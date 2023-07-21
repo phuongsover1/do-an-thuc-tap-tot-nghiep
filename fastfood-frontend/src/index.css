@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --main-color: #ffbc13;
+  --main-color-opacity: #ffbc1359;
+  --black: rgb(17, 16, 16);
+  --black-opacity: rgba(17, 16, 16, 0.575);
+  --white: white;
+  --small-size: 14px;
+  --title-size: clamp(1rem, calc(-0.875rem + 2.4vw), 3.5rem);
+  --basic-text-size: clamp(1rem, calc(-0.875rem + 1.5vw), 3.5rem);
+  --mini-title-size: clamp(1rem, calc(-0.875rem + 1.8vw), 3.5rem);
+  --body-bg-color: #e8e8e8;
+}
