@@ -2,7 +2,6 @@ import { createSlice } from '@reduxjs/toolkit';
 
 type AuthPayloadAction = {
   payload: number;
-  type: string;
 };
 type AuthState = {
   idAccount: number | null;

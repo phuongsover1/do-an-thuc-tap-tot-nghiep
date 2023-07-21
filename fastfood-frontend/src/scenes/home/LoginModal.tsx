@@ -1,11 +1,8 @@
 import BasicModal from '@/shared/BasicModal';
-import React, { useReducer, useState } from 'react';
+import React, { useState } from 'react';
 import LoginBanner from '@/assets/login-banner.jpg';
-import { useFormik } from 'formik';
-import axiosInstance from '@/axios/axios';
-import { log } from 'console';
-import CustomizedSnackbars from '@/shared/CustomizedSnackbars';
 import Login from './Login';
+import Register from '@/scenes/home/Register.tsx';
 
 type Props = {
   open: boolean;
@@ -56,7 +53,7 @@ const LoginModal = ({ open, handleClose }: Props) => {
     >
       <div className="flex h-full text-slate-600">
         <div className="basis-2/4 p-4">
-          <Login key="login" />
+          {isLoginBlockEnable ? <Login setIsLoginBlockEnable={setIsLoginBlockEnable}} key="login" /> : <Register key='register' setIsLoginBlockEnable={{setIsLoginBlockEnable}} />}
         </div>
         <div className="basis-2/4 rounded-r-[20px]">
           <img

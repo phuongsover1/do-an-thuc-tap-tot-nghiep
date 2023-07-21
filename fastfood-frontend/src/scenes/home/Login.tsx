@@ -1,38 +1,40 @@
 import axiosInstance from '@/axios/axios';
 import CustomizedSnackbars from '@/shared/CustomizedSnackbars';
-import { useAppDispatch, useAppSelector } from '@/store';
+import { useAppDispatch } from '@/store';
 import { useFormik } from 'formik';
 import React, { useState } from 'react';
+import { authActions } from '@/store/auth/auth-slice.ts';
+import { Message } from '@/shared/MessageType.ts';
 
 type LoginError = {
   username?: string;
   password?: string;
 };
 
-type Message = {
-  message: string;
-  type: 'success' | 'warning' | 'error' | 'info';
+type Props = {
+  setIsLoginBlockEnable: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const Login = () => {
+const Login = ({ setIsLoginBlockEnable }: Props) => {
   const [messageEnable, setMessageEnable] = useState(false);
   const [messageState, setMessage] = useState<Message>({
     type: 'info',
     message: '',
   });
 
-  const loginId = useAppSelector((state) => state.auth.idAccount);
   const dispatch = useAppDispatch();
 
+  const enableRegisterBlock = () => {
+    setIsLoginBlockEnable(false);
+  };
+
   const formikLogin = useFormik({
+    isInitialValid: true,
     initialValues: {
       username: '',
       password: '',
     },
     onSubmit: (values) => {
-      console.log('onSubmit');
-
-      console.log(values);
       login(values.username, values.password);
     },
     validate: (values) => {
@@ -51,17 +53,17 @@ const Login = () => {
     axiosInstance
       .post('/auth/login', { username, password })
       .then((response) => {
-        const idAccount: number | '' = response.data as number;
+        const idAccount: number | '' = response.data as number | '';
         if (typeof idAccount === 'number') {
-          console.log('id la number');
           setMessageEnable(true);
           setMessage({
             type: 'success',
             message: 'Đăng nhập thành công',
           });
+
           // TODO: Lưu vào redux id đăng nhập hiện tại
+          dispatch(authActions.setLogin(idAccount));
         } else {
-          console.log('id la string');
           setMessageEnable(true);
           setMessage({
             type: 'error',
@@ -125,6 +127,7 @@ const Login = () => {
       <button
         type="button"
         className="mt-3 w-full rounded-md bg-red-400 py-2 text-white"
+        onClick={enableRegisterBlock}
       >
         Đăng ký
       </button>
