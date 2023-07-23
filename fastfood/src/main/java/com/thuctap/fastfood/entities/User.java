@@ -23,19 +23,19 @@ public class User {
       strategy = "com.thuctap.fastfood.entities.stringId.UserIdGenerator")
   private String id;
 
-  @Column(name = "first_name", nullable = false)
+  @Column(name = "first_name")
   private String firstName;
 
-  @Column(name = "last_name", nullable = false)
+  @Column(name = "last_name")
   private String lastName;
 
-  @Column(name = "date_of_birth", nullable = false)
+  @Column(name = "date_of_birth")
   private LocalDate dateOfBirth;
 
-  @Column(name = "sex", nullable = false)
+  @Column(name = "sex")
   private boolean sex;
 
-  @Column(name = "address", columnDefinition = "VARCHAR(1000)", nullable = false)
+  @Column(name = "address", columnDefinition = "VARCHAR(1000)")
   private String address;
 
   @Column(name = "phone_number", nullable = false, unique = true)
