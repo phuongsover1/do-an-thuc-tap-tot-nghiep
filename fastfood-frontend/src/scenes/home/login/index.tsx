@@ -89,7 +89,7 @@ const Login = ({ setIsLoginBlockEnable }: Props) => {
       />
       <p className="text-lg font-bold">Đăng nhập hoặc tạo tài khoản</p>
 
-      <form className="my-3" onSubmit={formikLogin.handleSubmit} noValidate>
+      <form className="my-3" onSubmit={formikLogin.handleSubmit}>
         <label htmlFor="username" className="font-bold">
           Tên tài khoản
         </label>
@@ -102,9 +102,12 @@ const Login = ({ setIsLoginBlockEnable }: Props) => {
           value={formikLogin.values.username}
           onChange={formikLogin.handleChange}
         />
-        <div className="username-error mb-4 text-red-600">
-          {formikLogin.errors.username && formikLogin.errors.username}
-        </div>
+        {formikLogin.errors.username && formikLogin.touched.username && (
+          <div className="username-error mb-4 text-red-600">
+            {formikLogin.errors.username}
+          </div>
+        )}
+
         <label htmlFor="password" className="font-bold">
           Mật khẩu
         </label>
@@ -117,9 +120,11 @@ const Login = ({ setIsLoginBlockEnable }: Props) => {
           value={formikLogin.values.password}
           onChange={formikLogin.handleChange}
         />
-        <div className="password-error mb-6 text-red-600">
-          {formikLogin.errors.password && formikLogin.errors.password}
-        </div>
+        {formikLogin.errors.password && formikLogin.touched.password && (
+          <div className="password-error mb-6 text-red-600">
+            {formikLogin.errors.password}
+          </div>
+        )}
         <button
           type="submit"
           className="mt-1 w-full rounded-md bg-red-500 py-2 text-white"

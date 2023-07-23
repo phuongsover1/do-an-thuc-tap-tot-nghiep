@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 
 const style = {
   position: 'absolute',
@@ -25,6 +26,7 @@ type ModalProps = {
   borderRadius?: string;
   open: boolean;
   closeModalHandler: () => void;
+  haveCloseButton: boolean;
 };
 export default function BasicModal({
   children,
@@ -34,6 +36,7 @@ export default function BasicModal({
   borderRadius,
   open,
   closeModalHandler,
+  haveCloseButton,
 }: ModalProps) {
   if (width) {
     style.width = width;
@@ -41,14 +44,34 @@ export default function BasicModal({
   if (p !== undefined) style.p = p;
   if (border !== undefined) style.border = border;
   if (borderRadius !== undefined) style.borderRadius = borderRadius;
+  const handleClose = (event, reason: 'backdropClick' | 'escapeKeyDown') => {
+    if (reason === 'backdropClick') {
+      return;
+    }
+    closeModalHandler();
+  };
   return (
     <Modal
       open={open}
-      onClose={closeModalHandler}
+      onClose={handleClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
+      disableEscapeKeyDown
     >
-      <Box sx={style}>{children}</Box>
+      <Box sx={style}>
+        <div className="relative">
+          {haveCloseButton && (
+            <button
+              className="absolute top-3 right-3 p-1 rounded-full bg-pink-300"
+              onClick={handleClose}
+            >
+              <XMarkIcon className="w-8 h-8 text-white" />
+            </button>
+          )}
+
+          {children}
+        </div>
+      </Box>
     </Modal>
   );
 }

@@ -49,7 +49,9 @@ const LoginModal = ({ open, handleClose }: Props) => {
       width={750}
       p={0}
       border=""
+      borderRadius={'20px'}
       closeModalHandler={handleClose}
+      haveCloseButton={true}
     >
       <div className="flex h-full text-slate-600">
         <div className="basis-2/4 p-4 overflow-auto">

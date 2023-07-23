@@ -75,8 +75,6 @@ const Register = ({ setIsLoginBlockEnable }: Props) => {
       }
       return errors;
     },
-    validateOnBlur: true,
-    validateOnChange: false,
   });
 
   function register(values: RegisterType) {
@@ -143,11 +141,13 @@ const Register = ({ setIsLoginBlockEnable }: Props) => {
             onBlur={formikRegister.handleBlur}
             autoComplete={'off'}
           />
-          <div className="username-error mb-4 text-red-600">
-            {formikRegister.errors.username &&
-              formikRegister.touched &&
-              formikRegister.errors.username}
-          </div>
+          {formikRegister.errors.username &&
+            formikRegister.touched.username && (
+              <div className="username-error mb-4 text-red-600">
+                {formikRegister.errors.username}
+              </div>
+            )}
+
           <label htmlFor="password" className="font-bold">
             Mật khẩu
           </label>
@@ -161,9 +161,13 @@ const Register = ({ setIsLoginBlockEnable }: Props) => {
             onChange={formikRegister.handleChange}
             onBlur={formikRegister.handleBlur}
           />
-          <div className="password-error mb-4 text-red-600">
-            {formikRegister.errors.password && formikRegister.errors.password}
-          </div>
+          {formikRegister.errors.password &&
+            formikRegister.touched.password && (
+              <div className="password-error mb-4 text-red-600">
+                {formikRegister.errors.password}
+              </div>
+            )}
+
           <label htmlFor="email" className="font-bold">
             Email
           </label>
@@ -177,9 +181,12 @@ const Register = ({ setIsLoginBlockEnable }: Props) => {
             onChange={formikRegister.handleChange}
             onBlur={formikRegister.handleBlur}
           />
-          <div className="password-error mb-4 text-red-600">
-            {formikRegister.errors.email && formikRegister.errors.email}
-          </div>
+          {formikRegister.errors.email && formikRegister.touched.email && (
+            <div className="password-error mb-4 text-red-600">
+              {formikRegister.errors.email}
+            </div>
+          )}
+
           <label htmlFor="phoneNumber" className="font-bold">
             Số điện thoại
           </label>
@@ -193,10 +200,13 @@ const Register = ({ setIsLoginBlockEnable }: Props) => {
             onChange={formikRegister.handleChange}
             onBlur={formikRegister.handleBlur}
           />
-          <div className="password-error mb-6 text-red-600">
-            {formikRegister.errors.phoneNumber &&
-              formikRegister.errors.phoneNumber}
-          </div>
+          {formikRegister.errors.phoneNumber &&
+            formikRegister.touched.phoneNumber && (
+              <div className="password-error mb-6 text-red-600">
+                {formikRegister.errors.phoneNumber}
+              </div>
+            )}
+
           <button
             type="submit"
             className="mt-1 w-full rounded-md bg-red-500 py-2 text-white"
