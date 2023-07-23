@@ -1,8 +1,8 @@
 import BasicModal from '@/shared/BasicModal';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import LoginBanner from '@/assets/login-banner.jpg';
-import Login from './Login';
-import Register from '@/scenes/home/Register.tsx';
+import Login from './login';
+import Register from '@/scenes/home/register';
 
 type Props = {
   open: boolean;
@@ -52,13 +52,20 @@ const LoginModal = ({ open, handleClose }: Props) => {
       closeModalHandler={handleClose}
     >
       <div className="flex h-full text-slate-600">
-        <div className="basis-2/4 p-4">
-          {isLoginBlockEnable ? <Login setIsLoginBlockEnable={setIsLoginBlockEnable}} key="login" /> : <Register key='register' setIsLoginBlockEnable={{setIsLoginBlockEnable}} />}
+        <div className="basis-2/4 p-4 overflow-auto">
+          {isLoginBlockEnable ? (
+            <Login setIsLoginBlockEnable={setIsLoginBlockEnable} key="login" />
+          ) : (
+            <Register
+              key="register"
+              setIsLoginBlockEnable={setIsLoginBlockEnable}
+            />
+          )}
         </div>
         <div className="basis-2/4 rounded-r-[20px]">
           <img
             src={LoginBanner}
-            className="w-full rounded-r-[20px]"
+            className="w-full rounded-r-[20px] h-full"
             alt="login-banner"
           />
         </div>

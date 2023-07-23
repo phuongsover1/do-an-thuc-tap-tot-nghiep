@@ -1,14 +1,9 @@
-import Navbar from "@/shared/Navbar";
-import React from "react";
+import React from 'react';
 
 type Props = {};
 
 const HomePage = (props: Props) => {
-  return (
-    <div>
-      <Navbar />
-    </div>
-  );
+  return <div className="h-screen bg-red-600">Home Page</div>;
 };
 
 export default HomePage;

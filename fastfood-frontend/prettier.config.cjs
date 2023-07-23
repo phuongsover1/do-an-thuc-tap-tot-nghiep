@@ -1,5 +1,6 @@
 // prettier.config.js
 module.exports = {
   plugins: ["prettier-plugin-tailwindcss"],
-  ...require('@azz/prettier-config')
+  ...require('@azz/prettier-config'),
+  printWidth: 80
 };

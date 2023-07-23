@@ -1,10 +1,11 @@
-import axiosInstance from '@/axios/axios';
-import CustomizedSnackbars from '@/shared/CustomizedSnackbars';
+import axiosInstance from '@/axios/axios.ts';
+import CustomizedSnackbars from '@/shared/CustomizedSnackbars.tsx';
 import { useAppDispatch } from '@/store';
 import { useFormik } from 'formik';
 import React, { useState } from 'react';
 import { authActions } from '@/store/auth/auth-slice.ts';
 import { Message } from '@/shared/MessageType.ts';
+import { useNavigate } from 'react-router-dom';
 
 type LoginError = {
   username?: string;
@@ -22,6 +23,8 @@ const Login = ({ setIsLoginBlockEnable }: Props) => {
     message: '',
   });
 
+  const navigate = useNavigate();
+
   const dispatch = useAppDispatch();
 
   const enableRegisterBlock = () => {
@@ -29,7 +32,6 @@ const Login = ({ setIsLoginBlockEnable }: Props) => {
   };
 
   const formikLogin = useFormik({
-    isInitialValid: true,
     initialValues: {
       username: '',
       password: '',
@@ -61,8 +63,10 @@ const Login = ({ setIsLoginBlockEnable }: Props) => {
             message: 'Đăng nhập thành công',
           });
 
+          setTimeout(() => {
+            dispatch(authActions.setLogin(idAccount));
+          }, 2000);
           // TODO: Lưu vào redux id đăng nhập hiện tại
-          dispatch(authActions.setLogin(idAccount));
         } else {
           setMessageEnable(true);
           setMessage({
