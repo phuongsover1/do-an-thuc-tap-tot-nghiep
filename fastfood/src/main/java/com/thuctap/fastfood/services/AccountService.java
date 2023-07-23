@@ -12,6 +12,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Transactional
 @AllArgsConstructor
@@ -36,5 +38,13 @@ public class AccountService {
         newAccount.setRole(roleRepository.findById(3).get());
 
         return accountRepository.save(newAccount);
+    }
+
+    public Optional<Account> findById(Integer id) {
+        return accountRepository.findById(id);
+    }
+
+    public Optional<Account> findByUsername(String username) {
+        return accountRepository.findByUsername(username);
     }
 }
