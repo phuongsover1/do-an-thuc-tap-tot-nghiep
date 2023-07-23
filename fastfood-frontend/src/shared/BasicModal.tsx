@@ -13,6 +13,8 @@ const style = {
   boxShadow: 24,
   borderRadius: '20px',
   p: 4,
+  overflow: 'auto',
+  maxHeight: '550px',
 };
 
 type ModalProps = {

@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import logo from '@/assets/lotteria_logo.svg';
 import { motion } from 'framer-motion';
-
-type Props = {};
 import {
-  UserIcon,
-  MapPinIcon,
-  BellIcon,
-  ShoppingBagIcon,
   Bars3Icon,
+  BellIcon,
+  MapPinIcon,
+  ShoppingBagIcon,
+  UserIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import {
@@ -18,15 +16,25 @@ import {
 } from '@heroicons/react/24/solid';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import LoginModal from '@/scenes/home/LoginModal';
+import { useAppSelector } from '@/store';
+
+type Props = {};
 
 const Navbar = (props: Props) => {
   const isAboveMediumScreen = useMediaQuery('(min-width: 1060px)');
   const [isMenuToggled, setMenuToggled] = useState(false);
   const [isUserIconClicked, setIsUserIconClicked] = useState<boolean>(false);
   const [isLoginModalOpened, setIsLoginModalOpened] = useState<boolean>(false);
+  const [enableUserInfor, setEnableUserInfo] = useState(false);
+  const idAccount = useAppSelector((state) => state.auth.idAccount);
 
-  const openLoginModal = () => {
-    setIsLoginModalOpened(true);
+  const userIconClickedHandler = () => {
+    if (idAccount !== null) {
+      if (!enableUserInfor) setEnableUserInfo(true);
+      else setEnableUserInfo(false);
+    } else {
+      setIsLoginModalOpened(true);
+    }
   };
   const closeLoginModal = () => {
     setIsLoginModalOpened(false);
@@ -34,7 +42,9 @@ const Navbar = (props: Props) => {
 
   return (
     <div>
-      <LoginModal open={isLoginModalOpened} handleClose={closeLoginModal} />
+      {idAccount === null && (
+        <LoginModal open={isLoginModalOpened} handleClose={closeLoginModal} />
+      )}
       <nav className="z-0">
         <div className="w-full bg-white">
           <div className="mx-auto flex h-16 max-w-3xl place-content-between items-center px-4 py-2 md:h-24 md:max-w-none md:px-24">
@@ -58,32 +68,34 @@ const Navbar = (props: Props) => {
               <div className="relative z-50">
                 <button
                   className="rounded-full p-2 shadow shadow-gray-300"
-                  onClick={openLoginModal}
+                  onClick={userIconClickedHandler}
                 >
                   <UserIcon className="w-6 text-gray-500" />
                 </button>
-                <div className="absolute -left-24 top-20 w-60 rounded-lg bg-white p-6 drop-shadow-xl before:absolute before:-top-2 before:left-[6.5rem] before:z-0 before:h-5 before:w-5 before:rotate-45 before:bg-white before:text-white before:content-['dffd']">
-                  <ul className="flex flex-col gap-2 text-slate-600">
-                    <li className="flex items-center gap-2">
-                      <span>
-                        <UserIconSolid className="h-6 w-6" />
-                      </span>
-                      <span>Account Information</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span>
-                        <DocumentTextIcon className="h-6 w-6" />
-                      </span>
-                      <span>Order History</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span>
-                        <PowerIcon className="h-6 w-6" />
-                      </span>
-                      <span>Sign out</span>
-                    </li>
-                  </ul>
-                </div>
+                {idAccount !== null && enableUserInfor && (
+                  <div className="absolute -left-24 top-20 w-60 rounded-lg bg-white p-6 drop-shadow-xl before:absolute before:-top-2 before:left-[6.5rem] before:z-0 before:h-5 before:w-5 before:rotate-45 before:bg-white before:text-white before:content-['dffd']">
+                    <ul className="flex flex-col gap-2 text-slate-600">
+                      <li className="flex items-center gap-2">
+                        <span>
+                          <UserIconSolid className="h-6 w-6" />
+                        </span>
+                        <span>Account Information</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span>
+                          <DocumentTextIcon className="h-6 w-6" />
+                        </span>
+                        <span>Order History</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span>
+                          <PowerIcon className="h-6 w-6" />
+                        </span>
+                        <span>Sign out</span>
+                      </li>
+                    </ul>
+                  </div>
+                )}
               </div>
 
               <button className="rounded-full p-2 shadow shadow-gray-300">
