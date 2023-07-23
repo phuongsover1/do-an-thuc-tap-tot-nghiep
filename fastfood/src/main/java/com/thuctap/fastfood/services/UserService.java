@@ -23,4 +23,8 @@ public class UserService {
     public Optional<User> findByPhoneNumber(String phoneNumber) {
         return userRepository.findByPhoneNumber(phoneNumber);
     }
+
+    public User save(User user){
+        return userRepository.save(user);
+    }
 }
