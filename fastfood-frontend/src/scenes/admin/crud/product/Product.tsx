@@ -1,7 +1,106 @@
-const crudProduct = (state, action) => {};
+import { useState } from 'react';
+import { HideProductForm, ShowProductForm } from './product-types';
+import axiosInstance from '@/axios/axios';
+import { useFormik } from 'formik';
+
+type AddFormSubmitValues = {
+  name: string;
+  description: string;
+  price: number;
+  image: string | Blob;
+};
 const Product = () => {
+  const [formProductState, setFormProductState] = useState<
+    HideProductForm | ShowProductForm
+  >({ showForm: false });
+  const [testImageSrc, setTestImageSrc] = useState(null);
+
+  const [selectedImage, setSelectedImage] = useState<null | Blob>(null);
+
+  const formik = useFormik({
+    initialValues: {
+      name: '',
+      description: '',
+      price: '0',
+      image: '' as string | Blob,
+    },
+    onSubmit: (values) => {
+      console.log('selectedImage: ', selectedImage);
+      const formData = new FormData();
+      formData.append('file', selectedImage!);
+      formData.append('idNumber', '1');
+      console.log('formData: ', formData);
+      console.log('onSubmit: ', values);
+      void submitAddProduct(values);
+    },
+  });
+
+  function onChangeImageHandler(e: Event) {
+    e.preventDefault();
+    console.log('object url: ', URL.createObjectURL(e.target.files[0]));
+
+    setSelectedImage(e.target.files[0]);
+  }
+  function uploadImage(productId: number, selectedImage) {
+    console.log('stringify: ', selectedImage);
+
+    const formData = new FormData();
+    formData.append('file', selectedImage);
+
+    axiosInstance
+      .post('/products/uploadImage', formData, {
+        params: { productId },
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+      .then((res) => console.log('res', res))
+      .catch((err) => console.log('error: ', err));
+  }
+
+  async function submitAddProduct(values: AddFormSubmitValues) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    delete values.image;
+    try {
+      const response = await axiosInstance.post('/products', values);
+      const responseData = response.data as { productId: null | number };
+      const { productId } = responseData;
+      if (productId !== null) {
+        console.log('productId: ', productId);
+
+        uploadImage(productId, selectedImage);
+      }
+
+      // if (idProduct !== '') {
+      //   console.log('idProduct: ', idProduct);
+
+      //   // if (selectedImage) {
+      //   //   uploadImage(idProduct, selectedImage);
+      //   // }
+      // }
+    } catch (err) {
+      console.log('error: ', err);
+    }
+  }
+  function showAddFormProductHandler() {
+    setFormProductState({ showForm: true, type: 'add-new' });
+  }
+
+  function showUpdateFormProductHandler() {
+    setFormProductState({ showForm: true, type: 'update' });
+  }
+
+  function showDeleteProductHandler() {
+    setFormProductState({ showForm: false });
+  }
+  function hideProductFormHandler() {
+    setFormProductState({ showForm: false });
+  }
+
   return (
     <div className="w-full pt-20 ml-[50px] mt-[-20px] min-h-screen">
+      {formProductState.showForm && (
+        <div className="bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-30 top-0 left-0"></div>
+      )}
       <div className="p-4 bg-white block sm:flex items-center justify-between border-b border-gray-200 lg:mt-1.5 dark:bg-gray-800 dark:border-gray-700">
         <div className="w-full mb-1">
           <div className="mb-4">
@@ -166,6 +265,7 @@ const Product = () => {
               data-drawer-show="drawer-create-product-default"
               aria-controls="drawer-create-product-default"
               data-drawer-placement="right"
+              onClick={showAddFormProductHandler}
             >
               Add new product
             </button>
@@ -663,7 +763,11 @@ const Product = () => {
       {/* Add Product Drawer */}
       <div
         id="drawer-create-product-default"
-        className="fixed top-0 right-0 z-40 w-full h-screen max-w-xs p-4 overflow-y-auto transition-transform translate-x-full bg-white dark:bg-gray-800"
+        className={`fixed top-0 right-0 z-40 w-full h-screen max-w-xs p-4 overflow-y-auto transition-transform ${
+          formProductState.showForm && formProductState.type === 'add-new'
+            ? ''
+            : 'translate-x-full'
+        }  bg-white dark:bg-gray-800`}
         tabIndex="-1"
         aria-labelledby="drawer-label"
         aria-hidden="true"
@@ -679,6 +783,7 @@ const Product = () => {
           data-drawer-dismiss="drawer-create-product-default"
           aria-controls="drawer-create-product-default"
           className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 absolute top-2.5 right-2.5 inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+          onClick={hideProductFormHandler}
         >
           <svg
             aria-hidden="true"
@@ -695,7 +800,7 @@ const Product = () => {
           </svg>
           <span className="sr-only">Close menu</span>
         </button>
-        <form action="#">
+        <form onSubmit={formik.handleSubmit}>
           <div className="space-y-4">
             <div>
               <label
@@ -706,11 +811,10 @@ const Product = () => {
               </label>
               <input
                 type="text"
-                name="title"
                 id="name"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 placeholder="Type product name"
-                required=""
+                {...formik.getFieldProps('name')}
               />
             </div>
 
@@ -722,15 +826,14 @@ const Product = () => {
                 Price
               </label>
               <input
-                type="number"
-                name="price"
+                type="text"
                 id="price"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 placeholder="$2999"
-                required=""
+                {...formik.getFieldProps('price')}
               />
             </div>
-            <div>
+            {/* <div>
               <label
                 htmlFor="category-create"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -747,7 +850,7 @@ const Product = () => {
                 <option value="AN">Angular</option>
                 <option value="VU">Vue</option>
               </select>
-            </div>
+            </div> */}
             <div>
               <label
                 htmlFor="description"
@@ -757,35 +860,37 @@ const Product = () => {
               </label>
               <textarea
                 id="description"
-                rows="4"
+                rows={4}
                 className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 placeholder="Enter event description here"
+                {...formik.getFieldProps('description')}
               ></textarea>
             </div>
             <div>
               <label
-                htmlFor="discount-create"
+                htmlFor="image"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
-                Discount
+                Image
               </label>
-              <select
-                id="discount-create"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              >
-                <option selected="">No</option>
-                <option value="5">5%</option>
-                <option value="10">10%</option>
-                <option value="20">20%</option>
-                <option value="30">30%</option>
-                <option value="40">40%</option>
-                <option value="50">50%</option>
-              </select>
+              <input
+                type="file"
+                id="image"
+                accept="image/jpeg"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                placeholder="Type product name"
+                {...formik.getFieldProps('image')}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  onChangeImageHandler(e);
+                }}
+              />
             </div>
+
             <div className="bottom-0 left-0 flex justify-center w-full pb-4 space-x-4 md:px-4 md:absolute">
               <button
                 type="submit"
-                className="text-white w-full justify-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                className="text-white w-full justify-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
                 Add product
               </button>
