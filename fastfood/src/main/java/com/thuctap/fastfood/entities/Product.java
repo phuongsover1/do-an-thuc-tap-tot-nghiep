@@ -1,9 +1,14 @@
 package com.thuctap.fastfood.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Getter
+@Setter
 @Table(name = "products")
 @Entity(name = "Product")
 public class Product {
@@ -21,14 +26,19 @@ public class Product {
   private String name;
 
   @Column(name = "status")
-  private boolean status = true;
+  private Boolean status = true;
 
   @Column(name = "price")
-  private double price;
+  private Double price;
 
   @Column(name = "description", columnDefinition = "TEXT")
   private String description;
 
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "productId")
   private List<ProductImage> images;
+
+  public void addImage(ProductImage productImage){
+    images.add(productImage);
+    productImage.setProductId(this);
+  }
 }

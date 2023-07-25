@@ -11,21 +11,27 @@ import com.thuctap.fastfood.services.RoleService;
 import com.thuctap.fastfood.services.UserService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(
-        origins = "http://localhost:5173",
-        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE},
-        allowedHeaders = "*",
-        allowCredentials = "true")
+//@CrossOrigin(
+//        origins = "http://localhost:5173",
+//        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE},
+//        allowedHeaders = "*",
+//        allowCredentials = "true")
 @RequestMapping("/api/auth")
 public class AuthController {
     private final UserService userService;
@@ -98,4 +104,5 @@ public class AuthController {
         }
         return ResponseEntity.ok(false);
     }
+
 }

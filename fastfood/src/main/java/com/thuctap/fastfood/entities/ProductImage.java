@@ -2,9 +2,12 @@ package com.thuctap.fastfood.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "product_images")
 @Entity(name = "ProductImage")
@@ -27,5 +30,5 @@ public class ProductImage {
 
     @Lob
     @Column(name = "image")
-    private Byte[] image;
+    private byte[] image;
 }
