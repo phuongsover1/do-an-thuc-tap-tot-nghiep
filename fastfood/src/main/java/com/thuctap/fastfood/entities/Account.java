@@ -32,7 +32,7 @@ public class Account {
   @Column(name = "password", nullable = false, columnDefinition = "VARCHAR(255 )")
   private String password;
 
-  @Column(name = "status", nullable = false, columnDefinition = "TINYINT")
+  @Column(name = "status", nullable = false)
   private boolean status = true;
 
   @OneToOne
