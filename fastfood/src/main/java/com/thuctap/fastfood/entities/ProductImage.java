@@ -24,7 +24,7 @@ public class ProductImage implements Serializable {
     @Column(name = "id", columnDefinition = "INT(11)")
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_product")
     @JsonBackReference
     private Product productId;

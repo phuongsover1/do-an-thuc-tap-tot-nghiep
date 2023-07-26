@@ -12,10 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -31,12 +28,13 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<Map<String, Object>> saveProduct(@RequestBody Map<String, Object> body) {
         Map<String, Object> returnedMap = new HashMap<>();
-        log.error(body.toString());
+        // add new
         Product product = productService.createProductFromMap(body);
         product = productService.saveProduct(product);
         returnedMap.put("productId", product.getId());
         return ResponseEntity.ok(returnedMap);
     }
+
 
     @PostMapping(value = "/uploadImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Boolean> uploadImage(@RequestParam MultipartFile file, @RequestParam("productId") Integer productId) throws IOException {
@@ -50,6 +48,23 @@ public class ProductController {
         return ResponseEntity.ok(true);
     }
 
+    @PostMapping(value = "/updateImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Boolean> updateImage(@RequestParam MultipartFile file, @RequestParam("productId") Integer productId) throws IOException {
+        Optional<Product> productOptional = productService.findById(productId);
+        if(productOptional.isPresent()) {
+            Product product = productOptional.get();
+            Optional<ProductImage> productImageOptional = productService.findImageByProductAndName(product, "anh 1");
+            if (productImageOptional.isPresent()) {
+                ProductImage productImage = productImageOptional.get();
+                productImage.setImage(file.getBytes());
+                productService.saveImage(productImage);
+                return ResponseEntity.ok(true);
+            }
+
+        }
+        return ResponseEntity.ok(false);
+    }
+
     @GetMapping(value = "/image",   produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> getImage( @RequestParam Integer productId, @RequestParam String imageName) {
         Optional<Product> productOptional = productService.findById(productId);
@@ -60,6 +75,12 @@ public class ProductController {
             }
         }
         return null;
+    }
+
+
+    @GetMapping
+    public ResponseEntity<List<Product>> findAllProducts() {
+        return ResponseEntity.ok(productService.findAll());
     }
 
 

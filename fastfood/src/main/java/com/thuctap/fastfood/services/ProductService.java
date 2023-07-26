@@ -37,6 +37,10 @@ public class ProductService {
         productRepository.save(product);
     }
 
+    public void saveImage(ProductImage productImage){
+        productImagesRepository.save(productImage);
+    }
+
     public Optional<Product> findById(Integer id) {
         return productRepository.findById(id);
     }

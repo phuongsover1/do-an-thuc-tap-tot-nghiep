@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface ProductImagesRepository extends JpaRepository<ProductImage, Integer> {
     Optional<ProductImage> findProductImageByProductIdAndImageName(Product productId, String imageName);
+
+
 }

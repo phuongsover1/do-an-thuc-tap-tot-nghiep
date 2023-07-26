@@ -7,7 +7,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -36,10 +38,9 @@ public class Product {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productId")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "productId", fetch = FetchType.LAZY)
     @JsonManagedReference
-    private List<ProductImage> images;
-
+    private Set<ProductImage> images;
 
     @ManyToMany
     @JoinTable(name = "category_product"
@@ -47,7 +48,7 @@ public class Product {
             inverseJoinColumns = @JoinColumn(name = "id_category")
     )
     @JsonBackReference
-    private List<Category> categories = new ArrayList<>();
+    private Set<Category> categories = new HashSet<>();
 
     public void addCategory(Category category) {
         categories.add(category);
