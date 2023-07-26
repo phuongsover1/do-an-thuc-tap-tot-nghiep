@@ -1,5 +1,7 @@
 package com.thuctap.fastfood.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,6 +37,7 @@ public class Product {
     private String description;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "productId")
+    @JsonManagedReference
     private List<ProductImage> images;
 
 
@@ -43,7 +46,12 @@ public class Product {
             , joinColumns = @JoinColumn(name = "id_product"),
             inverseJoinColumns = @JoinColumn(name = "id_category")
     )
+    @JsonBackReference
     private List<Category> categories = new ArrayList<>();
+
+    public void addCategory(Category category) {
+        categories.add(category);
+    }
 
     public void addImage(ProductImage productImage) {
         images.add(productImage);

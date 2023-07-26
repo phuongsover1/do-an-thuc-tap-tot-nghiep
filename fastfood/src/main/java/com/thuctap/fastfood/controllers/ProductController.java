@@ -19,6 +19,11 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
+//@CrossOrigin(
+//        origins = "http://localhost:5173",
+//        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE},
+//        allowedHeaders = "*",
+//        allowCredentials = "true")
 @RequiredArgsConstructor
 @RequestMapping("/api/products")
 public class ProductController {

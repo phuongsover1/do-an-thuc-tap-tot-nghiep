@@ -1,5 +1,6 @@
 package com.thuctap.fastfood.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,10 +26,11 @@ public class Category {
     @Column(name = "name", columnDefinition = "VARCHAR(255)")
     private String name;
 
-    @Column(name = "description",  columnDefinition = "VARCHAR(500)")
+    @Column(name = "description", columnDefinition = "VARCHAR(500)")
     private String description;
 
     @ManyToMany(mappedBy = "categories")
+    @JsonManagedReference
     List<Product> products = new ArrayList<>();
 
 }

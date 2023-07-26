@@ -1,14 +1,17 @@
 package com.thuctap.fastfood.services;
 
 import com.thuctap.fastfood.dto.ProductDTO;
+import com.thuctap.fastfood.entities.Category;
 import com.thuctap.fastfood.entities.Product;
 import com.thuctap.fastfood.entities.ProductImage;
+import com.thuctap.fastfood.repositories.CategoryRepository;
 import com.thuctap.fastfood.repositories.ProductImagesRepository;
 import com.thuctap.fastfood.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -18,7 +21,7 @@ import java.util.Optional;
 public class ProductService {
     private final ProductRepository productRepository;
     private final ProductImagesRepository productImagesRepository;
-
+    private final CategoryRepository categoryRepository;
 
     public Product saveProduct(Product product) {
         return productRepository.save(product);
@@ -47,6 +50,8 @@ public class ProductService {
             productDTO.setDescription((String) map.get("description"));
         if (map.containsKey("price"))
             productDTO.setPrice((Double.valueOf((String) map.get("price"))));
+        if (map.containsKey("categories"))
+            productDTO.setCategoriesId((List<String>) map.get("categories"));
         if (map.containsKey("status")) {
             if (map.get("status") instanceof String) {
                 productDTO.setStatus(Boolean.parseBoolean((String) map.get("status")));
@@ -68,6 +73,11 @@ public class ProductService {
             product.setStatus(productDTO.getStatus());
         if (productDTO.getPrice() != null)
             product.setPrice(productDTO.getPrice());
+        if (productDTO.getCategoriesId().size() != 0) {
+            productDTO.getCategoriesId().forEach(categoryIdStr -> {
+                categoryRepository.findById(Integer.valueOf(categoryIdStr)).ifPresent(product::addCategory);
+            });
+        }
         return product;
     }
 }

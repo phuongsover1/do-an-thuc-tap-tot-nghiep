@@ -1,17 +1,20 @@
 package com.thuctap.fastfood.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @Table(name = "product_images")
 @Entity(name = "ProductImage")
-public class ProductImage {
+public class ProductImage implements Serializable {
     @Id
     @SequenceGenerator(
             name = "product_images_sequence",
@@ -23,6 +26,7 @@ public class ProductImage {
 
     @ManyToOne
     @JoinColumn(name = "id_product")
+    @JsonBackReference
     private Product productId;
 
     @Column(name = "image_name" , columnDefinition = "VARCHAR(255)")
