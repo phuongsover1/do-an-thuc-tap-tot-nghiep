@@ -8,6 +8,7 @@ import Root from '@/routes/root.tsx';
 import HomePage from '@/scenes/home';
 import Product from '@/scenes/admin/crud/product/Product.tsx';
 import AdminRoot from '@/routes/admin/root.tsx';
+import Category from '@/scenes/admin/crud/category/Category.tsx';
 
 const router = createBrowserRouter([
   {
@@ -25,8 +26,12 @@ const router = createBrowserRouter([
     element: <AdminRoot />,
     children: [
       {
-        path: 'product',
+        path: 'products',
         element: <Product />,
+      },
+      {
+        path: 'categories',
+        element: <Category />,
       },
     ],
   },
