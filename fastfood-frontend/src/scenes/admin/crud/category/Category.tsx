@@ -5,6 +5,8 @@ import {
 } from '@/scenes/admin/crud/product/product-types.ts';
 import { useFormik } from 'formik';
 import axiosInstance from '@/axios/axios.ts';
+import CustomizedSnackbars from '@/shared/CustomizedSnackbars.tsx';
+import { Message } from '@/shared/MessageType.ts';
 
 type Category = {
   id?: number;
@@ -20,6 +22,13 @@ const Category = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null,
   );
+
+  const [messageEnable, setMessageEnable] = useState(false);
+  const [messageState, setMessage] = useState<Message>({
+    type: 'info',
+    message: '',
+  });
+
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -149,12 +158,16 @@ const Category = () => {
         const response = await axiosInstance.post(
           `/categories/delete/${selectedCategory.id}`,
         );
-        const isSuccessful = response.data as boolean;
-        if (isSuccessful) {
-          console.log('Xóa thành công');
+        const data = response.data as { isSuccessful: boolean; error?: string };
+        console.log('data: ', data);
+        if (data.isSuccessful) {
+          setMessageEnable(true);
+          setMessage({ type: 'success', message: 'Xóa danh mục thành công' });
           void getAllCategory();
           hideCategoryFormHandler();
         } else {
+          setMessageEnable(true);
+          setMessage({ type: 'error', message: data.error! });
           console.log('Xóa thất bại');
         }
       }
@@ -168,6 +181,13 @@ const Category = () => {
       {formCategoryState.showForm && (
         <div className="bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-30 top-0 left-0"></div>
       )}
+
+      <CustomizedSnackbars
+        open={messageEnable}
+        setOpen={setMessageEnable}
+        type={messageState.type}
+        message={messageState.message}
+      />
       <div className="p-4 bg-white block sm:flex items-center justify-between border-b border-gray-200 lg:mt-1.5 dark:bg-gray-800 dark:border-gray-700">
         <div className="w-full mb-1">
           <div className="mb-4">

@@ -2,13 +2,16 @@ package com.thuctap.fastfood.controllers;
 
 import com.thuctap.fastfood.dto.CategoryDTO;
 import com.thuctap.fastfood.entities.Category;
+import com.thuctap.fastfood.entities.Product;
 import com.thuctap.fastfood.services.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -51,14 +54,23 @@ public class CategoryController {
     }
 
     @PostMapping("/delete/{categoryId}")
-    public ResponseEntity<Boolean> deleteCategory(@PathVariable("categoryId")Integer categoryId) {
+    public ResponseEntity<Map<String, Object>> deleteCategory(@PathVariable("categoryId") Integer categoryId) {
+        Map<String, Object> map = new HashMap<>();
         Optional<Category> categoryOptional = categoryService.findById(categoryId);
         if (categoryOptional.isPresent()) {
+            List<Product> products = categoryOptional.get().getProducts();
+            if (!products.isEmpty()) {
+                map.put("isSuccessful", false);
+                map.put("error", "Đã có sản phẩm được thuộc danh mục này nên không thể xóa");
+                return ResponseEntity.ok(map);
+            }
             categoryService.delete(categoryOptional.get());
-            return ResponseEntity.ok(true);
-
+            map.put("isSuccessful", true);
+            return ResponseEntity.ok(map);
         }
-        return ResponseEntity.ok(false);
+        map.put("isSuccessful", false);
+        map.put("error", "Không có danh mục thuộc" + categoryId + " đã đưa");
+        return ResponseEntity.ok(map);
     }
 
 }
