@@ -9,28 +9,32 @@ type AddFormSubmitValues = {
   price: number;
   image: string | Blob;
 };
+
+type Category = {
+  id: number;
+  name: string;
+  description: string;
+};
 const Product = () => {
   const [formProductState, setFormProductState] = useState<
     HideProductForm | ShowProductForm
   >({ showForm: false });
   const [previewImage, setPreviewImage] = useState<string>('');
-
   const [selectedImage, setSelectedImage] = useState<null | Blob>(null);
+
+  const [categories, setCategories] = useState<Category[]>([]);
 
   const formik = useFormik({
     initialValues: {
       name: '',
+      categories: [],
       description: '',
       price: '0',
       image: '' as string | Blob,
     },
     onSubmit: (values) => {
-      console.log('selectedImage: ', selectedImage);
-      const formData = new FormData();
-      formData.append('file', selectedImage!);
-      formData.append('idNumber', '1');
-      console.log('formData: ', formData);
       console.log('onSubmit: ', values);
+
       void submitAddProduct(values);
 
       // get image from spring
@@ -49,6 +53,15 @@ const Product = () => {
     },
   });
 
+  async function getAllCategories() {
+    try {
+      const response = await axiosInstance.get('/categories');
+      console.log('in getAll: ', response);
+      setCategories(response.data as Category[]);
+    } catch (e) {
+      console.log('error: ', e);
+    }
+  }
   function onChangeImageHandler(e: Event) {
     e.preventDefault();
     setPreviewImage(URL.createObjectURL(e.target.files[0]));
@@ -78,7 +91,9 @@ const Product = () => {
       if (productId !== null) {
         console.log('productId: ', productId);
 
-        uploadImage(productId, selectedImage);
+        if (selectedImage) {
+          uploadImage(productId, selectedImage);
+        }
       }
 
       // if (idProduct !== '') {
@@ -93,10 +108,12 @@ const Product = () => {
     }
   }
   function showAddFormProductHandler() {
+    void getAllCategories();
     setFormProductState({ showForm: true, type: 'add-new' });
   }
 
   function showUpdateFormProductHandler() {
+    void getAllCategories();
     setFormProductState({ showForm: true, type: 'update' });
   }
 
@@ -835,24 +852,29 @@ const Product = () => {
                 {...formik.getFieldProps('price')}
               />
             </div>
-            {/* <div>
+            <div>
               <label
                 htmlFor="category-create"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
-                Technology
+                Category
               </label>
               <select
                 id="category-create"
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                {...formik.getFieldProps('categories')}
+                multiple
               >
-                <option selected="">Select category</option>
-                <option value="FL">Flowbite</option>
-                <option value="RE">React</option>
-                <option value="AN">Angular</option>
-                <option value="VU">Vue</option>
+                {categories.map((category) => (
+                  <option
+                    value={category.id}
+                    key={`${category.id} ${category.name}`}
+                  >
+                    {category.name}
+                  </option>
+                ))}
               </select>
-            </div> */}
+            </div>
             <div>
               <label
                 htmlFor="description"
@@ -892,7 +914,7 @@ const Product = () => {
               <img src={previewImage} className="w-24 h-24" alt="" />
             </div>
 
-            <div className="bottom-0 left-0 flex justify-center w-full pb-4 space-x-4 md:px-4 md:absolute">
+            <div className="flex justify-center w-full pb-4 space-x-4 md:px-4">
               <button
                 type="submit"
                 className="text-white w-full justify-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
