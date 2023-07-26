@@ -96,13 +96,13 @@ const Product = () => {
         }
       }
 
-      // if (idProduct !== '') {
-      //   console.log('idProduct: ', idProduct);
+      if (idProduct !== '') {
+        console.log('idProduct: ', idProduct);
 
-      //   // if (selectedImage) {
-      //   //   uploadImage(idProduct, selectedImage);
-      //   // }
-      // }
+        if (selectedImage) {
+          uploadImage(idProduct, selectedImage);
+        }
+      }
     } catch (err) {
       console.log('error: ', err);
     }

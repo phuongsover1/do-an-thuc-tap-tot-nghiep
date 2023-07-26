@@ -27,6 +27,10 @@ public class ProductService {
         return productRepository.save(product);
     }
 
+    public List<Product> findAll() {
+        return productRepository.findAll();
+    }
+
     public void saveImage(ProductImage productImage, Product product){
         product.addImage(productImage);
         productImagesRepository.save(productImage);
