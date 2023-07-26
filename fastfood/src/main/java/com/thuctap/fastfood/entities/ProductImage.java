@@ -25,10 +25,10 @@ public class ProductImage {
     @JoinColumn(name = "id_product")
     private Product productId;
 
-    @Column(name = "image_name")
+    @Column(name = "image_name" , columnDefinition = "VARCHAR(255)")
     private String imageName;
 
     @Lob
-    @Column(name = "image")
+    @Column(name = "image", columnDefinition = "LONGBLOB")
     private byte[] image;
 }

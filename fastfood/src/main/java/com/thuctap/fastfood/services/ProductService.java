@@ -7,12 +7,14 @@ import com.thuctap.fastfood.repositories.ProductImagesRepository;
 import com.thuctap.fastfood.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class ProductService {
     private final ProductRepository productRepository;
     private final ProductImagesRepository productImagesRepository;
