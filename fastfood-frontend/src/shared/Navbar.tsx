@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useReducer, useState } from 'react';
 import logo from '@/assets/lotteria_logo.svg';
 import { motion } from 'framer-motion';
 import {
@@ -20,22 +20,57 @@ import { useAppSelector } from '@/store';
 
 type Props = {};
 
+type ClickedIconStateType = {
+  user?: boolean;
+  cart?: boolean;
+};
+
+type ClickedIconActionType = {
+  type: 'user' | 'cart' | 'nothing';
+};
+function clickedIconReducer(
+  state: ClickedIconStateType,
+  action: ClickedIconActionType,
+): ClickedIconStateType {
+  switch (action.type) {
+    case 'user':
+      return { user: true };
+    case 'cart':
+      return { cart: true };
+    case 'nothing':
+      return {};
+  }
+}
+
 const Navbar = (props: Props) => {
   const isAboveMediumScreen = useMediaQuery('(min-width: 1060px)');
   const [isMenuToggled, setMenuToggled] = useState(false);
   const [isUserIconClicked, setIsUserIconClicked] = useState<boolean>(false);
   const [isLoginModalOpened, setIsLoginModalOpened] = useState<boolean>(false);
   const [enableUserInfor, setEnableUserInfo] = useState(false);
+  const [clickedIconState, setClickedIconState] = useReducer(
+    clickedIconReducer,
+    { cart: false, user: false },
+  );
   const idAccount = useAppSelector((state) => state.auth.idAccount);
 
   const userIconClickedHandler = () => {
     if (idAccount !== null) {
-      if (!enableUserInfor) setEnableUserInfo(true);
-      else setEnableUserInfo(false);
+      if (!clickedIconState.user) setClickedIconState({ type: 'user' });
+      else setClickedIconState({ type: 'nothing' });
     } else {
       setIsLoginModalOpened(true);
     }
   };
+
+  function cartIconClickedHandler() {
+    if (idAccount !== null) {
+      if (!clickedIconState.cart) setClickedIconState({ type: 'cart' });
+      else setClickedIconState({ type: 'nothing' });
+    } else {
+      setIsLoginModalOpened(true);
+    }
+  }
   const closeLoginModal = () => {
     setIsLoginModalOpened(false);
   };
@@ -72,7 +107,7 @@ const Navbar = (props: Props) => {
                 >
                   <UserIcon className="w-6 text-gray-500" />
                 </button>
-                {idAccount !== null && enableUserInfor && (
+                {idAccount !== null && clickedIconState.user && (
                   <div className="absolute -left-24 top-20 w-60 rounded-lg bg-white p-6 drop-shadow-xl before:absolute before:-top-2 before:left-[6.5rem] before:z-0 before:h-5 before:w-5 before:rotate-45 before:bg-white before:text-white before:content-['dffd']">
                     <ul className="flex flex-col gap-2 text-slate-600">
                       <li className="flex items-center gap-2">
@@ -102,26 +137,33 @@ const Navbar = (props: Props) => {
                 <BellIcon className="w-6 text-gray-500" />
               </button>
               <div className="relative z-50">
-                <button className="rounded-full p-2 shadow shadow-gray-300">
+                <button
+                  className="rounded-full p-2 shadow shadow-gray-300"
+                  onClick={cartIconClickedHandler}
+                >
                   <ShoppingBagIcon className="w-6 text-gray-500" />
                 </button>
-                <div className="absolute -left-64 top-20 w-96 rounded-lg bg-white drop-shadow-xl shadow-lg before:absolute before:-top-2 before:left-[16.6rem] before:z-0 before:h-5 before:w-5 before:rotate-45 before:bg-white before:text-white before:content-['dffd']">
-                  <ul className="flex flex-col gap-2 text-slate-600 my-4">
-                    <li className="gap-2 text-center w-full">
-                      Hiện không có gì trong giỏ hàng
-                    </li>
-                  </ul>
-                  <div className="flex items-center justify-between gap-2 border-t border-black py-4 px-4">
-                    <span className="text-slate-700 text-lg font-semibold">
-                      Tổng cộng
-                    </span>
-                    <span className="text-xl font-bold text-red-400">0 Đ</span>
-                  </div>
+                {idAccount !== null && clickedIconState.cart && (
+                  <div className="absolute -left-64 top-20 w-96 rounded-lg bg-white drop-shadow-xl shadow-lg before:absolute before:-top-2 before:left-[16.6rem] before:z-0 before:h-5 before:w-5 before:rotate-45 before:bg-white before:text-white before:content-['dffd']">
+                    <ul className="flex flex-col gap-2 text-slate-600 my-4">
+                      <li className="gap-2 text-center w-full">
+                        Hiện không có gì trong giỏ hàng
+                      </li>
+                    </ul>
+                    <div className="flex items-center justify-between gap-2 border-t border-black py-4 px-4">
+                      <span className="text-slate-700 text-lg font-semibold">
+                        Tổng cộng
+                      </span>
+                      <span className="text-xl font-bold text-red-400">
+                        0 Đ
+                      </span>
+                    </div>
 
-                  <button className="w-full bg-red-400 text-white hover:bg-red-500 text-lg font-bold p-4 rounded-b-lg">
-                    THANH TOÁN
-                  </button>
-                </div>
+                    <button className="w-full bg-red-400 text-white hover:bg-red-500 text-lg font-bold p-4 rounded-b-lg">
+                      THANH TOÁN
+                    </button>
+                  </div>
+                )}
               </div>
               {!isAboveMediumScreen && (
                 <button onClick={() => setMenuToggled(true)}>
