@@ -2,6 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useAppSelector } from '@/store';
 import axiosInstance from '@/axios/axios.ts';
 import OtherInformationModal from '@/scenes/home/other-informations/OtherInformationModal.tsx';
+import 'react-responsive-carousel/lib/styles/carousel.min.css'; // requires a loader
+import { Carousel } from 'react-responsive-carousel';
+import Banner1 from '@/assets/banner-1.png';
+import Banner2 from '@/assets/banner-2.jpg';
+import Banner3 from '@/assets/banner-3.jpg';
+import ProductList from '@/shared/ProductList';
 
 type Props = {};
 
@@ -46,7 +52,20 @@ const HomePage = (props: Props) => {
         open={enableForceUserTypeOtherInfor}
         handleClose={closeUserTypeOtherInfo}
       />
-      <div className="h-screen bg-red-600">Home Page</div>;
+      <Carousel autoPlay={true} infiniteLoop={true} interval={3000}>
+        <div>
+          <img src={Banner1} />
+        </div>
+        <div>
+          <img src={Banner2} />
+        </div>
+        <div>
+          <img src={Banner3} />
+        </div>
+      </Carousel>
+      <div className="bg-white">
+        <ProductList />
+      </div>
     </>
   );
 };
