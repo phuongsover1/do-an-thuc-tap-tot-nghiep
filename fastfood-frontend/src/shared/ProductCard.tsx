@@ -1,20 +1,48 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import GaRanImage from '@/assets/K-Chicken.png';
+import { ProductFromApi } from '@/scenes/admin/crud/product/Product';
+import axiosInstance from '@/axios/axios';
 
-type Props = {};
+type Props = {
+  product: ProductFromApi;
+};
 
-const ProductCard = (props: Props) => {
+const ProductCard = ({ product }: Props) => {
+  const [productImage, setProductImage] = useState<string>('');
+
+  function getProductImage(product: ProductFromApi) {
+    // get image from spring
+    axiosInstance
+      .get('/products/image', {
+        params: {
+          productId: product.id,
+          imageName: 'anh 1',
+        },
+        responseType: 'blob',
+      })
+      .then((res) => {
+        setProductImage(URL.createObjectURL(res.data as Blob | MediaSource));
+      })
+      .catch((err) => console.log(err));
+  }
+
+  useEffect(() => {
+    getProductImage(product);
+  }, [product]);
+
   return (
     <div className="shadow rounded-lg">
       <div className="flex flex-col">
-        <img src={GaRanImage} className="w-full rounded-t-lg" alt="" />
+        <img src={productImage} className="h-40 rounded-t-lg" alt="" />
+      </div>
+      <div className="p-3 pb-10">
+        <p className="font-semibold text-slate-800">{product.name}</p>
+        <p className="text-red-400 text-2xl font-bold mt-2">
+          {product.price} đ
+        </p>
       </div>
       <div className="p-3">
-        <p className="font-semibold text-slate-800">Gà Rán (1 miếng)</p>
-        <p className="text-red-400 text-2xl font-bold">34.000 đ</p>
-      </div>
-      <div className="p-3">
-        <button className="w-full text-white text-center py-2 px-4 rounded-sm bg-red-400">
+        <button className="text-white w-full text-center py-2 px-4 rounded-sm bg-red-400">
           Thêm vào giỏ hàng
         </button>
       </div>

@@ -13,13 +13,13 @@ type AddFormSubmitValues = {
   image: string | Blob;
 };
 
-type ProductFromApi = {
+export type ProductFromApi = {
   id: number;
   name: string;
   status: boolean;
   price: number;
   description: string;
-  images: { id: number; imageName: string; image: Blob }[];
+  images: [];
 };
 
 type Category = {
@@ -87,6 +87,8 @@ const Product = () => {
     try {
       const response = await axiosInstance.get('/products');
       const productArr = response.data as ProductFromApi[];
+      console.log('productArr: ', productArr);
+
       setProducts(productArr);
     } catch (e) {
       console.log('error: ', e);

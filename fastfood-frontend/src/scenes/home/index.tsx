@@ -8,6 +8,7 @@ import Banner1 from '@/assets/banner-1.png';
 import Banner2 from '@/assets/banner-2.jpg';
 import Banner3 from '@/assets/banner-3.jpg';
 import ProductList from '@/shared/ProductList';
+import { ProductFromApi } from '../admin/crud/product/Product';
 
 type Props = {};
 
@@ -15,6 +16,24 @@ const HomePage = (props: Props) => {
   const idAccount = useAppSelector((state) => state.auth.idAccount);
   const [enableForceUserTypeOtherInfor, setEnableForceUserTypeOtherInfor] =
     useState(false);
+
+  const [products, setProducts] = useState<ProductFromApi[]>([]);
+
+  async function getAllProducts() {
+    try {
+      const response = await axiosInstance.get('/products');
+      const productArr = response.data as ProductFromApi[];
+      console.log('productArr: ', productArr);
+
+      setProducts(productArr);
+    } catch (e) {
+      console.log('error: ', e);
+    }
+  }
+
+  useEffect(() => {
+    void getAllProducts();
+  }, []);
 
   function closeUserTypeOtherInfo() {
     setEnableForceUserTypeOtherInfor(false);
@@ -64,7 +83,7 @@ const HomePage = (props: Props) => {
         </div>
       </Carousel>
       <div className="bg-white">
-        <ProductList />
+        <ProductList products={products} />
       </div>
     </>
   );

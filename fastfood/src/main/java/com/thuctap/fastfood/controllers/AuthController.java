@@ -27,11 +27,6 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-//@CrossOrigin(
-//        origins = "http://localhost:5173",
-//        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE},
-//        allowedHeaders = "*",
-//        allowCredentials = "true")
 @RequestMapping("/api/auth")
 public class AuthController {
     private final UserService userService;

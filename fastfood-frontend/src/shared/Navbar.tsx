@@ -45,7 +45,7 @@ const Navbar = (props: Props) => {
       {idAccount === null && (
         <LoginModal open={isLoginModalOpened} handleClose={closeLoginModal} />
       )}
-      <nav className="z-0">
+      <nav className="z-50 fixed top-0 left-0 w-full">
         <div className="w-full bg-white">
           <div className="mx-auto flex h-16 max-w-3xl place-content-between items-center px-4 py-2 md:h-24 md:max-w-none md:px-24">
             <div className="flex items-center">
@@ -101,9 +101,28 @@ const Navbar = (props: Props) => {
               <button className="rounded-full p-2 shadow shadow-gray-300">
                 <BellIcon className="w-6 text-gray-500" />
               </button>
-              <button className="rounded-full p-2 shadow shadow-gray-300">
-                <ShoppingBagIcon className="w-6 text-gray-500" />
-              </button>
+              <div className="relative z-50">
+                <button className="rounded-full p-2 shadow shadow-gray-300">
+                  <ShoppingBagIcon className="w-6 text-gray-500" />
+                </button>
+                <div className="absolute -left-64 top-20 w-96 rounded-lg bg-white drop-shadow-xl shadow-lg before:absolute before:-top-2 before:left-[16.6rem] before:z-0 before:h-5 before:w-5 before:rotate-45 before:bg-white before:text-white before:content-['dffd']">
+                  <ul className="flex flex-col gap-2 text-slate-600 my-4">
+                    <li className="gap-2 text-center w-full">
+                      Hiện không có gì trong giỏ hàng
+                    </li>
+                  </ul>
+                  <div className="flex items-center justify-between gap-2 border-t border-black py-4 px-4">
+                    <span className="text-slate-700 text-lg font-semibold">
+                      Tổng cộng
+                    </span>
+                    <span className="text-xl font-bold text-red-400">0 Đ</span>
+                  </div>
+
+                  <button className="w-full bg-red-400 text-white hover:bg-red-500 text-lg font-bold p-4 rounded-b-lg">
+                    THANH TOÁN
+                  </button>
+                </div>
+              </div>
               {!isAboveMediumScreen && (
                 <button onClick={() => setMenuToggled(true)}>
                   <Bars3Icon className="w-6" />

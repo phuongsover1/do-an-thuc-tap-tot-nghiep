@@ -49,27 +49,9 @@ public class ProductService {
         return productImagesRepository.findProductImageByProductIdAndImageName(product, imageName);
     }
 
-//    public Product createProductFromMap(Map<String, Object> map) {
-//        ProductDTO productDTO = new ProductDTO();
-//
-//        if (map.containsKey("name"))
-//            productDTO.setName((String) map.get("name"));
-//        if (map.containsKey("description"))
-//            productDTO.setDescription((String) map.get("description"));
-//        if (map.containsKey("price"))
-//            productDTO.setPrice((Double.valueOf((String) map.get("price"))));
-//        if (map.containsKey("categories"))
-//            productDTO.setCategoriesId((List<String>) map.get("categories"));
-//        if (map.containsKey("status")) {
-//            if (map.get("status") instanceof String) {
-//                productDTO.setStatus(Boolean.parseBoolean((String) map.get("status")));
-//            }
-//            if (map.get("status") instanceof Boolean) {
-//                productDTO.setStatus((Boolean) map.get("status"));
-//            }
-//        }
-//        return convertProductDTOToProduct(productDTO);
-//    }
+    public void deleteProduct(Product product) {
+        productRepository.delete(product);
+    }
 
     public Product convertProductDTOToProduct(ProductDTO productDTO){
         Product product = new Product();

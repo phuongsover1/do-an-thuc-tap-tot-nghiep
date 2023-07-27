@@ -15,11 +15,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-@CrossOrigin(
-        origins = "http://localhost:5173",
-        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE},
-        allowedHeaders = "*",
-        allowCredentials = "true")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")

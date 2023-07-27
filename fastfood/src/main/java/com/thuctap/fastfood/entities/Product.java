@@ -50,6 +50,12 @@ public class Product {
     @JsonBackReference
     private Set<Category> categories = new HashSet<>();
 
+    @PreRemove
+    private void removeMembers() {
+        this.images.clear();
+        this.categories.clear();
+    }
+
     public void addCategory(Category category) {
         categories.add(category);
     }

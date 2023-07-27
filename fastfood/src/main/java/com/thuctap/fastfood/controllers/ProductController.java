@@ -18,24 +18,10 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
-//@CrossOrigin(
-//        origins = "http://localhost:5173",
-//        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE},
-//        allowedHeaders = "*",
-//        allowCredentials = "true")
 @RequiredArgsConstructor
 @RequestMapping("/api/products")
 public class ProductController {
     private final ProductService productService;
-//    @PostMapping
-//    public ResponseEntity<Map<String, Object>> saveProduct(@RequestBody Map<String, Object> body) {
-//        Map<String, Object> returnedMap = new HashMap<>();
-//        // add new
-//        Product product = productService.createProductFromMap(body);
-//        product = productService.saveProduct(product);
-//        returnedMap.put("productId", product.getId());
-//        return ResponseEntity.ok(returnedMap);
-//    }
 
     @PostMapping
     public ResponseEntity<Integer> saveProduct(@RequestBody ProductDTO productDTO) {
@@ -93,11 +79,22 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<List<Product>> findAllProducts() {
-//        List<Product> result =  productService.findAll().stream().map(product ->  {
-//            product.setImages(new HashSet<>());
-//            return product;
-//        }).collect(Collectors.toList());
-        return ResponseEntity.ok(productService.findAll());
+        List<Product> products= productService.findAll().stream().map(product -> {
+            product.setImages(new HashSet<>());
+            return product;
+        }).collect( Collectors.toList());
+        return ResponseEntity.ok(products);
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<Boolean> deleteProduct(@RequestBody Integer productId) {
+        Optional<Product> productOptional = productService.findById(productId);
+        if (productOptional.isPresent()) {
+            productService.deleteProduct(productOptional.get());
+            return  ResponseEntity.ok(true);
+        }
+
+        return ResponseEntity.ok(false);
     }
 
 
