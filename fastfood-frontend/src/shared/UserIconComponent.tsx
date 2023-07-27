@@ -1,0 +1,53 @@
+import { useAppSelector } from '@/store';
+import {
+  DocumentTextIcon,
+  PowerIcon,
+  UserIcon,
+} from '@heroicons/react/24/outline';
+import { UserIcon as UserIconSolid } from '@heroicons/react/24/solid';
+import React from 'react';
+
+type Props = {
+  userIconClickedHandler: () => void;
+  open: boolean;
+};
+
+const UserIconComponent = ({ userIconClickedHandler, open }: Props) => {
+  const idAccount = useAppSelector((state) => state.auth.idAccount);
+  return (
+    <>
+      <button
+        className="rounded-full p-2 shadow shadow-gray-300"
+        onClick={userIconClickedHandler}
+      >
+        <UserIcon className="w-6 text-gray-500" />
+      </button>
+      {idAccount !== null && open && (
+        <div className="absolute -left-24 top-20 w-60 rounded-lg bg-white p-6 drop-shadow-xl before:absolute before:-top-2 before:left-[6.5rem] before:z-0 before:h-5 before:w-5 before:rotate-45 before:bg-white before:text-white before:content-['dffd']">
+          <ul className="flex flex-col gap-2 text-slate-600">
+            <li className="flex items-center gap-2">
+              <span>
+                <UserIconSolid className="h-6 w-6" />
+              </span>
+              <span>Account Information</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <span>
+                <DocumentTextIcon className="h-6 w-6" />
+              </span>
+              <span>Order History</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <span>
+                <PowerIcon className="h-6 w-6" />
+              </span>
+              <span>Sign out</span>
+            </li>
+          </ul>
+        </div>
+      )}
+    </>
+  );
+};
+
+export default UserIconComponent;

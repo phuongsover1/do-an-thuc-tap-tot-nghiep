@@ -1,24 +1,17 @@
-import React, { useReducer, useState } from 'react';
+import { useReducer, useState } from 'react';
 import logo from '@/assets/lotteria_logo.svg';
 import { motion } from 'framer-motion';
 import {
   Bars3Icon,
   BellIcon,
   MapPinIcon,
-  ShoppingBagIcon,
-  UserIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
-import {
-  DocumentTextIcon,
-  PowerIcon,
-  UserIcon as UserIconSolid,
-} from '@heroicons/react/24/solid';
 import useMediaQuery from '@/hooks/useMediaQuery';
 import LoginModal from '@/scenes/home/LoginModal';
 import { useAppSelector } from '@/store';
-
-type Props = {};
+import CartIcon from './CartIcon';
+import UserIconComponent from './UserIconComponent';
 
 type ClickedIconStateType = {
   user?: boolean;
@@ -29,7 +22,7 @@ type ClickedIconActionType = {
   type: 'user' | 'cart' | 'nothing';
 };
 function clickedIconReducer(
-  state: ClickedIconStateType,
+  _state: ClickedIconStateType,
   action: ClickedIconActionType,
 ): ClickedIconStateType {
   switch (action.type) {
@@ -42,12 +35,10 @@ function clickedIconReducer(
   }
 }
 
-const Navbar = (props: Props) => {
+const Navbar = () => {
   const isAboveMediumScreen = useMediaQuery('(min-width: 1060px)');
   const [isMenuToggled, setMenuToggled] = useState(false);
-  const [isUserIconClicked, setIsUserIconClicked] = useState<boolean>(false);
   const [isLoginModalOpened, setIsLoginModalOpened] = useState<boolean>(false);
-  const [enableUserInfor, setEnableUserInfo] = useState(false);
   const [clickedIconState, setClickedIconState] = useReducer(
     clickedIconReducer,
     { cart: false, user: false },
@@ -101,69 +92,20 @@ const Navbar = (props: Props) => {
                 <MapPinIcon className="w-6 text-gray-500" />
               </button>
               <div className="relative z-50">
-                <button
-                  className="rounded-full p-2 shadow shadow-gray-300"
-                  onClick={userIconClickedHandler}
-                >
-                  <UserIcon className="w-6 text-gray-500" />
-                </button>
-                {idAccount !== null && clickedIconState.user && (
-                  <div className="absolute -left-24 top-20 w-60 rounded-lg bg-white p-6 drop-shadow-xl before:absolute before:-top-2 before:left-[6.5rem] before:z-0 before:h-5 before:w-5 before:rotate-45 before:bg-white before:text-white before:content-['dffd']">
-                    <ul className="flex flex-col gap-2 text-slate-600">
-                      <li className="flex items-center gap-2">
-                        <span>
-                          <UserIconSolid className="h-6 w-6" />
-                        </span>
-                        <span>Account Information</span>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span>
-                          <DocumentTextIcon className="h-6 w-6" />
-                        </span>
-                        <span>Order History</span>
-                      </li>
-                      <li className="flex items-center gap-2">
-                        <span>
-                          <PowerIcon className="h-6 w-6" />
-                        </span>
-                        <span>Sign out</span>
-                      </li>
-                    </ul>
-                  </div>
-                )}
+                <UserIconComponent
+                  userIconClickedHandler={userIconClickedHandler}
+                  open={clickedIconState.user === true}
+                />
               </div>
 
               <button className="rounded-full p-2 shadow shadow-gray-300">
                 <BellIcon className="w-6 text-gray-500" />
               </button>
               <div className="relative z-50">
-                <button
-                  className="rounded-full p-2 shadow shadow-gray-300"
-                  onClick={cartIconClickedHandler}
-                >
-                  <ShoppingBagIcon className="w-6 text-gray-500" />
-                </button>
-                {idAccount !== null && clickedIconState.cart && (
-                  <div className="absolute -left-64 top-20 w-96 rounded-lg bg-white drop-shadow-xl shadow-lg before:absolute before:-top-2 before:left-[16.6rem] before:z-0 before:h-5 before:w-5 before:rotate-45 before:bg-white before:text-white before:content-['dffd']">
-                    <ul className="flex flex-col gap-2 text-slate-600 my-4">
-                      <li className="gap-2 text-center w-full">
-                        Hiện không có gì trong giỏ hàng
-                      </li>
-                    </ul>
-                    <div className="flex items-center justify-between gap-2 border-t border-black py-4 px-4">
-                      <span className="text-slate-700 text-lg font-semibold">
-                        Tổng cộng
-                      </span>
-                      <span className="text-xl font-bold text-red-400">
-                        0 Đ
-                      </span>
-                    </div>
-
-                    <button className="w-full bg-red-400 text-white hover:bg-red-500 text-lg font-bold p-4 rounded-b-lg">
-                      THANH TOÁN
-                    </button>
-                  </div>
-                )}
+                <CartIcon
+                  cartIconClickedHandler={cartIconClickedHandler}
+                  open={clickedIconState.cart === true}
+                />
               </div>
               {!isAboveMediumScreen && (
                 <button onClick={() => setMenuToggled(true)}>

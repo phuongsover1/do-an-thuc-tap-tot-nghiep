@@ -6,16 +6,15 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter
 @Setter
 @Table(name = "products")
 @Entity(name = "Product")
-public class Product {
+public class Product implements Serializable {
 
     @Id
     @SequenceGenerator(
@@ -50,6 +49,11 @@ public class Product {
     @JsonBackReference
     private Set<Category> categories = new HashSet<>();
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    Set<CartProduct> cartProducts = new HashSet<>();
+
+
     @PreRemove
     private void removeMembers() {
         this.images.clear();
@@ -63,5 +67,20 @@ public class Product {
     public void addImage(ProductImage productImage) {
         images.add(productImage);
         productImage.setProductId(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Product product = (Product) o;
+
+        return id.equals(product.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 }

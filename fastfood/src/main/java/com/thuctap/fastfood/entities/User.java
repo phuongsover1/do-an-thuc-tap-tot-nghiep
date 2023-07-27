@@ -6,6 +6,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
+import java.io.Serializable;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +17,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Setter
 @Entity(name = "User")
 @Table(name = "users")
-public class User {
+public class User implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO, generator = "custom-id-generator")
   @GenericGenerator(

@@ -12,11 +12,13 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @Entity(name = "Account")
 @Table(name = "accounts")
-public class Account {
+public class Account implements Serializable {
   @Id
   @SequenceGenerator(
       name = "account_sequence",

@@ -34,7 +34,7 @@ public class AuthController {
     private final RoleService roleService;
 
     @PostMapping("/login")
-    public ResponseEntity<Integer> login(@NonNull @RequestBody Account account) {
+    public ResponseEntity<Integer> login(@NonNull @RequestBody AccountDTO account) {
         Optional<Account> accountOptional = accountService.findByUsername(account.getUsername());
         if (accountOptional.isPresent()) {
             Account dbAccount = accountOptional.get();
