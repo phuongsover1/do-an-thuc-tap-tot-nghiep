@@ -1,5 +1,6 @@
 package com.thuctap.fastfood.controllers;
 
+import com.thuctap.fastfood.dto.ProductDTO;
 import com.thuctap.fastfood.entities.Product;
 import com.thuctap.fastfood.entities.ProductImage;
 import com.thuctap.fastfood.services.ProductService;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -25,14 +27,25 @@ import java.util.*;
 @RequestMapping("/api/products")
 public class ProductController {
     private final ProductService productService;
+//    @PostMapping
+//    public ResponseEntity<Map<String, Object>> saveProduct(@RequestBody Map<String, Object> body) {
+//        Map<String, Object> returnedMap = new HashMap<>();
+//        // add new
+//        Product product = productService.createProductFromMap(body);
+//        product = productService.saveProduct(product);
+//        returnedMap.put("productId", product.getId());
+//        return ResponseEntity.ok(returnedMap);
+//    }
+
     @PostMapping
-    public ResponseEntity<Map<String, Object>> saveProduct(@RequestBody Map<String, Object> body) {
-        Map<String, Object> returnedMap = new HashMap<>();
+    public ResponseEntity<Integer> saveProduct(@RequestBody ProductDTO productDTO) {
+        if (productDTO.getId() != null){ //update
+
+        }
         // add new
-        Product product = productService.createProductFromMap(body);
-        product = productService.saveProduct(product);
-        returnedMap.put("productId", product.getId());
-        return ResponseEntity.ok(returnedMap);
+        Product product = productService.convertProductDTOToProduct(productDTO);
+         product = productService.saveProduct(product);
+        return ResponseEntity.ok(product.getId());
     }
 
 
@@ -80,6 +93,10 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<List<Product>> findAllProducts() {
+//        List<Product> result =  productService.findAll().stream().map(product ->  {
+//            product.setImages(new HashSet<>());
+//            return product;
+//        }).collect(Collectors.toList());
         return ResponseEntity.ok(productService.findAll());
     }
 

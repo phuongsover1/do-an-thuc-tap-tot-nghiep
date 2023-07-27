@@ -49,29 +49,29 @@ public class ProductService {
         return productImagesRepository.findProductImageByProductIdAndImageName(product, imageName);
     }
 
-    public Product createProductFromMap(Map<String, Object> map) {
-        ProductDTO productDTO = new ProductDTO();
+//    public Product createProductFromMap(Map<String, Object> map) {
+//        ProductDTO productDTO = new ProductDTO();
+//
+//        if (map.containsKey("name"))
+//            productDTO.setName((String) map.get("name"));
+//        if (map.containsKey("description"))
+//            productDTO.setDescription((String) map.get("description"));
+//        if (map.containsKey("price"))
+//            productDTO.setPrice((Double.valueOf((String) map.get("price"))));
+//        if (map.containsKey("categories"))
+//            productDTO.setCategoriesId((List<String>) map.get("categories"));
+//        if (map.containsKey("status")) {
+//            if (map.get("status") instanceof String) {
+//                productDTO.setStatus(Boolean.parseBoolean((String) map.get("status")));
+//            }
+//            if (map.get("status") instanceof Boolean) {
+//                productDTO.setStatus((Boolean) map.get("status"));
+//            }
+//        }
+//        return convertProductDTOToProduct(productDTO);
+//    }
 
-        if (map.containsKey("name"))
-            productDTO.setName((String) map.get("name"));
-        if (map.containsKey("description"))
-            productDTO.setDescription((String) map.get("description"));
-        if (map.containsKey("price"))
-            productDTO.setPrice((Double.valueOf((String) map.get("price"))));
-        if (map.containsKey("categories"))
-            productDTO.setCategoriesId((List<String>) map.get("categories"));
-        if (map.containsKey("status")) {
-            if (map.get("status") instanceof String) {
-                productDTO.setStatus(Boolean.parseBoolean((String) map.get("status")));
-            }
-            if (map.get("status") instanceof Boolean) {
-                productDTO.setStatus((Boolean) map.get("status"));
-            }
-        }
-        return convertProductDTOToProduct(productDTO);
-    }
-
-    private Product convertProductDTOToProduct(ProductDTO productDTO){
+    public Product convertProductDTOToProduct(ProductDTO productDTO){
         Product product = new Product();
         if (productDTO.getName() != null)
             product.setName(productDTO.getName());
@@ -80,9 +80,9 @@ public class ProductService {
         if (productDTO.getStatus() != null)
             product.setStatus(productDTO.getStatus());
         if (productDTO.getPrice() != null)
-            product.setPrice(productDTO.getPrice());
-        if (productDTO.getCategoriesId().size() != 0) {
-            productDTO.getCategoriesId().forEach(categoryIdStr -> {
+            product.setPrice(Double.valueOf(productDTO.getPrice()));
+        if (!productDTO.getCategories().isEmpty()) {
+            productDTO.getCategories().forEach(categoryIdStr -> {
                 categoryRepository.findById(Integer.valueOf(categoryIdStr)).ifPresent(product::addCategory);
             });
         }

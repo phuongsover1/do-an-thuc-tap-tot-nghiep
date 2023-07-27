@@ -5,14 +5,17 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
 public class ProductDTO {
+    private Integer id;
     private String name;
-    private Double price;
+    private String price;
     private String description;
     private Boolean status;
-    private List<String> categoriesId = new ArrayList<>();
+    private Set<String> categories = new HashSet<>();
 }

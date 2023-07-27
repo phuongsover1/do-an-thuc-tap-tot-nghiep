@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { HideProductForm, ShowProductForm } from './product-types';
 import axiosInstance from '@/axios/axios';
 import { useFormik } from 'formik';
+import { log } from 'console';
+import CustomizedSnackbars from '@/shared/CustomizedSnackbars';
+import { Message } from '@/shared/MessageType';
 
 type AddFormSubmitValues = {
   name: string;
@@ -34,6 +37,12 @@ const Product = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<ProductFromApi[]>([]);
 
+  const [messageEnable, setMessageEnable] = useState(false);
+  const [messageState, setMessage] = useState<Message>({
+    type: 'info',
+    message: '',
+  });
+
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -45,7 +54,14 @@ const Product = () => {
     onSubmit: (values) => {
       console.log('onSubmit: ', values);
 
-      void submitAddProduct(values);
+      submitAddProduct(values)
+        .then((res) => {
+          setMessageEnable(true);
+          setMessage({ type: 'success', message: 'Thêm sản phẩm thành công' });
+          hideProductFormHandler();
+          void getAllProducts();
+        })
+        .catch((err) => console.log(err));
 
       // get image from spring
       /*       axiosInstance
@@ -110,21 +126,12 @@ const Product = () => {
     delete values.image;
     try {
       const response = await axiosInstance.post('/products', values);
-      const responseData = response.data as { productId: null | number };
-      const { productId } = responseData;
-      if (productId !== null) {
-        console.log('productId: ', productId);
+      const responseData = response.data as null | number;
+      if (responseData !== null) {
+        console.log('productId: ', responseData);
 
         if (selectedImage) {
-          uploadImage(productId, selectedImage);
-        }
-      }
-
-      if (idProduct !== '') {
-        console.log('idProduct: ', idProduct);
-
-        if (selectedImage) {
-          uploadImage(idProduct, selectedImage);
+          uploadImage(responseData, selectedImage);
         }
       }
     } catch (err) {
@@ -153,6 +160,12 @@ const Product = () => {
       {formProductState.showForm && (
         <div className="bg-gray-900 bg-opacity-50 dark:bg-opacity-80 fixed inset-0 z-30 top-0 left-0"></div>
       )}
+      <CustomizedSnackbars
+        open={messageEnable}
+        setOpen={setMessageEnable}
+        type={messageState.type}
+        message={messageState.message}
+      />
       <div className="p-4 bg-white block sm:flex items-center justify-between border-b border-gray-200 lg:mt-1.5 dark:bg-gray-800 dark:border-gray-700">
         <div className="w-full mb-1">
           <div className="mb-4">
@@ -954,6 +967,7 @@ const Product = () => {
                 data-drawer-dismiss="drawer-create-product-default"
                 aria-controls="drawer-create-product-default"
                 className="inline-flex w-full justify-center text-gray-500 items-center bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-primary-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
+                onClick={hideProductFormHandler}
               >
                 <svg
                   aria-hidden="true"
