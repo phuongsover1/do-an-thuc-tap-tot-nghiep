@@ -6,7 +6,7 @@ type AuthAccountIdPayloadAction = {
 
 type CartType = {
   productId: number;
-  quantitty: number;
+  quantity: number;
 };
 
 type AuthAccountCartPayloadAction = {
@@ -16,6 +16,10 @@ type AuthAccountCartPayloadAction = {
 type AuthState = {
   idAccount: number | null;
   cart: CartType[];
+};
+
+type AddProductToCartActionType = {
+  payload: CartType;
 };
 
 const initialState: AuthState = { idAccount: null, cart: [] };
@@ -32,6 +36,19 @@ const authSlice = createSlice({
     },
     setCart(state, action: AuthAccountCartPayloadAction) {
       state.cart = action.payload;
+    },
+    addProductToCart(state, action: AddProductToCartActionType) {
+      const existProduct = state.cart.find(
+        (productObj) => productObj.productId === action.payload.productId,
+      );
+      if (!existProduct) {
+        state.cart.push({
+          productId: action.payload.productId,
+          quantity: action.payload.quantity,
+        });
+      } else {
+        existProduct.quantity += action.payload.quantity;
+      }
     },
   },
 });

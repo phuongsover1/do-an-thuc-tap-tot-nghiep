@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import GaRanImage from '@/assets/K-Chicken.png';
 import { ProductFromApi } from '@/scenes/admin/crud/product/Product';
 import axiosInstance from '@/axios/axios';
+import { useAppDispatch } from '@/store';
+import { authActions } from '@/store/auth/auth-slice';
 
 type Props = {
   product: ProductFromApi;
@@ -9,6 +11,7 @@ type Props = {
 
 const ProductCard = ({ product }: Props) => {
   const [productImage, setProductImage] = useState<string>('');
+  const dispatch = useAppDispatch();
 
   function getProductImage(product: ProductFromApi) {
     // get image from spring
@@ -30,6 +33,12 @@ const ProductCard = ({ product }: Props) => {
     getProductImage(product);
   }, [product]);
 
+  function addToCartHandler() {
+    dispatch(
+      authActions.addProductToCart({ productId: product.id, quantity: 1 }),
+    );
+  }
+
   return (
     <div className="shadow rounded-lg">
       <div className="flex flex-col">
@@ -42,7 +51,10 @@ const ProductCard = ({ product }: Props) => {
         </p>
       </div>
       <div className="p-3">
-        <button className="text-white w-full text-center py-2 px-4 rounded-sm bg-red-400">
+        <button
+          className="text-white w-full text-center py-2 px-4 rounded-sm bg-red-400"
+          onClick={addToCartHandler}
+        >
           Thêm vào giỏ hàng
         </button>
       </div>

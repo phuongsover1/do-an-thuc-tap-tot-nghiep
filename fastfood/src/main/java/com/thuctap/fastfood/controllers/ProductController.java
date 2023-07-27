@@ -97,6 +97,11 @@ public class ProductController {
         return ResponseEntity.ok(false);
     }
 
+    @GetMapping("/{productId}")
+    public ResponseEntity<Product> findById(@PathVariable Integer productId) {
+        return ResponseEntity.ok(productService.findById(productId).orElse(null));
+    }
+
 
 
 }
