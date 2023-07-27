@@ -65,7 +65,7 @@ const Product = () => {
 
   useEffect(() => {
     void getAllProducts();
-  });
+  }, []);
 
   async function getAllProducts() {
     try {
