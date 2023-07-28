@@ -1,10 +1,11 @@
+import axiosInstance from '@/axios/axios';
 import { createSlice } from '@reduxjs/toolkit';
 
 type AuthAccountIdPayloadAction = {
   payload: number;
 };
 
-type CartType = {
+export type CartType = {
   productId: number;
   quantity: number;
 };
@@ -49,6 +50,25 @@ const authSlice = createSlice({
       } else {
         existProduct.quantity += action.payload.quantity;
       }
+    },
+    updateAccountCartInDb(state) {
+      axiosInstance
+        .post('/carts', {
+          accountId: state.idAccount,
+          cartProductDTOS: state.cart,
+        })
+        .then((response) => {
+          const responseData = response.data as {
+            isSuccessful?: boolean;
+            error?: string;
+          };
+          if (responseData.isSuccessful) {
+            console.log('Thêm cart product thành công');
+          } else {
+            console.log('Thêm cart product thất bại');
+          }
+        })
+        .catch((err) => console.log('error: ', err));
     },
   },
 });

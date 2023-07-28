@@ -1,5 +1,5 @@
 import { ProductFromApi } from '@/scenes/admin/crud/product/Product';
-import React, { Dispatch, useEffect, useState } from 'react';
+import React, { Dispatch, useEffect, useMemo, useState } from 'react';
 import ProductImage from '@/assets/K-Chicken.png';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import axiosInstance from '@/axios/axios';
@@ -8,7 +8,8 @@ type Props = {
   productId: number;
   isTop1?: boolean;
   quantity: number;
-  updateTotalPrice: React.Dispatch<React.SetStateAction<number>>;
+  updateTotalPrice: (price: number) => void;
+  isLast: boolean;
 };
 
 const CartProduct = ({
@@ -16,21 +17,21 @@ const CartProduct = ({
   isTop1,
   quantity,
   updateTotalPrice,
+  isLast,
 }: Props) => {
-  if (!isTop1) {
-    isTop1 = false;
-  }
   const [product, setProduct] = useState<ProductFromApi | null>(null);
   const [productImage, setProductImage] = useState<string>('');
 
   useEffect(() => {
     if (product) {
-      updateTotalPrice((price) => {
-        const newPrice = product.price * quantity;
-        return price + newPrice;
-      });
+      updateTotalPrice(product.price * quantity);
     }
   }, [product, quantity, updateTotalPrice]);
+
+  if (isLast) {
+    console.log('isLast: ', isLast);
+  }
+
   function getProductImage(product: ProductFromApi) {
     // get image from spring
     axiosInstance
@@ -48,6 +49,8 @@ const CartProduct = ({
   }
 
   async function getProductById(productId: number) {
+    console.log('in get Product by id');
+
     const response = await axiosInstance.get(`/products/${productId}`);
     const data = response.data as ProductFromApi;
     setProduct(data);
@@ -62,7 +65,7 @@ const CartProduct = ({
   return (
     <li
       className={`flex items-center ${
-        isTop1 ? 'border-t' : ''
+        !isTop1 ? 'border-t' : ''
       } py-2 border-slate-200`}
     >
       <div className="flex gap-2 basis-4/5">

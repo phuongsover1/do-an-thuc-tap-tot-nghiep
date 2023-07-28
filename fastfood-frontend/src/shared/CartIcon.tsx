@@ -1,6 +1,6 @@
 import { useAppSelector } from '@/store';
 import { ShoppingBagIcon } from '@heroicons/react/24/outline';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CartProduct from './CartProduct';
 
 type Props = {
@@ -11,7 +11,16 @@ type Props = {
 const CartIcon = ({ cartIconClickedHandler, open }: Props) => {
   const idAccount = useAppSelector((state) => state.auth.idAccount);
   const cart = useAppSelector((state) => state.auth.cart);
-  const [totalPrice, setTotalPrice] = useState<number>(0);
+  let totalPrice = 0;
+  const [totalPriceState, setTotalPriceState] = useState(0);
+
+  function updateTotalPrice(plusPrice: number) {
+    console.log('totalPrice:', totalPrice);
+
+    totalPrice += plusPrice;
+
+    setTotalPriceState(totalPrice);
+  }
 
   let cartLength = 0;
   for (let i = 0; i < cart.length; i++) {
@@ -33,18 +42,20 @@ const CartIcon = ({ cartIconClickedHandler, open }: Props) => {
       </button>
       {idAccount !== null && open && (
         <div className="absolute -left-64 top-20 w-96 rounded-lg bg-white drop-shadow-xl shadow-lg before:absolute before:-top-2 before:left-[16.6rem] before:z-0 before:h-5 before:w-5 before:rotate-45 before:bg-white before:text-white before:content-['dffd']">
-          <ul className="flex flex-col gap-2 text-slate-600 my-4 pt-1 px-3">
+          <ul className="flex flex-col gap-2 text-slate-600 my-4 pt-1 px-3 max-h-[230px] overflow-auto">
             {cartLength === 0 ? (
               <li className="gap-2 text-center w-full">
                 Hiện không có gì trong giỏ hàng
               </li>
             ) : (
-              cart.map((product) => (
+              cart.map((product, index) => (
                 <CartProduct
                   key={product.productId}
+                  isTop1={index === 0}
                   productId={product.productId}
                   quantity={product.quantity}
-                  updateTotalPrice={setTotalPrice}
+                  updateTotalPrice={updateTotalPrice}
+                  isLast={index === cart.length - 1}
                 />
               ))
             )}
@@ -54,7 +65,7 @@ const CartIcon = ({ cartIconClickedHandler, open }: Props) => {
               Tổng cộng
             </span>
             <span className="text-xl font-bold text-red-400">
-              {totalPrice} Đ
+              {totalPriceState} Đ
             </span>
           </div>
 

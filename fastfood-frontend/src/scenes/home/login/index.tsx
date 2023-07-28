@@ -3,7 +3,7 @@ import CustomizedSnackbars from '@/shared/CustomizedSnackbars.tsx';
 import { useAppDispatch } from '@/store';
 import { useFormik } from 'formik';
 import React, { useState } from 'react';
-import { authActions } from '@/store/auth/auth-slice.ts';
+import { CartType, authActions } from '@/store/auth/auth-slice.ts';
 import { Message } from '@/shared/MessageType.ts';
 import { useNavigate } from 'react-router-dom';
 
@@ -65,6 +65,14 @@ const Login = ({ setIsLoginBlockEnable }: Props) => {
 
           setTimeout(() => {
             dispatch(authActions.setLogin(idAccount));
+
+            axiosInstance
+              .get('/carts', { params: { accountId: idAccount } })
+              .then((response) => {
+                const data = response.data as CartType[];
+                dispatch(authActions.setCart(data));
+              })
+              .catch((error) => console.log('error: ', error));
           }, 2000);
           // TODO: Lưu vào redux id đăng nhập hiện tại
         } else {

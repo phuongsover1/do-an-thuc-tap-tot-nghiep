@@ -1,5 +1,6 @@
 package com.thuctap.fastfood.controllers;
 
+import com.thuctap.fastfood.dto.CartProductDTO;
 import com.thuctap.fastfood.dto.SaveProductToCartDTO;
 import com.thuctap.fastfood.entities.Account;
 import com.thuctap.fastfood.entities.Cart;
@@ -14,10 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,10 +26,19 @@ public class CartController {
     private final AccountService accountService;
     private final ProductService productService;
     private final CartService cartService;
-//    @GetMapping
-//    public ResponseEntity<Set<CartProduct>> getCartProduct(@RequestBody Integer accountId) {
-//
-//    }
+    @GetMapping
+    public ResponseEntity<List<CartProductDTO>> getCartProduct(@RequestParam Integer accountId) {
+        List<CartProductDTO> result = new ArrayList<>();
+        Optional<Account> accountOptional = accountService.findById(accountId);
+        if (accountOptional.isPresent()) {
+            List<CartProduct> cartProducts = cartService.findAllProductsInCart(accountOptional.get().getCart());
+            cartProducts.forEach(cartProduct -> {
+                CartProductDTO cartProductDTO = CartProductDTO.builder().productId(cartProduct.getProduct().getId()).quantity(cartProduct.getQuantity()).build();
+                result.add(cartProductDTO);
+            });
+        }
+        return ResponseEntity.ok(result);
+    }
 
     @PostMapping
     public ResponseEntity<Map<String, Object>> saveProductToCart(@RequestBody SaveProductToCartDTO body) {
@@ -44,10 +51,16 @@ public class CartController {
                 body.getCartProductDTOS().forEach(cartProductDTO -> {
                     Optional<Product> productOptional = productService.findById(cartProductDTO.getProductId());
                     productOptional.ifPresent(product -> {
-
-                        CartProduct cartProduct = new CartProduct();
-                        cartProduct.setCart(cart);
-                        cartProduct.setProduct(product);
+                        Optional<CartProduct> cartProductOptional = cartService.findCartProduct(cart, product);
+                        CartProduct cartProduct;
+                        if (cartProductOptional.isPresent()) {
+                            cartProduct = cartProductOptional.get();
+                            cartProduct.setQuantity(cartProductDTO.getQuantity());
+                        } else {
+                            cartProduct = new CartProduct();
+                            cartProduct.setCart(cart);
+                            cartProduct.setProduct(product);
+                        }
                         cartProduct.setQuantity(cartProductDTO.getQuantity());
                         cartService.saveProductToCart(cartProduct);
                     });
