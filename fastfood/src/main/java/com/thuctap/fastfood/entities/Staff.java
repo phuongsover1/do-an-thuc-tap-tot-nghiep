@@ -1,14 +1,13 @@
 package com.thuctap.fastfood.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -45,4 +44,8 @@ public class Staff implements Serializable {
 
   @Column(name = "email", nullable = false, unique = true)
   private String email;
+
+  @OneToMany(mappedBy = "staff")
+  @JsonManagedReference
+  private Set<ProductImportNote> importNotes = new HashSet<>();
 }

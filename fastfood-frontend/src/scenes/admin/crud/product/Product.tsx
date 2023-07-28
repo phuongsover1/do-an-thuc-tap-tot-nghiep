@@ -2,7 +2,6 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { HideProductForm, ShowProductForm } from './product-types';
 import axiosInstance from '@/axios/axios';
 import { useFormik } from 'formik';
-import { log } from 'console';
 import CustomizedSnackbars from '@/shared/CustomizedSnackbars';
 import { Message } from '@/shared/MessageType';
 import { useAppSelector } from '@/store';
@@ -29,6 +28,13 @@ type Category = {
   name: string;
   description: string;
 };
+
+type ProductImportType = {
+  accountId: number;
+  productId: number;
+  quantity: number;
+  price: number;
+};
 const Product = () => {
   const [formProductState, setFormProductState] = useState<
     HideProductForm | ShowProductForm
@@ -49,9 +55,12 @@ const Product = () => {
     name: string;
     id: string;
     stock: string;
-  }>({ name: '', id: '', stock: '' });
+    price: string;
+  }>({ name: '', id: '', stock: '', price: '' });
 
   const roleName = useAppSelector((state) => state.auth.roleName);
+
+  const accountId = useAppSelector((state) => state.auth.idAccount);
 
   const formik = useFormik({
     initialValues: {
@@ -65,7 +74,7 @@ const Product = () => {
       console.log('onSubmit: ', values);
 
       submitAddProduct(values)
-        .then((res) => {
+        .then(() => {
           setMessageEnable(true);
           setMessage({ type: 'success', message: 'Thêm sản phẩm thành công' });
           hideProductFormHandler();
@@ -94,11 +103,19 @@ const Product = () => {
       price: 0,
       quantity: 0,
     },
-    onSubmit: (values) => {
+    onSubmit: (values, { resetForm }) => {
       console.log('onSubmit: ', values);
+      const requestData: ProductImportType = {
+        accountId: accountId!,
+        productId: parseInt(selectedProduct.id),
+        quantity: values.quantity,
+        price: values.price,
+      };
+      void addImportProductToDB(requestData);
+      resetForm();
     },
     validate: (values) => {
-      const errors = {} as { price: string; stock: string };
+      const errors = {} as { price: string; quantity: string };
       if (values.price <= 0) errors.price = 'Giá không hợp lệ';
       if (values.quantity <= 0)
         errors.quantity = 'Số lượng nhập hàng không hợp lệ';
@@ -106,13 +123,26 @@ const Product = () => {
     },
   });
 
+  async function addImportProductToDB(data: ProductImportType) {
+    const response = await axiosInstance.post('/staffs/importNote', data);
+    const importNoteId = response.data as number | null;
+    if (importNoteId) {
+      hideProductFormHandler();
+      setMessage({ type: 'success', message: 'Nhập hàng thành công' });
+      void getAllProducts();
+    } else {
+      setMessage({ type: 'error', message: 'Nhập hàng thất bại' });
+    }
+    setMessageEnable(true);
+  }
+
   useEffect(() => {
     void getAllProducts();
   }, []);
 
   async function getAllProducts() {
     try {
-      const response = await axiosInstance.get('/products');
+      const response = await axiosInstance.get('/products/allProducts');
       const productArr = response.data as ProductFromApi[];
       console.log('productArr: ', productArr);
 
@@ -180,6 +210,7 @@ const Product = () => {
       name: button.dataset.productname!,
       id: button.dataset.productid!,
       stock: button.dataset.productstock!,
+      price: button.dataset.productprice!,
     });
     setFormProductState({ showForm: true, type: 'import' });
   }
@@ -548,6 +579,7 @@ const Product = () => {
                             data-productname={`${product.name}`}
                             data-productid={`${product.id}`}
                             data-productstock={`${product.stock}`}
+                            data-productprice={`${product.price}`}
                             data-drawer-target="drawer-update-product-default"
                             data-drawer-show="drawer-update-product-default"
                             aria-controls="drawer-update-product-default"
@@ -880,9 +912,24 @@ const Product = () => {
         </button>
         <form onSubmit={formikImportProduct.handleSubmit}>
           <div className="space-y-4">
-            <p>Tên sản phẩm: {selectedProduct.name}</p>
-            <p>Id sản phẩm: {selectedProduct.id}</p>
-            <p>Số lượng hiện tại trong kho sản phẩm: {selectedProduct.stock}</p>
+            <p>
+              <span className="font-semibold">Tên sản phẩm:</span>{' '}
+              {selectedProduct.name}
+            </p>
+            <p>
+              <span className="font-semibold">Id sản phẩm:</span>{' '}
+              {selectedProduct.id}
+            </p>
+            <p>
+              <span className="font-semibold">Giá hiện tại của sản phẩm: </span>{' '}
+              {selectedProduct.price}
+            </p>
+            <p>
+              <span className="font-semibold">
+                Số lượng hiện tại trong kho sản phẩm:
+              </span>{' '}
+              {selectedProduct.stock}
+            </p>
             <div>
               <label
                 htmlFor="name"

@@ -51,7 +51,7 @@ const ProductCard = ({ product }: Props) => {
           {product.price} đ
         </p>
       </div>
-      <div className="p-3">
+      <div className="p-1">
         <button
           className="text-white w-full text-center py-2 px-4 rounded-sm bg-red-400"
           onClick={addToCartHandler}

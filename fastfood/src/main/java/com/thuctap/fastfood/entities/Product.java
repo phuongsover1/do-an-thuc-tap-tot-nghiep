@@ -57,6 +57,11 @@ public class Product implements Serializable {
     Set<CartProduct> cartProducts = new HashSet<>();
 
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    Set<ProductImportNoteDetails> productImportNoteDetails = new HashSet<>();
+
+
     @PreRemove
     private void removeMembers() {
         this.images.clear();

@@ -80,6 +80,15 @@ public class ProductController {
 
     @GetMapping
     public ResponseEntity<List<Product>> findAllProducts() {
+        List<Product> products = productService.findAll().stream().filter(product -> product.getStatus() && product.getStock() > 0).map(product -> {
+            product.setImages(new HashSet<>());
+            return product;
+        }).collect(Collectors.toList());
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/allProducts")
+    public ResponseEntity<List<Product>> findAllProductsAdminStaff() {
         List<Product> products = productService.findAll().stream().map(product -> {
             product.setImages(new HashSet<>());
             return product;
