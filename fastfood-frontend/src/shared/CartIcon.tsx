@@ -69,9 +69,11 @@ const CartIcon = ({ cartIconClickedHandler, open }: Props) => {
             </span>
           </div>
 
-          <button className="w-full bg-red-400 text-white hover:bg-red-500 text-lg font-bold p-4 rounded-b-lg">
-            THANH TOÁN
-          </button>
+          {cartLength !== 0 && (
+            <button className="w-full bg-red-400 text-white hover:bg-red-500 text-lg font-bold p-4 rounded-b-lg">
+              THANH TOÁN
+            </button>
+          )}
         </div>
       )}
     </>

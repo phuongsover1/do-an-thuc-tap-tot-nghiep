@@ -37,4 +37,12 @@ public class CartService {
         return cartProductRepository.findCartProductsByCart(cart);
     }
 
+    public void removeProductFromCart(CartProduct cartProduct) {
+        cartProductRepository.delete(cartProduct);
+    }
+
+    public Optional<CartProduct> findCartProductById(CartProductKey cartProductKey) {
+        return cartProductRepository.findById(cartProductKey);
+    }
+
 }

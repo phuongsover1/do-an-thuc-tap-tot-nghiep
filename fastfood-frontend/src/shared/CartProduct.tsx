@@ -3,6 +3,8 @@ import React, { Dispatch, useEffect, useMemo, useState } from 'react';
 import ProductImage from '@/assets/K-Chicken.png';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import axiosInstance from '@/axios/axios';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { authActions } from '@/store/auth/auth-slice';
 
 type Props = {
   productId: number;
@@ -21,6 +23,8 @@ const CartProduct = ({
 }: Props) => {
   const [product, setProduct] = useState<ProductFromApi | null>(null);
   const [productImage, setProductImage] = useState<string>('');
+  const accountId = useAppSelector((state) => state.auth.idAccount);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (product) {
@@ -62,6 +66,26 @@ const CartProduct = ({
   useEffect(() => {
     if (product) getProductImage(product);
   }, [product]);
+
+  async function removeProductFromCartHandler() {
+    if (product) {
+      try {
+        const response = await axiosInstance.post('/carts/delete', {
+          productId: product.id,
+          accountId,
+        });
+        const isSuccessful = response.data as boolean;
+        if (isSuccessful) {
+          console.log('xoa san pham thanh cong');
+          dispatch(
+            authActions.removeProductFromCart({ productId: product.id }),
+          );
+        } else console.log('xoa san pham that bai');
+      } catch (err) {
+        console.log('error: ', err);
+      }
+    }
+  }
   return (
     <li
       className={`flex items-center ${
@@ -78,7 +102,7 @@ const CartProduct = ({
         </div>
       </div>
       <div className="basis-1/5 text-right">
-        <button>
+        <button onClick={removeProductFromCartHandler}>
           <TrashIcon className="w-6 h-6" />
         </button>
       </div>

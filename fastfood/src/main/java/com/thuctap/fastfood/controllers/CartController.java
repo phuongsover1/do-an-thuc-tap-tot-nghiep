@@ -1,6 +1,7 @@
 package com.thuctap.fastfood.controllers;
 
 import com.thuctap.fastfood.dto.CartProductDTO;
+import com.thuctap.fastfood.dto.RemoveProductFromCartDTO;
 import com.thuctap.fastfood.dto.SaveProductToCartDTO;
 import com.thuctap.fastfood.entities.Account;
 import com.thuctap.fastfood.entities.Cart;
@@ -72,5 +73,22 @@ public class CartController {
         }
         returnedMap.put("error", "Cần truyền vào id của tài khoản");
         return ResponseEntity.ok(returnedMap);
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<Boolean> removeProductFromCart(@RequestBody RemoveProductFromCartDTO removeProductFromCartDTO) {
+        Optional<Account> accountOptional = accountService.findById(removeProductFromCartDTO.getAccountId());
+        if (accountOptional.isPresent()) {
+            Cart cart = accountOptional.get().getCart();
+            CartProductKey cartProductKey = new CartProductKey();
+            cartProductKey.setCartId(cart.getId());
+            cartProductKey.setProductId(removeProductFromCartDTO.getProductId());
+            Optional<CartProduct> cartProductOptional = cartService.findCartProductById(cartProductKey);
+            if (cartProductOptional.isPresent()) {
+                cartService.removeProductFromCart(cartProductOptional.get());
+                return ResponseEntity.ok(true);
+            }
+        }
+        return ResponseEntity.ok(false);
     }
 }

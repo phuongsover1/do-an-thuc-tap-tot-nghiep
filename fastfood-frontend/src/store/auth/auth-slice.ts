@@ -34,6 +34,7 @@ const authSlice = createSlice({
     },
     setLogout(state) {
       state.idAccount = null;
+      state.cart = [];
     },
     setCart(state, action: AuthAccountCartPayloadAction) {
       state.cart = action.payload;
@@ -69,6 +70,15 @@ const authSlice = createSlice({
           }
         })
         .catch((err) => console.log('error: ', err));
+    },
+    removeProductFromCart(state, action: { payload: { productId: number } }) {
+      const { productId } = action.payload;
+      const existIndex = state.cart.findIndex(
+        (product) => product.productId === productId,
+      );
+      if (existIndex >= 0) {
+        state.cart.splice(existIndex, 1);
+      }
     },
   },
 });

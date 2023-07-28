@@ -1,11 +1,11 @@
-import { useAppSelector } from '@/store';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { authActions } from '@/store/auth/auth-slice';
 import {
   DocumentTextIcon,
   PowerIcon,
   UserIcon,
 } from '@heroicons/react/24/outline';
 import { UserIcon as UserIconSolid } from '@heroicons/react/24/solid';
-import React from 'react';
 
 type Props = {
   userIconClickedHandler: () => void;
@@ -14,6 +14,11 @@ type Props = {
 
 const UserIconComponent = ({ userIconClickedHandler, open }: Props) => {
   const idAccount = useAppSelector((state) => state.auth.idAccount);
+  const dispatch = useAppDispatch();
+
+  function signOutHandler() {
+    dispatch(authActions.setLogout());
+  }
   return (
     <>
       <button
@@ -37,11 +42,16 @@ const UserIconComponent = ({ userIconClickedHandler, open }: Props) => {
               </span>
               <span>Order History</span>
             </li>
-            <li className="flex items-center gap-2">
-              <span>
-                <PowerIcon className="h-6 w-6" />
-              </span>
-              <span>Sign out</span>
+            <li>
+              <button
+                className="flex items-center gap-2"
+                onClick={signOutHandler}
+              >
+                <span>
+                  <PowerIcon className="h-6 w-6" />
+                </span>
+                <span>Sign out</span>
+              </button>
             </li>
           </ul>
         </div>
