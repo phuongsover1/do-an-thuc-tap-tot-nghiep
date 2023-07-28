@@ -17,13 +17,14 @@ type AuthAccountCartPayloadAction = {
 type AuthState = {
   idAccount: number | null;
   cart: CartType[];
+  roleName: 'USER' | 'ADMIN' | 'STAFF' | '';
 };
 
 type AddProductToCartActionType = {
   payload: CartType;
 };
 
-const initialState: AuthState = { idAccount: null, cart: [] };
+const initialState: AuthState = { idAccount: null, cart: [], roleName: '' };
 
 const authSlice = createSlice({
   name: 'auth',
@@ -35,6 +36,9 @@ const authSlice = createSlice({
     setLogout(state) {
       state.idAccount = null;
       state.cart = [];
+    },
+    setRole(state, action: { payload: 'USER' | 'ADMIN' | 'STAFF' }) {
+      state.roleName = action.payload;
     },
     setCart(state, action: AuthAccountCartPayloadAction) {
       state.cart = action.payload;

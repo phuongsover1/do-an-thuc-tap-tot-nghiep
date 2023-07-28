@@ -33,6 +33,12 @@ public class AuthController {
     private final AccountService accountService;
     private final RoleService roleService;
 
+    @GetMapping("/role")
+    public ResponseEntity<Role> getRoleOfAccount(@RequestParam Integer accountId) {
+        Optional<Account> accountOptional = accountService.findById(accountId);
+        return accountOptional.map(account -> ResponseEntity.ok(account.getRole())).orElseGet(() -> ResponseEntity.ok(null));
+    }
+
     @PostMapping("/login")
     public ResponseEntity<Integer> login(@NonNull @RequestBody AccountDTO account) {
         Optional<Account> accountOptional = accountService.findByUsername(account.getUsername());

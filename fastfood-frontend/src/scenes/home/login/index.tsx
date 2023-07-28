@@ -51,6 +51,26 @@ const Login = ({ setIsLoginBlockEnable }: Props) => {
     },
   });
 
+  async function getRoleFromAccountId(accountId: number) {
+    try {
+      const response = await axiosInstance.get('/auth/role', {
+        params: { accountId },
+      });
+      const role = response.data as { id: number; name: string } | null;
+      if (role) {
+        dispatch(authActions.setRole(role.name));
+        // TODO: Chuyển trang
+        if (role.name === 'ADMIN') {
+          navigate('/admin');
+        }
+
+        if (role.name === 'STAFF') navigate('/staff');
+      }
+    } catch (err) {
+      console.log('error: ', err);
+    }
+  }
+
   const login = (username: string, password: string) => {
     axiosInstance
       .post('/auth/login', { username, password })
@@ -65,6 +85,7 @@ const Login = ({ setIsLoginBlockEnable }: Props) => {
 
           setTimeout(() => {
             dispatch(authActions.setLogin(idAccount));
+            void getRoleFromAccountId(idAccount);
 
             axiosInstance
               .get('/carts', { params: { accountId: idAccount } })

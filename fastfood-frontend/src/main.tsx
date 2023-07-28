@@ -35,6 +35,16 @@ const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: '/staff',
+    element: <AdminRoot />,
+    children: [
+      {
+        path: 'products',
+        element: <Product />,
+      },
+    ],
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

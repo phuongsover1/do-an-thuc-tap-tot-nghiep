@@ -37,6 +37,9 @@ public class Product implements Serializable {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "stock")
+    private Integer stock;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "productId", fetch = FetchType.LAZY)
     @JsonManagedReference
     private Set<ProductImage> images;

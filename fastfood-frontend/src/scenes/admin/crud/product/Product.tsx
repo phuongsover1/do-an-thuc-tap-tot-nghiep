@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { HideProductForm, ShowProductForm } from './product-types';
 import axiosInstance from '@/axios/axios';
 import { useFormik } from 'formik';
 import { log } from 'console';
 import CustomizedSnackbars from '@/shared/CustomizedSnackbars';
 import { Message } from '@/shared/MessageType';
+import { useAppSelector } from '@/store';
 
 type AddFormSubmitValues = {
   name: string;
@@ -19,6 +20,7 @@ export type ProductFromApi = {
   status: boolean;
   price: number;
   description: string;
+  stock: number;
   images: [];
 };
 
@@ -42,6 +44,14 @@ const Product = () => {
     type: 'info',
     message: '',
   });
+
+  const [selectedProduct, setSelectedProduct] = useState<{
+    name: string;
+    id: string;
+    stock: string;
+  }>({ name: '', id: '', stock: '' });
+
+  const roleName = useAppSelector((state) => state.auth.roleName);
 
   const formik = useFormik({
     initialValues: {
@@ -76,6 +86,23 @@ const Product = () => {
           setTestImageSrc(URL.createObjectURL(res.data));
         })
         .catch((err) => console.log(err)); */
+    },
+  });
+
+  const formikImportProduct = useFormik({
+    initialValues: {
+      price: 0,
+      quantity: 0,
+    },
+    onSubmit: (values) => {
+      console.log('onSubmit: ', values);
+    },
+    validate: (values) => {
+      const errors = {} as { price: string; stock: string };
+      if (values.price <= 0) errors.price = 'Giá không hợp lệ';
+      if (values.quantity <= 0)
+        errors.quantity = 'Số lượng nhập hàng không hợp lệ';
+      return errors;
     },
   });
 
@@ -143,6 +170,18 @@ const Product = () => {
   function showAddFormProductHandler() {
     void getAllCategories();
     setFormProductState({ showForm: true, type: 'add-new' });
+  }
+
+  function showImportProductHandler(e: ChangeEvent<HTMLButtonElement>) {
+    const button = e.currentTarget;
+    console.log('button: ', button);
+    // TODO: giờ làm tiếp nhập hàng cho nhân viên
+    setSelectedProduct({
+      name: button.dataset.productname!,
+      id: button.dataset.productid!,
+      stock: button.dataset.productstock!,
+    });
+    setFormProductState({ showForm: true, type: 'import' });
   }
 
   function showUpdateFormProductHandler() {
@@ -324,18 +363,20 @@ const Product = () => {
                 </div>
               </div>
             </div>
-            <button
-              id="createProductButton"
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
-              type="button"
-              data-drawer-target="drawer-create-product-default"
-              data-drawer-show="drawer-create-product-default"
-              aria-controls="drawer-create-product-default"
-              data-drawer-placement="right"
-              onClick={showAddFormProductHandler}
-            >
-              Add new product
-            </button>
+            {roleName && roleName === 'ADMIN' && (
+              <button
+                id="createProductButton"
+                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
+                type="button"
+                data-drawer-target="drawer-create-product-default"
+                data-drawer-show="drawer-create-product-default"
+                aria-controls="drawer-create-product-default"
+                data-drawer-placement="right"
+                onClick={showAddFormProductHandler}
+              >
+                Add new product
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -393,13 +434,22 @@ const Product = () => {
                       scope="col"
                       className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
                     >
+                      Stock
+                    </th>
+                    <th
+                      scope="col"
+                      className="p-4 text-xs font-medium text-left text-gray-500 uppercase dark:text-gray-400"
+                    >
                       Actions
                     </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
                   {products.map((product) => (
-                    <tr className="hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <tr
+                      key={product.id}
+                      className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
                       <td className="w-4 p-4">
                         <div className="flex items-center">
                           <input
@@ -436,56 +486,92 @@ const Product = () => {
                       <td className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
                         {product.status ? 'Đang được bán' : 'Đã ngừng bán'}
                       </td>
-
-                      <td className="p-4 space-x-2 whitespace-nowrap">
-                        <button
-                          type="button"
-                          id="updateProductButton"
-                          data-drawer-target="drawer-update-product-default"
-                          data-drawer-show="drawer-update-product-default"
-                          aria-controls="drawer-update-product-default"
-                          data-drawer-placement="right"
-                          className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                        >
-                          <svg
-                            className="w-4 h-4 mr-2"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path>
-                            <path
-                              fill-rule="evenodd"
-                              d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
-                              clip-rule="evenodd"
-                            ></path>
-                          </svg>
-                          Update
-                        </button>
-                        <button
-                          type="button"
-                          id="deleteProductButton"
-                          data-drawer-target="drawer-delete-product-default"
-                          data-drawer-show="drawer-delete-product-default"
-                          aria-controls="drawer-delete-product-default"
-                          data-drawer-placement="right"
-                          className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
-                        >
-                          <svg
-                            className="w-4 h-4 mr-2"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                              clip-rule="evenodd"
-                            ></path>
-                          </svg>
-                          Delete item
-                        </button>
+                      <td className="p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                        {product.stock}
                       </td>
+                      {roleName && roleName === 'ADMIN' && (
+                        <td className="p-4 space-x-2 whitespace-nowrap">
+                          <button
+                            type="button"
+                            id="updateProductButton"
+                            data-drawer-target="drawer-update-product-default"
+                            data-drawer-show="drawer-update-product-default"
+                            aria-controls="drawer-update-product-default"
+                            data-drawer-placement="right"
+                            className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                          >
+                            <svg
+                              className="w-4 h-4 mr-2"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path>
+                              <path
+                                fill-rule="evenodd"
+                                d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
+                                clip-rule="evenodd"
+                              ></path>
+                            </svg>
+                            Update
+                          </button>
+                          <button
+                            type="button"
+                            id="deleteProductButton"
+                            data-drawer-target="drawer-delete-product-default"
+                            data-drawer-show="drawer-delete-product-default"
+                            aria-controls="drawer-delete-product-default"
+                            data-drawer-placement="right"
+                            className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
+                          >
+                            <svg
+                              className="w-4 h-4 mr-2"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                clip-rule="evenodd"
+                              ></path>
+                            </svg>
+                            Delete item
+                          </button>
+                        </td>
+                      )}
+                      {roleName && roleName === 'STAFF' && (
+                        <td className="p-4 space-x-2 whitespace-nowrap">
+                          <button
+                            type="button"
+                            id={`importProductButton-${product.id}`}
+                            data-productname={`${product.name}`}
+                            data-productid={`${product.id}`}
+                            data-productstock={`${product.stock}`}
+                            data-drawer-target="drawer-update-product-default"
+                            data-drawer-show="drawer-update-product-default"
+                            aria-controls="drawer-update-product-default"
+                            data-drawer-placement="right"
+                            className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                            onClick={showImportProductHandler}
+                          >
+                            <svg
+                              className="w-4 h-4 mr-2"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z"></path>
+                              <path
+                                fill-rule="evenodd"
+                                d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"
+                                clip-rule="evenodd"
+                              ></path>
+                            </svg>
+                            Nhập hàng
+                          </button>
+                        </td>
+                      )}
                     </tr>
                   ))}
 
@@ -501,9 +587,6 @@ const Product = () => {
                     <td className="p-4 space-x-2 whitespace-nowrap"></td>
                   </tr>
                   <div className="bg-black h-max"></div>
-
-                  {/*{{ end -}}*/}
-                  {/*{{< /products.inline >}}*/}
                 </tbody>
               </table>
             </div>
@@ -750,6 +833,126 @@ const Product = () => {
                 ></path>
               </svg>
               Delete
+            </button>
+          </div>
+        </form>
+      </div>
+      {/*  Nhập hàng form */}
+
+      <div
+        id="drawer-update-product-default"
+        className={`fixed top-0 right-0 z-40 w-full h-screen max-w-xs p-4 overflow-y-auto transition-transform ${
+          formProductState.showForm && formProductState.type === 'import'
+            ? ''
+            : 'translate-x-full '
+        } bg-white dark:bg-gray-800`}
+        tabIndex={-1}
+        aria-labelledby="drawer-label"
+        aria-hidden="true"
+      >
+        <h5
+          id="drawer-label"
+          className="inline-flex items-center mb-6 text-sm font-semibold text-gray-500 uppercase dark:text-gray-400"
+        >
+          Nhập hàng
+        </h5>
+        <button
+          type="button"
+          data-drawer-dismiss="drawer-update-product-default"
+          aria-controls="drawer-update-product-default"
+          className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 absolute top-2.5 right-2.5 inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+          onClick={hideProductFormHandler}
+        >
+          <svg
+            aria-hidden="true"
+            className="w-5 h-5"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+          <span className="sr-only">Close menu</span>
+        </button>
+        <form onSubmit={formikImportProduct.handleSubmit}>
+          <div className="space-y-4">
+            <p>Tên sản phẩm: {selectedProduct.name}</p>
+            <p>Id sản phẩm: {selectedProduct.id}</p>
+            <p>Số lượng hiện tại trong kho sản phẩm: {selectedProduct.stock}</p>
+            <div>
+              <label
+                htmlFor="name"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Số lượng
+              </label>
+              <input
+                min={0}
+                type="number"
+                id="quantity"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                placeholder="Nhập số lượng cần thêm vào kho"
+                {...formikImportProduct.getFieldProps('quantity')}
+              />
+              {formikImportProduct.errors.quantity &&
+                formikImportProduct.touched.quantity && (
+                  <div className="text-red-400">
+                    {formikImportProduct.errors.quantity}
+                  </div>
+                )}
+            </div>
+            <div>
+              <label
+                htmlFor="price"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Giá
+              </label>
+              <input
+                type="number"
+                id="price"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                placeholder="Nhập giá của sản phẩm khi nhập vào kho"
+                {...formikImportProduct.getFieldProps('price')}
+              />
+              {formikImportProduct.errors.price &&
+                formikImportProduct.touched.price && (
+                  <div className="text-red-400">
+                    {formikImportProduct.errors.price}
+                  </div>
+                )}
+            </div>
+          </div>
+          <div className="bottom-0 left-0 flex justify-center w-full pb-4 mt-4 space-x-4 sm:absolute sm:px-4 sm:mt-0">
+            <button
+              type="submit"
+              className="w-full justify-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-primary-800"
+            >
+              Xác nhận
+            </button>
+            <button
+              type="button"
+              className="w-full justify-center text-red-600 inline-flex items-center hover:text-white border border-red-600 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900"
+              onClick={hideProductFormHandler}
+            >
+              <svg
+                aria-hidden="true"
+                className="w-5 h-5 mr-1 -ml-1"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                ></path>
+              </svg>
+              Hủy
             </button>
           </div>
         </form>
