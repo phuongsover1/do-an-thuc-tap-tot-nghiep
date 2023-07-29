@@ -35,7 +35,10 @@ const ProductCard = ({ product }: Props) => {
 
   function addToCartHandler() {
     dispatch(
-      authActions.addProductToCart({ productId: product.id, quantity: 1 }),
+      authActions.addProductToCart({
+        cartDetail: { productId: product.id, quantity: 1 },
+        inDetailPage: false,
+      }),
     );
     dispatch(authActions.updateAccountCartInDb());
   }

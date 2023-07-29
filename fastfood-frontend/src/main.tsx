@@ -9,6 +9,7 @@ import HomePage from '@/scenes/home';
 import Product from '@/scenes/admin/crud/product/Product.tsx';
 import AdminRoot from '@/routes/admin/root.tsx';
 import Category from '@/scenes/admin/crud/category/Category.tsx';
+import ProductDetails from './scenes/product-detail';
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
       {
         path: '',
         element: <HomePage />,
+      },
+      {
+        path: 'product-details/:productId',
+        element: <ProductDetails />,
       },
     ],
   },

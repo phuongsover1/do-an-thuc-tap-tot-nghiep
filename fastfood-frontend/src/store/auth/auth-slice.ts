@@ -21,7 +21,7 @@ type AuthState = {
 };
 
 type AddProductToCartActionType = {
-  payload: CartType;
+  payload: { cartDetail: CartType; inDetailPage: boolean };
 };
 
 const initialState: AuthState = { idAccount: null, cart: [], roleName: '' };
@@ -45,15 +45,18 @@ const authSlice = createSlice({
     },
     addProductToCart(state, action: AddProductToCartActionType) {
       const existProduct = state.cart.find(
-        (productObj) => productObj.productId === action.payload.productId,
+        (productObj) =>
+          productObj.productId === action.payload.cartDetail.productId,
       );
       if (!existProduct) {
         state.cart.push({
-          productId: action.payload.productId,
-          quantity: action.payload.quantity,
+          productId: action.payload.cartDetail.productId,
+          quantity: action.payload.cartDetail.quantity,
         });
       } else {
-        existProduct.quantity += action.payload.quantity;
+        if (action.payload.inDetailPage)
+          existProduct.quantity = action.payload.cartDetail.quantity;
+        else existProduct.quantity += action.payload.cartDetail.quantity;
       }
     },
     updateAccountCartInDb(state) {

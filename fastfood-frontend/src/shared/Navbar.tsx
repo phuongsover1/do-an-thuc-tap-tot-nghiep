@@ -71,7 +71,7 @@ const Navbar = () => {
       {idAccount === null && (
         <LoginModal open={isLoginModalOpened} handleClose={closeLoginModal} />
       )}
-      <nav className="z-50 fixed top-0 left-0 w-full">
+      <nav className="z-50 fixed top-0 left-0 w-full shadow">
         <div className="w-full bg-white">
           <div className="mx-auto flex h-16 max-w-3xl place-content-between items-center px-4 py-2 md:h-24 md:max-w-none md:px-24">
             <div className="flex items-center">

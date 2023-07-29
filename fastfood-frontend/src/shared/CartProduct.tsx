@@ -5,6 +5,7 @@ import { TrashIcon } from '@heroicons/react/24/outline';
 import axiosInstance from '@/axios/axios';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { authActions } from '@/store/auth/auth-slice';
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
   productId: number;
@@ -25,6 +26,7 @@ const CartProduct = ({
   const [productImage, setProductImage] = useState<string>('');
   const accountId = useAppSelector((state) => state.auth.idAccount);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (product) {
@@ -86,11 +88,16 @@ const CartProduct = ({
       }
     }
   }
+
+  function navigateToProductDetails(productId: number) {
+    navigate(`/product-details/${productId}`);
+  }
   return (
     <li
-      className={`flex items-center ${
+      className={`flex items-center cursor-pointer ${
         !isTop1 ? 'border-t' : ''
       } py-2 border-slate-200`}
+      onClick={() => navigateToProductDetails(productId)}
     >
       <div className="flex gap-2 basis-4/5">
         <img src={productImage} alt="" className="h-12 w-16" />
