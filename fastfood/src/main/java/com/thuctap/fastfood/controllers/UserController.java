@@ -22,6 +22,20 @@ public class UserController {
     private final AccountService accountService;
     private final UserService userService;
 
+   @GetMapping("/find-user-by-account-id")
+   public ResponseEntity<UserDTO> findUserByAccountId(@RequestParam("accountId") Integer accountId) {
+       UserDTO userDTO = null;
+       Optional<Account> accountOptional = accountService.findById(accountId);
+       if(accountOptional.isPresent()) {
+           Optional<User> userOptional = userService.findById(accountOptional.get().getIdPerson());
+           if (userOptional.isPresent()) {
+               User user = userOptional.get();
+               userDTO = userService.toDTO(user);
+           }
+       }
+       return ResponseEntity.ok(userDTO);
+   }
+
     @PostMapping("/updateInformation")
     public ResponseEntity<Boolean> updateInformation(@RequestBody Map<String, Object> map) {
         try {

@@ -26,6 +26,12 @@ const TotalPrice = ({ totalPrice }: Props) => {
             {totalPriceRender} đ
           </span>
         </div>
+        <button
+          type="submit"
+          className="w-full rounded-b-lg bg-red-500 hover:bg-red-400 transition duration-200 text-white py-4 font-bold"
+        >
+          Tiếp tục
+        </button>
       </div>
     </div>
   );

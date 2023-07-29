@@ -5,6 +5,8 @@ import { ProductFromApi } from '../admin/crud/product/Product';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { handleMoney } from '@/shared/Utils';
+import { Link } from 'react-router-dom';
+import { ClassNames } from '@emotion/react';
 
 type Props = {
   cartItem: CartType;
@@ -110,9 +112,16 @@ const CartItem = ({ isTop1, cartItem, updateTotalPrice }: Props) => {
       }`}
     >
       <div className="left-div flex gap-4 items-center">
-        <img src={productImage} alt="" className="w-28" />
+        <Link to={`/product-details/${productId}`}>
+          <img src={productImage} alt="" className="w-28" />
+        </Link>
         <div className="details flex flex-col gap-1">
-          <p>{product?.name}</p>
+          <Link
+            to={`/product-details/${productId}`}
+            className="font-semibold text-slate-800 text-base hover:text-red-400"
+          >
+            {product?.name}
+          </Link>
           <p>
             {product && handleMoney(product.price * productQuantity)}
             <span className="underline underline-offset-1">đ</span>

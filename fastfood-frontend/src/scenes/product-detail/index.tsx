@@ -9,7 +9,6 @@ import { handleMoney } from '@/shared/Utils';
 
 const ProductDetails = () => {
   const [productImage, setProductImage] = useState('');
-  // TODO: Lấy product về render lên
   const [product, setProduct] = useState<ProductFromApi | null>(null);
   const { productId } = useParams();
   const [productQuantity, setProductQuantity] = useState(1);
