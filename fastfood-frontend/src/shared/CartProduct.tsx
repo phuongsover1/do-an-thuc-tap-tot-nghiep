@@ -6,6 +6,7 @@ import axiosInstance from '@/axios/axios';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { authActions } from '@/store/auth/auth-slice';
 import { useNavigate } from 'react-router-dom';
+import { handleMoney } from './Utils';
 
 type Props = {
   productId: number;
@@ -94,17 +95,19 @@ const CartProduct = ({
   }
   return (
     <li
-      className={`flex items-center cursor-pointer ${
+      className={`flex items-center ${
         !isTop1 ? 'border-t' : ''
       } py-2 border-slate-200`}
-      onClick={() => navigateToProductDetails(productId)}
     >
-      <div className="flex gap-2 basis-4/5">
+      <div
+        className="flex gap-2 basis-4/5 cursor-pointer"
+        onClick={() => navigateToProductDetails(productId)}
+      >
         <img src={productImage} alt="" className="h-12 w-16" />
         <div>
           <p className="text-slate-800 font-semibold">{product?.name}</p>
           <p className="text-slate-800">
-            {product?.price} đ x {quantity}
+            {product && handleMoney(product.price)} đ x {quantity}
           </p>
         </div>
       </div>

@@ -5,13 +5,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch } from '@/store';
 import { authActions } from '@/store/auth/auth-slice';
 import { ArrowLongLeftIcon } from '@heroicons/react/24/outline';
+import { handleMoney } from '@/shared/Utils';
 
 const ProductDetails = () => {
   const [productImage, setProductImage] = useState('');
   // TODO: Lấy product về render lên
   const [product, setProduct] = useState<ProductFromApi | null>(null);
   const { productId } = useParams();
-  const [productQuantity, setProductQuantity] = useState(0);
+  const [productQuantity, setProductQuantity] = useState(1);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
@@ -88,17 +89,17 @@ const ProductDetails = () => {
           <div className="flex gap-4 flex-col items-start">
             <p className="text-slate-700 text-3xl font-bold">{product?.name}</p>
             <p className="text-red-400 font-bold text-2xl">
-              {product?.price} đ
+              {product && handleMoney(product?.price)} đ
             </p>
             <div>
               <div className="flex gap-4 items-center">
                 <span className="text-slate-700">Số lượng: </span>
                 <div className="flex items-center gap-2">
                   <button
-                    disabled={productQuantity === 0}
+                    disabled={productQuantity === 1}
                     onClick={() => setProductQuantity((prev) => prev - 1)}
                     className={`w-12 justify-center h-12 bg-red-300 rounded-lg text-white text-lg text-center font-bold flex ${
-                      productQuantity > 0 ? 'hover:bg-red-400' : ''
+                      productQuantity > 1 ? 'hover:bg-red-400' : ''
                     } `}
                   >
                     <span className="self-center">-</span>

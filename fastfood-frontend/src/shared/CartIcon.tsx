@@ -2,6 +2,8 @@ import { useAppSelector } from '@/store';
 import { ShoppingBagIcon } from '@heroicons/react/24/outline';
 import React, { useEffect, useState } from 'react';
 import CartProduct from './CartProduct';
+import { useNavigate } from 'react-router-dom';
+import { handleMoney } from './Utils';
 
 type Props = {
   cartIconClickedHandler: () => void;
@@ -13,6 +15,8 @@ const CartIcon = ({ cartIconClickedHandler, open }: Props) => {
   const cart = useAppSelector((state) => state.auth.cart);
   let totalPrice = 0;
   const [totalPriceState, setTotalPriceState] = useState(0);
+
+  const navigate = useNavigate();
 
   function updateTotalPrice(plusPrice: number) {
     console.log('totalPrice:', totalPrice);
@@ -65,12 +69,18 @@ const CartIcon = ({ cartIconClickedHandler, open }: Props) => {
               Tổng cộng
             </span>
             <span className="text-xl font-bold text-red-400">
-              {totalPriceState} Đ
+              {handleMoney(totalPriceState)}
+              <span className="underline">đ</span>
             </span>
           </div>
 
           {cartLength !== 0 && (
-            <button className="w-full bg-red-400 text-white hover:bg-red-500 text-lg font-bold p-4 rounded-b-lg">
+            <button
+              onClick={() => {
+                navigate('/checkout');
+              }}
+              className="w-full bg-red-400 text-white hover:bg-red-500 text-lg font-bold p-4 rounded-b-lg"
+            >
               THANH TOÁN
             </button>
           )}
