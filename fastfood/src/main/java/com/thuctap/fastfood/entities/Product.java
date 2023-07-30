@@ -16,7 +16,10 @@ import lombok.Setter;
 public class Product implements Serializable {
 
   @Id
-  @SequenceGenerator(name = "product", sequenceName = "product", allocationSize = 1)
+  @SequenceGenerator(
+      name = "product_sequence",
+      sequenceName = "product_sequence",
+      allocationSize = 1)
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_sequence")
   @Column(name = "id", columnDefinition = "INT(11)")
   private Integer id;
@@ -55,6 +58,10 @@ public class Product implements Serializable {
   @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
   @JsonManagedReference
   Set<ProductImportNoteDetails> productImportNoteDetails = new HashSet<>();
+
+  @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+  @JsonManagedReference
+  Set<BillDetail> billDetails = new HashSet<>();
 
   @PreRemove
   private void removeMembers() {

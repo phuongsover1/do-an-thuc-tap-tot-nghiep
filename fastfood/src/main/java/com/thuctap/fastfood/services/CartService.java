@@ -23,6 +23,10 @@ public class CartService {
     return cartRepository.save(cart);
   }
 
+  public void clearCartProduct(Cart cart) {
+    cartProductRepository.deleteAllByCart(cart);
+  }
+
   public void saveProductToCart(CartProduct cartProduct) {
     cartProductRepository.save(cartProduct);
   }

@@ -23,6 +23,10 @@ public class Cart {
   @JsonManagedReference
   private Set<CartProduct> cartProducts = new HashSet<>();
 
+  public void clearCart() {
+    cartProducts.clear();
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;

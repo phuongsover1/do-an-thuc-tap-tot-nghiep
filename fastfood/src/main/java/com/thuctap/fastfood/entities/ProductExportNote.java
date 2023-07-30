@@ -22,6 +22,6 @@ public class ProductExportNote {
   @JoinColumn(name = "id_bill")
   private Bill bill;
 
-  @Column(name = "date")
+  @Column(name = "date", columnDefinition = "DATETIME")
   private LocalDateTime date;
 }
