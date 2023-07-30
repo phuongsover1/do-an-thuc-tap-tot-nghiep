@@ -13,22 +13,21 @@ import lombok.Setter;
 @Table(name = "product_import_note_details")
 @Entity(name = "ProductImportNoteDetails")
 public class ProductImportNoteDetails {
-    @EmbeddedId
-    private ProductImportNoteDetailsId primaryKey = new ProductImportNoteDetailsId();
+  @EmbeddedId private ProductImportNoteDetailsId primaryKey = new ProductImportNoteDetailsId();
 
-    @ManyToOne
-    @MapsId("importNoteId")
-    @JoinColumn(name = "id_import_note")
-    @JsonBackReference
-    private ProductImportNote importNote;
+  @ManyToOne
+  @MapsId("importNoteId")
+  @JoinColumn(name = "id_import_note")
+  @JsonBackReference
+  private ProductImportNote importNote;
 
-    @ManyToOne
-    @MapsId("productId")
-    @JoinColumn(name = "id_product")
-    @JsonBackReference
-    private Product product;
+  @ManyToOne
+  @MapsId("productId")
+  @JoinColumn(name = "id_product")
+  @JsonBackReference
+  private Product product;
 
-    private int quantity;
+  private int quantity;
 
-    private double price;
+  private double price;
 }

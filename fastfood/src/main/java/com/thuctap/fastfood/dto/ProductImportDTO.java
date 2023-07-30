@@ -8,8 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductImportDTO {
-    private Integer accountId;
-    private Integer productId;
-    private int quantity;
-    private double price;
+  private Integer accountId;
+  private Integer productId;
+  private int quantity;
+  private double price;
 }

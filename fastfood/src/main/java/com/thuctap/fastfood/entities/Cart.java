@@ -2,13 +2,10 @@ package com.thuctap.fastfood.entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity(name = "Cart")
 @Table(name = "carts")
@@ -25,7 +22,6 @@ public class Cart {
   @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
   @JsonManagedReference
   private Set<CartProduct> cartProducts = new HashSet<>();
-
 
   @Override
   public boolean equals(Object o) {

@@ -8,10 +8,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 public class ProductImportNoteService {
-    private final ProductImportNoteRepository productImportNoteRepository;
+  private final ProductImportNoteRepository productImportNoteRepository;
 
-    public ProductImportNote save(ProductImportNote importNote) {
-        return productImportNoteRepository.save(importNote);
-    }
-
+  public ProductImportNote save(ProductImportNote importNote) {
+    return productImportNoteRepository.save(importNote);
+  }
 }

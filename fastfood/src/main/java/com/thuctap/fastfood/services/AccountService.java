@@ -8,43 +8,42 @@ import com.thuctap.fastfood.repositories.AccountRepository;
 import com.thuctap.fastfood.repositories.CartRepository;
 import com.thuctap.fastfood.repositories.RoleRepository;
 import com.thuctap.fastfood.repositories.UserRepository;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @Transactional
 @AllArgsConstructor
 public class AccountService {
-    private final AccountRepository accountRepository;
-    private final UserRepository userRepository;
-    private final CartRepository cartRepository;
-    private final RoleRepository roleRepository;
+  private final AccountRepository accountRepository;
+  private final UserRepository userRepository;
+  private final CartRepository cartRepository;
+  private final RoleRepository roleRepository;
 
-    public Account register(AccountDTO accountDTO) {
-        User newUser = new User();
-        Account newAccount = new Account();
-        Cart newCart = new Cart();
-        newUser.setEmail(accountDTO.getEmail());
-        newUser.setPhoneNumber(accountDTO.getPhoneNumber());
-        newAccount.setUsername(accountDTO.getUsername());
-        newAccount.setPassword(accountDTO.getPassword());
-        newAccount.setCart(newCart);
-        cartRepository.save(newCart);
-        User returnedUser =  userRepository.save(newUser);
-        newAccount.setIdPerson(returnedUser.getId());
-        newAccount.setRole(roleRepository.findById(3).get());
+  public Account register(AccountDTO accountDTO) {
+    User newUser = new User();
+    Account newAccount = new Account();
+    Cart newCart = new Cart();
+    newUser.setEmail(accountDTO.getEmail());
+    newUser.setPhoneNumber(accountDTO.getPhoneNumber());
+    newAccount.setUsername(accountDTO.getUsername());
+    newAccount.setPassword(accountDTO.getPassword());
+    newAccount.setCart(newCart);
+    cartRepository.save(newCart);
+    User returnedUser = userRepository.save(newUser);
+    newAccount.setIdPerson(returnedUser.getId());
+    newAccount.setRole(roleRepository.findById(3).get());
 
-        return accountRepository.save(newAccount);
-    }
+    return accountRepository.save(newAccount);
+  }
 
-    public Optional<Account> findById(Integer id) {
-        return accountRepository.findById(id);
-    }
+  public Optional<Account> findById(Integer id) {
+    return accountRepository.findById(id);
+  }
 
-    public Optional<Account> findByUsername(String username) {
-        return accountRepository.findByUsername(username);
-    }
+  public Optional<Account> findByUsername(String username) {
+    return accountRepository.findByUsername(username);
+  }
 }

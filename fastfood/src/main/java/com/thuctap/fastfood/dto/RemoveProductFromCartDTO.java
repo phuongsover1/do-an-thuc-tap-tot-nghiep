@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class RemoveProductFromCartDTO {
-    private Integer accountId;
-    private Integer productId;
+  private Integer accountId;
+  private Integer productId;
 }

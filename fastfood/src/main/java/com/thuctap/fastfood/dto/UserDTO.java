@@ -1,8 +1,7 @@
 package com.thuctap.fastfood.dto;
 
-import lombok.*;
-
 import java.time.LocalDate;
+import lombok.*;
 
 @Getter
 @Setter
@@ -10,11 +9,11 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder
 public class UserDTO {
-    private String firstName;
-    private String lastName;
-    private String sex;
-    private String address;
-    private LocalDate dateOfBirth;
-    private String email;
-    private String phoneNumber;
+  private String firstName;
+  private String lastName;
+  private String sex;
+  private String address;
+  private LocalDate dateOfBirth;
+  private String email;
+  private String phoneNumber;
 }

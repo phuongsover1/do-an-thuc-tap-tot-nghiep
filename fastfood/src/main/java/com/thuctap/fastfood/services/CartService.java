@@ -6,43 +6,40 @@ import com.thuctap.fastfood.entities.Product;
 import com.thuctap.fastfood.entities.embeddedId.CartProductKey;
 import com.thuctap.fastfood.repositories.CartProductRepository;
 import com.thuctap.fastfood.repositories.CartRepository;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class CartService {
-    private final CartRepository cartRepository;
-    private final CartProductRepository cartProductRepository;
+  private final CartRepository cartRepository;
+  private final CartProductRepository cartProductRepository;
 
+  public Cart save(Cart cart) {
+    return cartRepository.save(cart);
+  }
 
-    public Cart save(Cart cart) {
-        return cartRepository.save(cart);
-    }
+  public void saveProductToCart(CartProduct cartProduct) {
+    cartProductRepository.save(cartProduct);
+  }
 
-    public void saveProductToCart(CartProduct cartProduct) {
-        cartProductRepository.save(cartProduct);
-    }
+  public Optional<CartProduct> findCartProduct(Cart cart, Product product) {
+    return cartProductRepository.findCartProductByCartAndProduct(cart, product);
+  }
 
-    public Optional<CartProduct> findCartProduct(Cart cart, Product product) {
-        return cartProductRepository.findCartProductByCartAndProduct(cart, product);
-    }
+  public List<CartProduct> findAllProductsInCart(Cart cart) {
+    return cartProductRepository.findCartProductsByCart(cart);
+  }
 
-    public List<CartProduct> findAllProductsInCart(Cart cart) {
-        return cartProductRepository.findCartProductsByCart(cart);
-    }
+  public void removeProductFromCart(CartProduct cartProduct) {
+    cartProductRepository.delete(cartProduct);
+  }
 
-    public void removeProductFromCart(CartProduct cartProduct) {
-        cartProductRepository.delete(cartProduct);
-    }
-
-    public Optional<CartProduct> findCartProductById(CartProductKey cartProductKey) {
-        return cartProductRepository.findById(cartProductKey);
-    }
-
+  public Optional<CartProduct> findCartProductById(CartProductKey cartProductKey) {
+    return cartProductRepository.findById(cartProductKey);
+  }
 }
