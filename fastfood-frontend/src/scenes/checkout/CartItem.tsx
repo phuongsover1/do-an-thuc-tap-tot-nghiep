@@ -143,10 +143,13 @@ const CartItem = ({ isTop1, cartItem, updateTotalPrice }: Props) => {
           >
             <span className="self-center">-</span>
           </button>
-          <div className="w-8 justify-center h-8 bg-red-100 rounded-md text-lg text-center flex">
+          <div className="relative w-8 justify-center h-8 bg-red-100 rounded-md text-lg text-center flex">
             <span className="self-center text-slate-700">
               {productQuantity}
             </span>
+            <div className="absolute text-red-400 w-20 text-sm -top-6 -left-6">
+              MAX: {product && product.stock}
+            </div>
           </div>
           <button
             onClick={() => {
