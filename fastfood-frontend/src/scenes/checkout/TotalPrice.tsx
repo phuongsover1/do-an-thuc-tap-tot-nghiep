@@ -1,4 +1,5 @@
 import { handleMoney } from '@/shared/Utils';
+import { useAppSelector } from '@/store';
 import React from 'react';
 
 type Props = {
@@ -7,6 +8,7 @@ type Props = {
 
 const TotalPrice = ({ totalPrice }: Props) => {
   const totalPriceRender = handleMoney(totalPrice);
+  const cart = useAppSelector((state) => state.auth.cart);
   return (
     <div className="p-3 bg-white font-medium text-slate-900 shadow rounded-lg">
       <div className="flex flex-col">
@@ -26,12 +28,14 @@ const TotalPrice = ({ totalPrice }: Props) => {
             {totalPriceRender} đ
           </span>
         </div>
-        <button
-          type="submit"
-          className="w-full rounded-b-lg bg-red-500 hover:bg-red-400 transition duration-200 text-white py-4 font-bold"
-        >
-          Tiếp tục
-        </button>
+        {cart.length > 0 && (
+          <button
+            type="submit"
+            className="w-full rounded-b-lg bg-red-500 hover:bg-red-400 transition duration-200 text-white py-4 font-bold"
+          >
+            Tiếp tục
+          </button>
+        )}
       </div>
     </div>
   );

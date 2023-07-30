@@ -135,7 +135,6 @@ const CartItem = ({ isTop1, cartItem, updateTotalPrice }: Props) => {
             disabled={productQuantity === 1}
             onClick={() => {
               setProductQuantity((prev) => prev - 1);
-              addToCartHandler();
             }}
             className={`w-8 justify-center h-8 bg-red-300 rounded-md text-white text-lg text-center font-bold flex ${
               productQuantity > 1 ? 'hover:bg-red-400' : ''
@@ -154,9 +153,11 @@ const CartItem = ({ isTop1, cartItem, updateTotalPrice }: Props) => {
           <button
             onClick={() => {
               setProductQuantity((prev) => prev + 1);
-              addToCartHandler();
             }}
-            className="w-8 justify-center h-8 bg-red-300 rounded-md text-white text-lg text-center font-bold flex hover:bg-red-400"
+            className={`w-8 justify-center h-8 bg-red-300 rounded-md text-white text-lg text-center font-bold flex ${
+              product?.stock === productQuantity ? '' : 'hover:bg-red-400'
+            } `}
+            disabled={product?.stock === productQuantity}
           >
             <span className="self-center">+</span>
           </button>
