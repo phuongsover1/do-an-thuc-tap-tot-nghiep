@@ -87,6 +87,9 @@ const authSlice = createSlice({
         state.cart.splice(existIndex, 1);
       }
     },
+    clearCart(state) {
+      state.cart = [];
+    },
   },
 });
 export const authActions = authSlice.actions;

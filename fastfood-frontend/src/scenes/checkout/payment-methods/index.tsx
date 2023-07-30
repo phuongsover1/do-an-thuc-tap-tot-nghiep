@@ -10,6 +10,8 @@ import { useAppDispatch, useAppSelector } from '@/store';
 import { checkoutActions } from '@/store/checkout/checkout-slice';
 import { CheckoutType } from '@/shared/types';
 import axiosInstance from '@/axios/axios';
+import { log } from 'console';
+import { authActions } from '@/store/auth/auth-slice';
 
 type Props = {
   open: boolean;
@@ -28,7 +30,7 @@ const PaymentMethods = ({ open, closeModalHandler }: Props) => {
   }
 
   async function createBill(values: CheckoutType) {
-    const response = await axiosInstance.post('/checkout', values);
+    const response = await axiosInstance.post('/bills', values);
     const billId = response.data as number | null;
     return billId;
   }
@@ -47,9 +49,9 @@ const PaymentMethods = ({ open, closeModalHandler }: Props) => {
       totalPrice,
     })
       .then((billId) => {
-        // TODO: Làm post tạo bill
+        dispatch(authActions.clearCart());
         if (billId) {
-          navigate(`/checkout/qr-scan/${billId}`);
+          navigate(`/checkout/qr-scan/${billId}`, { replace: true });
         }
       })
       .catch((error) => {
