@@ -10,6 +10,7 @@ import java.util.List;
 @Setter
 @Builder
 public class BillDTO {
+  private Integer billId;
   private Integer accountId;
   private List<CartProductDTO> cart;
   private String notes;
@@ -17,5 +18,6 @@ public class BillDTO {
   private String phoneNumber;
   private Double totalPrice;
   private String paymentMethod;
+  private String status;
 
 }

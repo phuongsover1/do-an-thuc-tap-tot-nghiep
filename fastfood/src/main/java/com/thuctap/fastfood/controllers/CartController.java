@@ -86,6 +86,7 @@ public class CartController {
     return ResponseEntity.ok(returnedMap);
   }
 
+
   @PostMapping("/delete")
   public ResponseEntity<Boolean> removeProductFromCart(
       @RequestBody RemoveProductFromCartDTO removeProductFromCartDTO) {

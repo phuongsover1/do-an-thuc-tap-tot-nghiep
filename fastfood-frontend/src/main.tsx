@@ -11,6 +11,7 @@ import AdminRoot from '@/routes/admin/root.tsx';
 import Category from '@/scenes/admin/crud/category/Category.tsx';
 import ProductDetails from './scenes/product-detail';
 import Checkout from './scenes/checkout';
+import QRScan from './scenes/checkout/QRScan';
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
         element: <Checkout />,
       },
     ],
+  },
+  {
+    path: '/qr-scan/:billId',
+    element: <QRScan />,
   },
   {
     path: '/admin',
@@ -58,9 +63,7 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <RouterProvider router={router} />
-    </Provider>
-  </React.StrictMode>,
+  <Provider store={store}>
+    <RouterProvider router={router} />
+  </Provider>,
 );

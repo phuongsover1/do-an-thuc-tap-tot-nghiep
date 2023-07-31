@@ -69,7 +69,8 @@ const CartIcon = ({ cartIconClickedHandler, open }: Props) => {
               Tổng cộng
             </span>
             <span className="text-xl font-bold text-red-400">
-              {handleMoney(totalPriceState)}
+              {cart.length === 0 && 0}
+              {cart.length > 0 && handleMoney(totalPriceState)}
               <span className="underline">đ</span>
             </span>
           </div>

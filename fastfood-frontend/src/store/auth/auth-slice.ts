@@ -36,6 +36,7 @@ const authSlice = createSlice({
     setLogout(state) {
       state.idAccount = null;
       state.cart = [];
+      state.roleName = '';
     },
     setRole(state, action: { payload: 'USER' | 'ADMIN' | 'STAFF' }) {
       state.roleName = action.payload;

@@ -6,6 +6,6 @@ export type CheckoutType = {
   address: string;
   phoneNumber: string;
   notes: string;
-  paymentMethod?: string;
+  paymentMethod?: 'VietinBank' | 'ZaloPay' | 'MoMo' | 'ShopeePay';
   totalPrice: number;
 };

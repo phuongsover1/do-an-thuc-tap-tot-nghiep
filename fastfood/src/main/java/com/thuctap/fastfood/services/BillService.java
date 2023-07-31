@@ -18,6 +18,9 @@ import java.util.Optional;
 public class BillService {
   private final BillRepository billRepository;
 
+  public Optional<Bill> findById(Integer id) {
+    return billRepository.findById(id);
+  }
 
   public Bill save(Bill bill) {
     return billRepository.save(bill);
