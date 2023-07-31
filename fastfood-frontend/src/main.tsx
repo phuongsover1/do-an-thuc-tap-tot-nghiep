@@ -12,6 +12,9 @@ import Category from '@/scenes/admin/crud/category/Category.tsx';
 import ProductDetails from './scenes/product-detail';
 import Checkout from './scenes/checkout';
 import QRScan from './scenes/checkout/QRScan';
+import AccountRoot from './scenes/account/account-root';
+import AccountInfo from './scenes/account/account-info';
+import AccountHistory from './scenes/account/account-history';
 
 const router = createBrowserRouter([
   {
@@ -29,6 +32,17 @@ const router = createBrowserRouter([
       {
         path: 'checkout',
         element: <Checkout />,
+      },
+      {
+        path: 'account',
+        element: <AccountRoot />,
+        children: [
+          {
+            path: 'info',
+            element: <AccountInfo />,
+          },
+          { path: 'history', element: <AccountHistory /> },
+        ],
       },
     ],
   },
