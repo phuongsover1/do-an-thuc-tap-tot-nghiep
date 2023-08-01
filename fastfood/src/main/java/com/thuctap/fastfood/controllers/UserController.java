@@ -2,10 +2,13 @@ package com.thuctap.fastfood.controllers;
 
 import com.thuctap.fastfood.dto.UserDTO;
 import com.thuctap.fastfood.entities.Account;
+import com.thuctap.fastfood.entities.Staff;
 import com.thuctap.fastfood.entities.User;
 import com.thuctap.fastfood.services.AccountService;
+import com.thuctap.fastfood.services.StaffService;
 import com.thuctap.fastfood.services.UserService;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
   private final AccountService accountService;
   private final UserService userService;
+  private final StaffService staffService;
 
   @GetMapping("/find-user-by-account-id")
   public ResponseEntity<UserDTO> findUserByAccountId(@RequestParam("accountId") Integer accountId) {
@@ -32,6 +36,61 @@ public class UserController {
       }
     }
     return ResponseEntity.ok(userDTO);
+  }
+
+  @PostMapping("/update-info-by-account")
+   public ResponseEntity<Boolean> updateInfoByAccount(@RequestBody UserDTO userDTO, @RequestParam("accountId") Integer accountId) {
+    Optional<Account> accountOptional = accountService.findById(accountId);
+    if (accountOptional.isPresent()) {
+      Optional<User> userOptional  = userService.findById(accountOptional.get().getIdPerson());
+      if (userOptional.isPresent()) {
+        User user = userOptional.get();
+        userService.changeFieldsDTOToEntity(userDTO, user);
+        userService.save(user);
+        return ResponseEntity.ok(true);
+      }
+    }
+    return ResponseEntity.ok(false);
+  }
+
+  @GetMapping("/check-email-phone-number")
+  public ResponseEntity<Map<String, String>> checkEmailAndPhoneNumber(
+      @RequestParam("email") String email,
+      @RequestParam("phoneNumber") String phoneNumber,
+      @RequestParam("accountId") Integer accountId) {
+    Map<String, String> map = new HashMap<>();
+    Optional<Account> accountOptional = accountService.findById(accountId);
+    if (accountOptional.isPresent()) {
+      Account account = accountOptional.get();
+      Optional<User> userOfAccountOptional = userService.findById(account.getIdPerson());
+      if (userOfAccountOptional.isPresent()) {
+        User userOfAccount = userOfAccountOptional.get();
+
+        Optional<User> userOptional = userService.findByEmail(email);
+        if (userOptional.isPresent()) {
+          User user = userOptional.get();
+          if (!user.getId().equals(userOfAccount.getId()))
+            map.put("email", "Đã tồn tại tài khoản có email này");
+        }
+        userOptional = userService.findByPhoneNumber(phoneNumber);
+        if (userOptional.isPresent()) {
+          User user = userOptional.get();
+          if (!user.getId().equals(userOfAccount.getId()))
+            map.put("phoneNumber", "Đã tồn tại tài khoản có số điện thoại này");
+        }
+
+        Optional<Staff> staffOptional = staffService.findByEmail(email);
+        if (staffOptional.isPresent()) {
+          map.put("email", "Đã tồn tại tài khoản có email này");
+        }
+
+        staffOptional = staffService.findByPhoneNumber(phoneNumber);
+        if (staffOptional.isPresent()) {
+          map.put("phoneNumber", "Đã tồn tại tài khoản có số điện thoại này");
+        }
+      }
+    }
+    return ResponseEntity.ok(map);
   }
 
   @PostMapping("/updateInformation")

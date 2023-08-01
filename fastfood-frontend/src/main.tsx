@@ -46,8 +46,9 @@ const router = createBrowserRouter([
       },
     ],
   },
+
   {
-    path: '/qr-scan/:billId',
+    path: 'checkout/qr-scan/:billId',
     element: <QRScan />,
   },
   {

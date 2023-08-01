@@ -73,7 +73,7 @@ type Bill = {
 };
 
 const QRScan = () => {
-  const afterFiveMinutesFromNow = new Date().getTime() + 30000;
+  const afterFiveMinutesFromNow = new Date().getTime() + 300000;
   const [isPaid, setIsPaid] = useState(false);
   const [minutes, setMinutes] = useState('01');
   const [seconds, setSeconds] = useState('00');

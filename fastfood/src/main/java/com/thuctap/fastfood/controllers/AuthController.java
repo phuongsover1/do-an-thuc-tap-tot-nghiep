@@ -100,4 +100,24 @@ public class AuthController {
     }
     return ResponseEntity.ok(false);
   }
+
+  @PostMapping("/change-password")
+  public ResponseEntity<Map<String, String>> changePassword(@RequestBody AccountDTO accountDTO, @RequestParam("newPassword") String newPassword){
+    Map<String, String> map = new HashMap<>();
+    Optional<Account> accountOptional = accountService.findById(accountDTO.getAccountId());
+    if (accountOptional.isPresent()) {
+      Account account = accountOptional.get();
+      if (!account.getPassword().equals(accountDTO.getPassword())) {
+        map.put("error", "Mật khẩu cũ không đúng");
+      }else {
+        account.setPassword(newPassword);
+        String savedPassword = accountService.save(account).getPassword();
+        if (!savedPassword.equals(newPassword)) {
+          map.put("error", "Thay đổi mật khẩu thất bại");
+        }
+      }
+    }
+    return ResponseEntity.ok(map);
+  }
+
 }

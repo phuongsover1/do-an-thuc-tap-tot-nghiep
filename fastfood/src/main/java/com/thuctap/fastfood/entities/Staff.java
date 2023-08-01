@@ -43,6 +43,9 @@ public class Staff implements Serializable {
   @Column(name = "email", nullable = false, unique = true)
   private String email;
 
+  @Column(name = "phone_number")
+  private String phoneNumber;
+
   @OneToMany(mappedBy = "staff")
   @JsonManagedReference
   private Set<ProductImportNote> importNotes = new HashSet<>();

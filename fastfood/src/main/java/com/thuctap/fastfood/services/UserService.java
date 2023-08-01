@@ -38,6 +38,15 @@ public class UserService {
         .build();
   }
 
+  public void changeFieldsDTOToEntity(UserDTO dto, User entity) {
+    if (dto.getFirstName() != null) entity.setFirstName(dto.getFirstName());
+    if (dto.getLastName() != null) entity.setLastName(dto.getLastName());
+    if (dto.getAddress() != null) entity.setAddress(dto.getAddress());
+    if (dto.getDateOfBirth() != null) entity.setDateOfBirth((dto.getDateOfBirth()));
+    if (dto.getEmail() != null) entity.setEmail(dto.getEmail());
+    if (dto.getPhoneNumber() != null) entity.setPhoneNumber(dto.getPhoneNumber());
+  }
+
   public User save(User user) {
     return userRepository.save(user);
   }

@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import MyCart from './MyCart';
 import Information from './Information';
 import TotalPrice from './TotalPrice';
@@ -11,7 +11,6 @@ import * as Yup from 'yup';
 import axiosInstance from '@/axios/axios';
 import { checkoutActions } from '@/store/checkout/checkout-slice';
 import PaymentMethods from './payment-methods';
-import { log } from 'console';
 
 const validationSchema = Yup.object({
   address: Yup.string().trim().required('Địa chỉ không được để trống'),
@@ -73,42 +72,42 @@ const Checkout = () => {
   }
 
   return (
-    <div className="pt-32 bg-[#fffcfe] min-h-screen">
+    <div className="min-h-screen bg-[#fffcfe] pt-32">
       <PaymentMethods
         open={openPaymentMethodModal}
         closeModalHandler={closePaymentMethodModalHandler}
       />
       <div className="container mx-auto">
         <div className="flex gap-10">
-          <div className="basis-2/3 ml-24">
-            <div className="flex justify-between items-center mb-5">
+          <div className="ml-24 basis-2/3">
+            <div className="mb-5 flex items-center justify-between">
               <p>
-                <span className="font-semibold text-xl text-slate-800">
+                <span className="text-xl font-semibold text-slate-800">
                   GIỎ HÀNG CỦA BẠN
                 </span>
                 &nbsp;&nbsp; ({cartLengthState} Sản phẩm)
               </p>
               <Link to={'/products'}>
-                <button className="flex items-center gap-1 text-red-500 font-semibold px-4 py-2 rounded-full shadow-md ">
+                <button className="flex items-center gap-1 rounded-full px-4 py-2 font-semibold text-red-500 shadow-md ">
                   <PlusSmallIcon className="w-5" />
                   Thêm món ăn
                 </button>
               </Link>
             </div>
             <MyCart cart={myCart} updateTotalPrice={updateTotalPrice} />
-            <div className="mt-6 p-4 bg-white rounded-lg shadow drop-shadow">
-              <p className="text-slate-700 font-semibold text-lg mb-2">
+            <div className="mt-6 rounded-lg bg-white p-4 shadow drop-shadow">
+              <p className="mb-2 text-lg font-semibold text-slate-700">
                 Ghi chú cho đơn hàng
               </p>
               <input
                 type="text"
-                className="w-full py-1 border-b border-red-400 focus:outline-none"
+                className="w-full border-b border-red-400 py-1 focus:outline-none"
                 placeholder="Vui lòng thêm lưu ý cho cửa hàng (nếu có)"
                 ref={noteInputRef}
               />
             </div>
           </div>
-          <div className="basis-1/3 mr-24 flex flex-col gap-3">
+          <div className="mr-24 flex basis-1/3 flex-col gap-3">
             <Formik
               initialValues={{ address: '', phoneNumber: '' }}
               onSubmit={(values) => {

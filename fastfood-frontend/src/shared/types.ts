@@ -9,3 +9,13 @@ export type CheckoutType = {
   paymentMethod?: 'VietinBank' | 'ZaloPay' | 'MoMo' | 'ShopeePay';
   totalPrice: number;
 };
+
+export type UserInfor = {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  address: string;
+  dateOfBirth: string;
+  email: string;
+  phoneNumber: string;
+};

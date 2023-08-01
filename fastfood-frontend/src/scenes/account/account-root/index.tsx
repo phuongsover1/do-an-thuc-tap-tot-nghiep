@@ -15,39 +15,39 @@ const AccountRoot = (props: Props) => {
   console.log('active: ', active);
 
   return (
-    <div className="flex container mt-40 max-w-4xl m-auto rounded-lg shadow">
-      <div className="sidebar basis-80 bg-red-400  rounded-l-lg text-white">
+    <div className="container m-auto mb-10 mt-32 flex max-w-6xl rounded-lg shadow">
+      <div className="sidebar basis-80 rounded-l-lg  bg-red-400 text-white">
         <p className="p-5">LE NGUYEN DUY PHUONG</p>
         <ul className="">
           <Link to={'/account/info'}>
             <li
-              className={`flex gap-3 items-center p-3 hover:bg-red-300 ${
+              className={`flex items-center gap-3 p-3 hover:bg-red-300 ${
                 active === 'info' ? 'bg-red-300' : ''
               }`}
             >
-              <UserIcon className="w-6 h-6" /> <span>Thông tin tài khoản</span>
+              <UserIcon className="h-6 w-6" /> <span>Thông tin tài khoản</span>
             </li>
           </Link>
           <Link to={'/account/history'}>
             <li
-              className={`flex gap-3 items-center p-3 hover:bg-red-300 ${
+              className={`flex items-center gap-3 p-3 hover:bg-red-300 ${
                 active === 'history' ? 'bg-red-300' : ''
               }`}
             >
-              <DocumentTextIcon className="w-6 h-6" />{' '}
+              <DocumentTextIcon className="h-6 w-6" />{' '}
               <span>Lịch sử đơn hàng</span>
             </li>
           </Link>
           <Link to={'/'}>
-            <li className="flex gap-3 items-center p-3 hover:bg-red-300 rounded-l-lg rounded-t-none">
-              <ArrowLeftOnRectangleIcon className="w-6 h-6" />{' '}
+            <li className="flex items-center gap-3 rounded-l-lg rounded-t-none p-3 hover:bg-red-300">
+              <ArrowLeftOnRectangleIcon className="h-6 w-6" />{' '}
               <span>Đăng xuất</span>
             </li>
           </Link>
         </ul>
       </div>
 
-      <div className="w-full pl-10">
+      <div className="w-full">
         <Outlet />
       </div>
     </div>

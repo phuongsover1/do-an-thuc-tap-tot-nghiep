@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class AccountDTO {
+  private Integer accountId;
   private String username;
   private String password;
   private String email;

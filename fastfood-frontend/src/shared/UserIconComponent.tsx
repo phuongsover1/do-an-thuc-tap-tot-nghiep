@@ -6,7 +6,7 @@ import {
   UserIcon,
 } from '@heroicons/react/24/outline';
 import { UserIcon as UserIconSolid } from '@heroicons/react/24/solid';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 type Props = {
   userIconClickedHandler: () => void;
@@ -16,9 +16,11 @@ type Props = {
 const UserIconComponent = ({ userIconClickedHandler, open }: Props) => {
   const idAccount = useAppSelector((state) => state.auth.idAccount);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   function signOutHandler() {
     dispatch(authActions.setLogout());
+    navigate('/', { replace: true });
   }
   return (
     <>
@@ -31,7 +33,7 @@ const UserIconComponent = ({ userIconClickedHandler, open }: Props) => {
       {idAccount !== null && open && (
         <div className="absolute -left-24 top-20 w-60 rounded-lg bg-white p-6 drop-shadow-xl before:absolute before:-top-2 before:left-[6.5rem] before:z-0 before:h-5 before:w-5 before:rotate-45 before:bg-white before:text-white before:content-['dffd']">
           <ul className="flex flex-col gap-2 text-slate-600">
-            <Link to={'/account'}>
+            <Link to={'/account/info'} onClick={userIconClickedHandler}>
               <li className="flex items-center gap-2">
                 <span>
                   <UserIconSolid className="h-6 w-6" />
