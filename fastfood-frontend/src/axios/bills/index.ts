@@ -16,8 +16,9 @@ export type Bill = {
   totalPrice: number;
   paymentMethod: string;
   status: string;
-  dateCreatead: string;
+  dateCreated: string;
   dateSuccessfullyPaid: string;
+  qrPaymentPath: string;
 };
 
 export const fetAllBills = async (accountId: number) => {
@@ -40,4 +41,9 @@ export const fetchBillDetails = async (billId: number) => {
 export const fetchBill = async (billId: number) => {
   const response = await axiosInstance.get(`/bills/${billId}`);
   return response.data as Bill;
+};
+
+export const fetchWaitingBills = async () => {
+  const response = await axiosInstance.get('/bills/waiting-bills');
+  return response.data as BillHistory[];
 };

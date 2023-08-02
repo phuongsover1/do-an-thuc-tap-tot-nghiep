@@ -46,6 +46,32 @@ public class BillController {
     return ResponseEntity.ok(billDTOS);
   }
 
+  @GetMapping("waiting-bills")
+  public ResponseEntity<List<BillDTO>> getAllWaitingBills() {
+    List<BillDTO> billDTOS = new ArrayList<>();
+    billService
+        .findAllBills("Đang Chờ Duyệt")
+        .forEach(
+            bill -> {
+              BillDTO billDTO =
+                  BillDTO.builder()
+                      .billId(bill.getId())
+                      .paymentMethod(bill.getPaymentMethod())
+                      .status(bill.getStatus())
+                      .totalPrice(bill.getTotalPrice())
+                      .dateCreated(bill.getDateCreated())
+                      .dateSuccessfullyPaid(bill.getDateSuccessfullyPaid())
+                      .address(bill.getAddress())
+                      .phoneNumber(bill.getPhoneNumber())
+                      .notes(bill.getNotes())
+                      .qrPaymentPath(bill.getQrPaymentPath())
+                      .build();
+              billDTOS.add(billDTO);
+            });
+
+    return ResponseEntity.ok(billDTOS);
+  }
+
   private void entityToDTO(Bill entity, BillDTO dto) {
     dto.setBillId(entity.getId());
     dto.setTotalPrice(entity.getTotalPrice());
@@ -66,9 +92,11 @@ public class BillController {
               .paymentMethod(bill.getPaymentMethod())
               .status(bill.getStatus())
               .totalPrice(bill.getTotalPrice())
+              .dateCreated(bill.getDateCreated())
               .dateSuccessfullyPaid(bill.getDateSuccessfullyPaid())
               .address(bill.getAddress())
               .phoneNumber(bill.getPhoneNumber())
+              .qrPaymentPath(bill.getQrPaymentPath())
               .notes(bill.getNotes())
               .build();
     }
@@ -105,7 +133,6 @@ public class BillController {
     if (billOptional.isPresent()) {
       Bill bill = billOptional.get();
       bill.setStatus("Đang Chờ Duyệt");
-      bill.setDateSuccessfullyPaid(LocalDateTime.now());
       bill.setQrPaymentPath(qrPath);
       billService.save(bill);
       return ResponseEntity.ok(true);

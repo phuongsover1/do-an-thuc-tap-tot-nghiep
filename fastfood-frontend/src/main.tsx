@@ -17,6 +17,9 @@ import AccountInfo from './scenes/account/account-info';
 import AccountHistory from './scenes/account/account-history';
 import BillDetailsPage from './scenes/account/account-history/bill-details';
 
+import Bills from './scenes/admin/bills';
+import BillDetailsPageStaff from './scenes/admin/bills/bill-details';
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -78,7 +81,15 @@ const router = createBrowserRouter([
         path: 'products',
         element: <Product />,
       },
+      {
+        path: 'bills',
+        element: <Bills />,
+      },
     ],
+  },
+  {
+    path: '/staff/bills/details/:billId',
+    element: <BillDetailsPageStaff />,
   },
 ]);
 

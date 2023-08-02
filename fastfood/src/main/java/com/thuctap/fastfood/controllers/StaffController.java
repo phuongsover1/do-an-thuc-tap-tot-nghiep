@@ -2,18 +2,13 @@ package com.thuctap.fastfood.controllers;
 
 import com.thuctap.fastfood.dto.ProductImportDTO;
 import com.thuctap.fastfood.entities.*;
-import com.thuctap.fastfood.services.AccountService;
-import com.thuctap.fastfood.services.ProductImportNoteService;
-import com.thuctap.fastfood.services.ProductService;
-import com.thuctap.fastfood.services.StaffService;
+import com.thuctap.fastfood.services.*;
+
 import java.time.LocalDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,7 +18,7 @@ public class StaffController {
   private final StaffService staffService;
   private final ProductService productService;
   private final ProductImportNoteService productImportNoteService;
-
+  private final BillService billService;
   @PostMapping("/importNote")
   public ResponseEntity<Integer> saveImportNote(@RequestBody ProductImportDTO productImportDTO) {
     Optional<Account> accountOptional = accountService.findById(productImportDTO.getAccountId());
@@ -58,5 +53,32 @@ public class StaffController {
       }
     }
     return ResponseEntity.ok(null);
+  }
+
+  @PostMapping("/payment-confirmation")
+  public ResponseEntity<Boolean> paymentConfirmation(@RequestParam("billId") Integer billId, @RequestParam("accountId") Integer accountId) {
+    Optional<Bill> billOptional = billService.findById(billId);
+    Optional<Account> accountOptional = accountService.findById(accountId);
+    if (billOptional.isPresent() && accountOptional.isPresent()) {
+      Bill bill = billOptional.get();
+      Account account = accountOptional.get();
+      Staff staff = staffService.findById(account.getIdPerson()).get();
+      bill.setStatus("Đã Thanh Toán");
+      bill.setDateSuccessfullyPaid(LocalDateTime.now());
+      bill.setStaff(staff);
+
+      // Lập phiếu xuất
+      ProductExportNote exportNote = new ProductExportNote();
+      exportNote.setDate(LocalDateTime.now());
+      exportNote.setBill(bill);
+
+       bill.setExportNote(exportNote);
+      exportNote =  billService.save(exportNote);
+      bill.setExportNote(exportNote);
+      billService.save(bill);
+      return ResponseEntity.ok(true);
+    }
+
+    return ResponseEntity.ok(false);
   }
 }

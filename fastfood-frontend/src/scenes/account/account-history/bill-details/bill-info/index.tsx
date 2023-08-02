@@ -6,6 +6,8 @@ type Props = {
 };
 
 const BillInfo = ({ bill }: Props) => {
+  console.log('bill:', bill);
+
   const statusColor =
     bill.status === 'Đã Thanh Toán'
       ? 'text-green-600'
@@ -24,16 +26,16 @@ const BillInfo = ({ bill }: Props) => {
         </p>
         <p className="text-sm text-slate-500">
           Ngày đặt hàng:{' '}
-          <span className="font-semibold text-black">
-            {dayjs(bill.dateCreatead).format('DD/MM/YYYY hh:mm:ss A')}
-          </span>
+          <p className="font-semibold text-black">
+            {dayjs(bill.dateCreated).format('DD/MM/YYYY hh:mm:ss A')}
+          </p>
         </p>
         {bill.dateSuccessfullyPaid && (
           <p className="text-sm text-slate-500">
-            Thanh toán thành công:{' '}
-            <span className="font-semibold text-black">
+            Xác nhận thanh toán thành công:{' '}
+            <p className="font-semibold text-black">
               {dayjs(bill.dateSuccessfullyPaid).format('DD/MM/YYYY hh:mm:ss A')}
-            </span>
+            </p>
           </p>
         )}
 

@@ -23,5 +23,5 @@ public class BillDTO {
   private String status;
   private LocalDateTime dateCreated;
   private LocalDateTime dateSuccessfullyPaid;
-
+  private String qrPaymentPath;
 }

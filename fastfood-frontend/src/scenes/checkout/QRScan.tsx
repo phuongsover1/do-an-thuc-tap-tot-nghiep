@@ -80,6 +80,7 @@ const QRScan = () => {
   const [invalidateTime, setInvalidateTime] = useState(false);
   const [bill, setBill] = useState<Bill | null>(null);
   const { billId } = useParams();
+  const qrStatus = invalid || !isPaid ? 'active' : 'expired';
 
   useEffect(() => {
     async function fetchBillStatus(billId: number) {
@@ -388,7 +389,7 @@ const QRScan = () => {
               {bill && (
                 <QRCode
                   value={`http://192.168.1.11:8080/api/bills/paid/${bill.billId}?qr_path=http://192.168.1.11:8080/api/bills/paid/${bill.billId}`}
-                  status={invalid ? 'expired' : 'active'}
+                  status={qrStatus ? 'active' : 'expired'}
                 />
               )}
               <div

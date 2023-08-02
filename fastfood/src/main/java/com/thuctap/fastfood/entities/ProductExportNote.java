@@ -12,10 +12,8 @@ import java.time.LocalDateTime;
 @Entity(name = "ProductExportNote")
 public class ProductExportNote {
   @Id
-  @SequenceGenerator(
-      name = "good_export_notes_sequence",
-      sequenceName = "good_export_notes_sequence",
-      allocationSize = 1)
+
+      @GeneratedValue(strategy = GenerationType.AUTO)
   private Integer id;
 
   @OneToOne
