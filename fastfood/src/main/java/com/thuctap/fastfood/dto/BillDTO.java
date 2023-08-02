@@ -1,14 +1,15 @@
 package com.thuctap.fastfood.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class BillDTO {
   private Integer billId;
   private Integer accountId;
@@ -19,5 +20,5 @@ public class BillDTO {
   private Double totalPrice;
   private String paymentMethod;
   private String status;
-
+  private LocalDateTime dateCreated;
 }

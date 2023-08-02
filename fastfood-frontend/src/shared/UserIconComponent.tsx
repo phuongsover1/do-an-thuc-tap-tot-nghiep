@@ -42,12 +42,15 @@ const UserIconComponent = ({ userIconClickedHandler, open }: Props) => {
               </li>
             </Link>
 
-            <li className="flex items-center gap-2">
-              <span>
-                <DocumentTextIcon className="h-6 w-6" />
-              </span>
-              <span>Order History</span>
-            </li>
+            <Link to="/account/history" onClick={userIconClickedHandler}>
+              <li className="flex items-center gap-2">
+                <span>
+                  <DocumentTextIcon className="h-6 w-6" />
+                </span>
+                <span>Order History</span>
+              </li>
+            </Link>
+
             <li>
               <button
                 className="flex items-center gap-2"

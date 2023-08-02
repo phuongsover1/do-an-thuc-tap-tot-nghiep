@@ -48,11 +48,11 @@ public class Bill {
   @Column(name = "total_price", columnDefinition = "DOUBLE")
   private Double totalPrice;
 
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "id_user")
   private User user;
 
-  @OneToOne
+  @ManyToOne
   @JoinColumn(name = "id_staff")
   private Staff staff;
 

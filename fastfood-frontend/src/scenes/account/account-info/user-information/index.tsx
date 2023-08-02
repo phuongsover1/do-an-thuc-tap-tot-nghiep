@@ -14,8 +14,6 @@ import { useFormik } from 'formik';
 import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 
-type Props = {};
-
 const validationSchema = Yup.object({
   lastName: Yup.string().trim().required('Họ và tên đệm không được để trống'),
   firstName: Yup.string().trim().required('Tên không được để trống'),
@@ -38,7 +36,7 @@ const initialValues: UserInfor = {
   email: '',
   phoneNumber: '',
 };
-const UserInformation = (props: Props) => {
+const UserInformation = () => {
   const dayjsObj = dayjs();
   const dateToday = dayjsObj.format('YYYY-MM-DD');
   const accountId = useAppSelector((state) => state.auth.idAccount);

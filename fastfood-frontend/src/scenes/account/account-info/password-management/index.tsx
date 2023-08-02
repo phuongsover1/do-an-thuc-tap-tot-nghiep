@@ -3,9 +3,8 @@ import CustomizedSnackbars from '@/shared/CustomizedSnackbars';
 import { Message } from '@/shared/MessageType';
 import { useAppSelector } from '@/store';
 import { useFormik } from 'formik';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import * as Yup from 'yup';
-type Props = {};
 
 const validationSchema = Yup.object({
   oldPassword: Yup.string().trim().required('Mật khẩu cũ không được để trống'),
@@ -20,7 +19,7 @@ const initialValues = {
   newPassword: '',
   newTypedPassword: '',
 };
-const PasswordManagement = (props: Props) => {
+const PasswordManagement = () => {
   const [isOldPasswordCorrect, setisOldPasswordCorrect] = useState(true);
   const [messageEnable, setMessageEnable] = useState(false);
   const [messageState, setMessage] = useState<Message>({

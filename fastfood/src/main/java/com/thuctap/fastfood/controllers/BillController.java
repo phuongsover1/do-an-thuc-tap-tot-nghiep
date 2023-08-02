@@ -1,10 +1,15 @@
 package com.thuctap.fastfood.controllers;
 
 import com.thuctap.fastfood.dto.BillDTO;
+import com.thuctap.fastfood.dto.CartProductDTO;
 import com.thuctap.fastfood.entities.*;
 import com.thuctap.fastfood.services.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +25,33 @@ public class BillController {
   private final ProductService productService;
   private final UserService userService;
   private final CartService cartService;
+
+  @GetMapping
+  public ResponseEntity<List<BillDTO>> getAllBillsOfAccount(@RequestParam("accountId") Integer accountId) {
+    List<BillDTO> billDTOS  = new ArrayList<>();
+    Optional<Account> accountOptional = accountService.findById(accountId);
+    if (accountOptional.isPresent()) {
+      Account account = accountOptional.get();
+       Optional<User> userOptional = userService.findById(account.getIdPerson());
+        if (userOptional.isPresent()){
+          User user = userOptional.get();
+          user.getBills().forEach(bill -> {
+            BillDTO dto = new BillDTO();
+            entityToDTO(bill,dto);
+            billDTOS.add(dto);
+          });
+        }
+    }
+    return ResponseEntity.ok(billDTOS);
+  }
+
+  private void entityToDTO(Bill entity, BillDTO dto) {
+    dto.setBillId(entity.getId());
+    dto.setTotalPrice(entity.getTotalPrice());
+    dto.setPaymentMethod(entity.getPaymentMethod());
+    dto.setStatus(entity.getStatus());
+    dto.setDateCreated(entity.getDateCreated());
+  }
 
   @GetMapping("/{billId}")
   public ResponseEntity<BillDTO> findBillById(@PathVariable Integer billId) {
@@ -39,12 +71,32 @@ public class BillController {
     return ResponseEntity.ok(billDTO);
   }
 
+  @GetMapping("/details")
+  public ResponseEntity<List<CartProductDTO>> getBillDetails(@RequestParam("billId") Integer billId) {
+    Optional<Bill> billOptional = billService.findById(billId);
+    List<CartProductDTO> billDetails;
+    if (billOptional.isPresent()) {
+      Bill bill = billOptional.get();
+      billDetails = new ArrayList<>();
+      bill.getBillDetails().forEach(billDetail -> {
+        CartProductDTO cartProductDTO = new CartProductDTO();
+        cartProductDTO
+                .setProductId(billDetail.getPrimaryKey().getProductId());
+        cartProductDTO.setQuantity(billDetail.getQuantity());
+        billDetails.add(cartProductDTO);
+      });
+    } else {
+      billDetails = null;
+    }
+    return ResponseEntity.ok(billDetails);
+  }
+
   @GetMapping("/paid/{billId}")
   public ResponseEntity<Boolean> successfullyPaid(@PathVariable Integer billId) {
     Optional<Bill> billOptional = billService.findById(billId);
     if (billOptional.isPresent()) {
       Bill bill = billOptional.get();
-      bill.setStatus("Đã Thanh Toán");
+      bill.setStatus("Đang Chờ Duyệt");
       bill.setDateSuccessfullyPaid(LocalDateTime.now());
       billService.save(bill);
       return ResponseEntity.ok(true);
@@ -52,7 +104,7 @@ public class BillController {
     return ResponseEntity.ok(false);
   }
 
-  @PostMapping("/cancel")
+  @GetMapping("/cancel")
   public ResponseEntity<Boolean> cancelBill(@RequestParam("billId") Integer billId) {
     Optional<Bill> billOptional = billService.findById(billId);
     if (billOptional.isPresent()) {

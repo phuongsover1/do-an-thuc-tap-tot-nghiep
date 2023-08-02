@@ -158,7 +158,7 @@ const QRScan = () => {
     console.log('new data: ', data);
 
     const status = data.status;
-    if (status === 'Đã Thanh Toán') setIsPaid(true);
+    if (status === 'Đang Chờ Duyệt') setIsPaid(true);
   };
 
   useEffect(() => {
@@ -198,8 +198,9 @@ const QRScan = () => {
       setInvalidateTime(true);
       void message.error(failedPaidNavigateContent, 3, () => {
         invalid = false;
+
         axiosInstance
-          .post('/bills/cancel', {}, { params: { billId: bill?.billId } })
+          .get('/bills/cancel', { params: { billId: billId } })
           .then((res) => {
             console.log('res navigate: ', res);
 
@@ -208,14 +209,20 @@ const QRScan = () => {
           .catch((error) => console.log('error: ', error));
       });
     }
-  }, [invalid, navigate, bill?.billId]);
+  }, [invalid, navigate, bill]);
 
   // khi user ấn nút quay lại, hoặc chuyển đi trang khác khi mà chưa thanh toán xong :
   const onOkHandler = () => {
     // setInvalidateTime(true);
     // your logic
     invalid = false;
-    navigate('/');
+    axiosInstance
+      .get('/bills/cancel', { params: { billId: billId } })
+      .then((res) => {
+        console.log('res navigate: ', res);
+        navigate(`/`, { replace: true });
+      })
+      .catch((error) => console.log('error: ', error));
   };
   const onCancelHandler = () => {
     window.history.pushState(null, null, window.location.pathname);

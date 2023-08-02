@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
@@ -49,4 +51,7 @@ public class Staff implements Serializable {
   @OneToMany(mappedBy = "staff")
   @JsonManagedReference
   private Set<ProductImportNote> importNotes = new HashSet<>();
+
+  @OneToMany(mappedBy = "staff")
+  private List<Bill> bills =  new ArrayList<>();
 }
