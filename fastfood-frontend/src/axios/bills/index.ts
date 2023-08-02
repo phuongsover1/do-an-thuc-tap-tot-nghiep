@@ -8,6 +8,18 @@ export interface BillHistory {
   paymentMethod: string;
 }
 
+export type Bill = {
+  billId: number;
+  notes: string;
+  address: string;
+  phoneNumber: string;
+  totalPrice: number;
+  paymentMethod: string;
+  status: string;
+  dateCreatead: string;
+  dateSuccessfullyPaid: string;
+};
+
 export const fetAllBills = async (accountId: number) => {
   const response = await axiosInstance.get('/bills', { params: { accountId } });
   return response.data as BillHistory[];
@@ -23,4 +35,9 @@ export const fetchBillDetails = async (billId: number) => {
     params: { billId },
   });
   return response.data as BillDetails[];
+};
+
+export const fetchBill = async (billId: number) => {
+  const response = await axiosInstance.get(`/bills/${billId}`);
+  return response.data as Bill;
 };

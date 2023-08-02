@@ -15,7 +15,7 @@ const AccountRoot = (props: Props) => {
   console.log('active: ', active);
 
   return (
-    <div className="container m-auto mb-10 mt-32 flex max-w-6xl rounded-lg shadow">
+    <div className="container m-auto mb-10 mt-32 flex max-w-7xl rounded-lg shadow">
       <div className="sidebar basis-80 rounded-l-lg  bg-red-400 text-white">
         <p className="p-5">LE NGUYEN DUY PHUONG</p>
         <ul className="">

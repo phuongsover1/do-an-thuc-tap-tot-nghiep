@@ -62,8 +62,8 @@ const CartItem = ({ cartItem, isTop1 }: Props) => {
             {product?.name}
           </p>
           <p>
-            {product && product.price}
-            {'x'} {quantity} {' = '}
+            {product && handleMoney(product.price)}
+            {' x'} {quantity} {' = '}
             {product && handleMoney(product.price * quantity)}
             <span className="underline underline-offset-1">đ</span>
           </p>
@@ -71,7 +71,8 @@ const CartItem = ({ cartItem, isTop1 }: Props) => {
       </div>
 
       <div className="right-div flex items-center gap-10">
-        <div className="flex items-center gap-2">
+        <div className="mr-8 flex items-center gap-2">
+          <span className="text-sm">Số lượng:</span>
           <div className="relative flex h-8 w-8 justify-center rounded-md bg-red-100 text-center text-lg">
             <span className="self-center text-slate-700">{quantity}</span>
           </div>

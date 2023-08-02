@@ -1,6 +1,7 @@
 package com.thuctap.fastfood.dto;
 
 import lombok.*;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,4 +22,6 @@ public class BillDTO {
   private String paymentMethod;
   private String status;
   private LocalDateTime dateCreated;
+  private LocalDateTime dateSuccessfullyPaid;
+
 }

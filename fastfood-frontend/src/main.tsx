@@ -15,7 +15,7 @@ import QRScan from './scenes/checkout/QRScan';
 import AccountRoot from './scenes/account/account-root';
 import AccountInfo from './scenes/account/account-info';
 import AccountHistory from './scenes/account/account-history';
-import BillDetails from './scenes/account/account-history/bill-details';
+import BillDetailsPage from './scenes/account/account-history/bill-details';
 
 const router = createBrowserRouter([
   {
@@ -47,7 +47,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/account/history/details/:billId',
-        element: <BillDetails />,
+        element: <BillDetailsPage />,
       },
     ],
   },

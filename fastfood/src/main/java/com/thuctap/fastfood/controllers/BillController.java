@@ -8,8 +8,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -27,20 +25,23 @@ public class BillController {
   private final CartService cartService;
 
   @GetMapping
-  public ResponseEntity<List<BillDTO>> getAllBillsOfAccount(@RequestParam("accountId") Integer accountId) {
-    List<BillDTO> billDTOS  = new ArrayList<>();
+  public ResponseEntity<List<BillDTO>> getAllBillsOfAccount(
+      @RequestParam("accountId") Integer accountId) {
+    List<BillDTO> billDTOS = new ArrayList<>();
     Optional<Account> accountOptional = accountService.findById(accountId);
     if (accountOptional.isPresent()) {
       Account account = accountOptional.get();
-       Optional<User> userOptional = userService.findById(account.getIdPerson());
-        if (userOptional.isPresent()){
-          User user = userOptional.get();
-          user.getBills().forEach(bill -> {
-            BillDTO dto = new BillDTO();
-            entityToDTO(bill,dto);
-            billDTOS.add(dto);
-          });
-        }
+      Optional<User> userOptional = userService.findById(account.getIdPerson());
+      if (userOptional.isPresent()) {
+        User user = userOptional.get();
+        user.getBills()
+            .forEach(
+                bill -> {
+                  BillDTO dto = new BillDTO();
+                  entityToDTO(bill, dto);
+                  billDTOS.add(dto);
+                });
+      }
     }
     return ResponseEntity.ok(billDTOS);
   }
@@ -65,6 +66,10 @@ public class BillController {
               .paymentMethod(bill.getPaymentMethod())
               .status(bill.getStatus())
               .totalPrice(bill.getTotalPrice())
+              .dateSuccessfullyPaid(bill.getDateSuccessfullyPaid())
+              .address(bill.getAddress())
+              .phoneNumber(bill.getPhoneNumber())
+              .notes(bill.getNotes())
               .build();
     }
 
@@ -72,19 +77,21 @@ public class BillController {
   }
 
   @GetMapping("/details")
-  public ResponseEntity<List<CartProductDTO>> getBillDetails(@RequestParam("billId") Integer billId) {
+  public ResponseEntity<List<CartProductDTO>> getBillDetails(
+      @RequestParam("billId") Integer billId) {
     Optional<Bill> billOptional = billService.findById(billId);
     List<CartProductDTO> billDetails;
     if (billOptional.isPresent()) {
       Bill bill = billOptional.get();
       billDetails = new ArrayList<>();
-      bill.getBillDetails().forEach(billDetail -> {
-        CartProductDTO cartProductDTO = new CartProductDTO();
-        cartProductDTO
-                .setProductId(billDetail.getPrimaryKey().getProductId());
-        cartProductDTO.setQuantity(billDetail.getQuantity());
-        billDetails.add(cartProductDTO);
-      });
+      bill.getBillDetails()
+          .forEach(
+              billDetail -> {
+                CartProductDTO cartProductDTO = new CartProductDTO();
+                cartProductDTO.setProductId(billDetail.getPrimaryKey().getProductId());
+                cartProductDTO.setQuantity(billDetail.getQuantity());
+                billDetails.add(cartProductDTO);
+              });
     } else {
       billDetails = null;
     }
@@ -92,12 +99,14 @@ public class BillController {
   }
 
   @GetMapping("/paid/{billId}")
-  public ResponseEntity<Boolean> successfullyPaid(@PathVariable Integer billId) {
+  public ResponseEntity<Boolean> successfullyPaid(
+      @PathVariable Integer billId, @RequestParam("qr_path") String qrPath) {
     Optional<Bill> billOptional = billService.findById(billId);
     if (billOptional.isPresent()) {
       Bill bill = billOptional.get();
       bill.setStatus("Đang Chờ Duyệt");
       bill.setDateSuccessfullyPaid(LocalDateTime.now());
+      bill.setQrPaymentPath(qrPath);
       billService.save(bill);
       return ResponseEntity.ok(true);
     }

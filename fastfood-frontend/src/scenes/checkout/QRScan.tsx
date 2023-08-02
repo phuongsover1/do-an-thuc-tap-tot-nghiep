@@ -187,7 +187,7 @@ const QRScan = () => {
   if (isPaid) {
     invalid = false;
     void message.success(sucessfulPaidNavigateContent, 4, () => {
-      navigate('/customer/profiledetails', { replace: true });
+      navigate('/account/history', { replace: true });
     });
   }
 
@@ -387,7 +387,7 @@ const QRScan = () => {
               </Typography.Title>
               {bill && (
                 <QRCode
-                  value={`http://192.168.1.11:8080/api/bills/paid/${bill.billId}`}
+                  value={`http://192.168.1.11:8080/api/bills/paid/${bill.billId}?qr_path=http://192.168.1.11:8080/api/bills/paid/${bill.billId}`}
                   status={invalid ? 'expired' : 'active'}
                 />
               )}

@@ -12,6 +12,7 @@ import { BillHistory, fetAllBills } from '@/axios/bills';
 import { handleMoney } from '@/shared/Utils';
 import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
+import { validateYupSchema } from 'formik';
 
 const columns: ColumnsType<BillHistory> = [
   {
@@ -19,6 +20,9 @@ const columns: ColumnsType<BillHistory> = [
     dataIndex: 'billId',
     key: 'billId',
     render: (text) => <p>{text}</p>,
+
+    sorter: (a, b) => a.billId - b.billId,
+    sortDirections: ['descend', 'ascend', 'descend'],
   },
   {
     title: 'Ngày đặt',
@@ -27,6 +31,10 @@ const columns: ColumnsType<BillHistory> = [
     render: (text: string) => (
       <p>{dayjs(text).format('DD/MM/YYYY hh:mm:ss A')}</p>
     ),
+    sorter: (a, b) =>
+      dayjs(a.dateCreated).toDate().getTime() -
+      dayjs(b.dateCreated).toDate().getTime(),
+    sortDirections: ['descend', 'ascend', 'descend'],
   },
   {
     title: 'Tổng tiền',
@@ -101,6 +109,9 @@ const AccountHistory = () => {
 
   return (
     <div>
+      <p className="border-b border-red-400 py-5 text-center text-2xl font-bold text-slate-700">
+        LICH SỬ ĐƠN HÀNG
+      </p>
       <Table
         columns={columns}
         pagination={{ position: ['bottomRight'] }}
