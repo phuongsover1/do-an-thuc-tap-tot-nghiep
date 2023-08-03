@@ -1,10 +1,14 @@
 package com.thuctap.fastfood.controllers;
 
 import com.thuctap.fastfood.dto.ProductImportDTO;
+import com.thuctap.fastfood.dto.StaffDTO;
+import com.thuctap.fastfood.dto.UserDTO;
 import com.thuctap.fastfood.entities.*;
 import com.thuctap.fastfood.services.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +23,7 @@ public class StaffController {
   private final ProductService productService;
   private final ProductImportNoteService productImportNoteService;
   private final BillService billService;
+  private final UserService userService;
   @PostMapping("/importNote")
   public ResponseEntity<Integer> saveImportNote(@RequestBody ProductImportDTO productImportDTO) {
     Optional<Account> accountOptional = accountService.findById(productImportDTO.getAccountId());
@@ -55,6 +60,75 @@ public class StaffController {
     return ResponseEntity.ok(null);
   }
 
+  @GetMapping("/check-email-phone-number")
+  public ResponseEntity<Map<String, String>> checkEmailAndPhoneNumber(
+          @RequestParam("email") String email,
+          @RequestParam("phoneNumber") String phoneNumber,
+          @RequestParam("accountId") Integer accountId) {
+    Map<String, String> map = new HashMap<>();
+    Optional<Account> accountOptional = accountService.findById(accountId);
+    if (accountOptional.isPresent()) {
+      Account account = accountOptional.get();
+      Optional<Staff> staffOfAccountOptional = staffService.findById(account.getIdPerson());
+      if (staffOfAccountOptional.isPresent()) {
+        Staff staffOfAccount = staffOfAccountOptional.get();
+
+        Optional<Staff> staffOptional = staffService.findByEmail(email);
+        if (staffOptional.isPresent()) {
+          Staff staff = staffOptional.get();
+          if (!staffOfAccount.getId().equals(staff.getId()))
+            map.put("email", "Đã tồn tại tài khoản có email này");
+        }
+        staffOptional = staffService.findByPhoneNumber(phoneNumber);
+        if (staffOptional.isPresent()) {
+          Staff staff = staffOptional.get();
+          if (!staff.getId().equals(staffOfAccount.getId()))
+            map.put("phoneNumber", "Đã tồn tại tài khoản có số điện thoại này");
+        }
+
+        Optional<User> userOptional = userService.findByEmail(email);
+        if (userOptional.isPresent()) {
+          map.put("email", "Đã tồn tại tài khoản có email này");
+        }
+
+        userOptional = userService.findByPhoneNumber(phoneNumber);
+        if (userOptional.isPresent()) {
+          map.put("phoneNumber", "Đã tồn tại tài khoản có số điện thoại này");
+        }
+      }
+    }
+    return ResponseEntity.ok(map);
+  }
+
+  @GetMapping("/find-staff-by-account-id")
+  public ResponseEntity<StaffDTO> findUserByAccountId(@RequestParam("accountId") Integer accountId) {
+    StaffDTO staffDTO = null;
+    Optional<Account> accountOptional = accountService.findById(accountId);
+    if (accountOptional.isPresent()) {
+      Optional<Staff> staffOptional = staffService.findById(accountOptional.get().getIdPerson());
+      if (staffOptional.isPresent()) {
+        Staff staff = staffOptional.get();
+        staffDTO = staffService.toDTO(staff);
+      }
+    }
+    return ResponseEntity.ok(staffDTO);
+  }
+
+  @PostMapping("/update-info-by-account")
+  public ResponseEntity<Boolean> updateInfoByAccount(@RequestBody StaffDTO staffDTO, @RequestParam("accountId") Integer accountId) {
+    Optional<Account> accountOptional = accountService.findById(accountId);
+    if (accountOptional.isPresent()) {
+      Optional<Staff> staffOptional  = staffService.findById(accountOptional.get().getIdPerson());
+      if (staffOptional.isPresent()) {
+        Staff staff = staffOptional.get();
+        staffService.changeFieldsDTOToEntity(staffDTO, staff);
+        staffService.save(staff);
+        return ResponseEntity.ok(true);
+      }
+    }
+    return ResponseEntity.ok(false);
+  }
+
   @PostMapping("/payment-confirmation")
   public ResponseEntity<Boolean> paymentConfirmation(@RequestParam("billId") Integer billId, @RequestParam("accountId") Integer accountId) {
     Optional<Bill> billOptional = billService.findById(billId);
@@ -73,9 +147,9 @@ public class StaffController {
       exportNote.setBill(bill);
 
        bill.setExportNote(exportNote);
-      exportNote =  billService.save(exportNote);
-      bill.setExportNote(exportNote);
       billService.save(bill);
+//      exportNote =  billService.save(exportNote);
+//      bill.setExportNote(exportNote);
       return ResponseEntity.ok(true);
     }
 

@@ -23,6 +23,7 @@ public class BillController {
   private final ProductService productService;
   private final UserService userService;
   private final CartService cartService;
+  private final StaffService staffService;
 
   @GetMapping
   public ResponseEntity<List<BillDTO>> getAllBillsOfAccount(
@@ -43,6 +44,41 @@ public class BillController {
                 });
       }
     }
+    return ResponseEntity.ok(billDTOS);
+  }
+
+  @GetMapping("successful-bills")
+  public ResponseEntity<List<BillDTO>> getAllSuccessfulBills(
+      @RequestParam("accountId") Integer accountId) {
+    List<BillDTO> billDTOS = new ArrayList<>();
+    Optional<Account> accountOptional = accountService.findById(accountId);
+    if (accountOptional.isPresent()) {
+      Staff staff = staffService.findById(accountOptional.get().getIdPerson()).orElse(null);
+      if (staff != null) {
+        billService
+            .findAllBills("Đã Thanh Toán")
+            .forEach(
+                bill -> {
+                  if (bill.getStaff().getId().equals(staff.getId())) {
+                    BillDTO billDTO =
+                        BillDTO.builder()
+                            .billId(bill.getId())
+                            .paymentMethod(bill.getPaymentMethod())
+                            .status(bill.getStatus())
+                            .totalPrice(bill.getTotalPrice())
+                            .dateCreated(bill.getDateCreated())
+                            .dateSuccessfullyPaid(bill.getDateSuccessfullyPaid())
+                            .address(bill.getAddress())
+                            .phoneNumber(bill.getPhoneNumber())
+                            .notes(bill.getNotes())
+                            .qrPaymentPath(bill.getQrPaymentPath())
+                            .build();
+                    billDTOS.add(billDTO);
+                  }
+                });
+      }
+    }
+
     return ResponseEntity.ok(billDTOS);
   }
 

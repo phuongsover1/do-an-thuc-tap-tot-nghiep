@@ -56,7 +56,8 @@ public class Bill {
   @JoinColumn(name = "id_staff")
   private Staff staff;
 
-  @OneToOne(mappedBy = "bill")
+  @OneToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "id_export_note")
   private ProductExportNote exportNote;
 
   @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL)

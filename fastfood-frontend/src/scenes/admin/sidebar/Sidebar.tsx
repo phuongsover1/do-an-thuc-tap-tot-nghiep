@@ -1,9 +1,17 @@
 import axiosInstance from '@/axios/axios';
-import { useAppSelector } from '@/store';
-import { DocumentTextIcon } from '@heroicons/react/24/outline';
-import { Link } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { authActions } from '@/store/auth/auth-slice';
+import {
+  DocumentCheckIcon,
+  DocumentTextIcon,
+  UserIcon,
+} from '@heroicons/react/24/outline';
+import { Link, useNavigate } from 'react-router-dom';
 const Sidebar = () => {
   const roleName = useAppSelector((state) => state.auth.roleName);
+
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   return (
     <>
       <aside
@@ -46,33 +54,37 @@ const Sidebar = () => {
                   </form>
                 </li>
                 <li>
-                  <a
-                    href=""
+                  <Link
+                    to={'/staff/info'}
                     className="group flex items-center rounded-lg p-2 text-base text-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
                   >
-                    <svg
-                      className="h-6 w-6 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
-                      <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
-                    </svg>
+                    <UserIcon className="h-6 w-6" />
                     <span className="ml-3" sidebar-toggle-item>
-                      Dashboard
+                      Information
                     </span>
-                  </a>
+                  </Link>
                 </li>
-                <li>
-                  <Link to="/staff/bills">
+                {roleName && roleName === 'STAFF' && (
+                  <li>
                     <button
                       type="button"
                       className="group flex w-full items-center rounded-lg p-2 text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-                      aria-controls="dropdown-layouts"
-                      data-collapse-toggle="dropdown-layouts"
+                      aria-controls="dropdown-crud"
+                      data-collapse-toggle="dropdown-crud"
                     >
-                      <DocumentTextIcon className="h-6 w-6" />
+                      <svg
+                        className="h-6 w-6 flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                      >
+                        <path
+                          clip-rule="evenodd"
+                          fill-rule="evenodd"
+                          d="M.99 5.24A2.25 2.25 0 013.25 3h13.5A2.25 2.25 0 0119 5.25l.01 9.5A2.25 2.25 0 0116.76 17H3.26A2.267 2.267 0 011 14.74l-.01-9.5zm8.26 9.52v-.625a.75.75 0 00-.75-.75H3.25a.75.75 0 00-.75.75v.615c0 .414.336.75.75.75h5.373a.75.75 0 00.627-.74zm1.5 0a.75.75 0 00.627.74h5.373a.75.75 0 00.75-.75v-.615a.75.75 0 00-.75-.75H11.5a.75.75 0 00-.75.75v.625zm6.75-3.63v-.625a.75.75 0 00-.75-.75H11.5a.75.75 0 00-.75.75v.625c0 .414.336.75.75.75h5.25a.75.75 0 00.75-.75zm-8.25 0v-.625a.75.75 0 00-.75-.75H3.25a.75.75 0 00-.75.75v.625c0 .414.336.75.75.75H8.5a.75.75 0 00.75-.75zM17.5 7.5v-.625a.75.75 0 00-.75-.75H11.5a.75.75 0 00-.75.75V7.5c0 .414.336.75.75.75h5.25a.75.75 0 00.75-.75zm-8.25 0v-.625a.75.75 0 00-.75-.75H3.25a.75.75 0 00-.75.75V7.5c0 .414.336.75.75.75H8.5a.75.75 0 00.75-.75z"
+                        ></path>
+                      </svg>
                       <span
                         className="ml-3 flex-1 whitespace-nowrap text-left"
                         sidebar-toggle-item
@@ -93,27 +105,167 @@ const Sidebar = () => {
                         ></path>
                       </svg>
                     </button>
-                  </Link>
+                    <ul className="space-y-2 py-2">
+                      <li className="group flex items-center rounded-lg p-2 pl-5 text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700">
+                        <Link to="/staff/bills">
+                          <button
+                            type="button"
+                            className="group flex w-full items-center rounded-lg  text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                            aria-controls="dropdown-layouts"
+                            data-collapse-toggle="dropdown-layouts"
+                          >
+                            <DocumentTextIcon className="h-6 w-6" />
+                            <span
+                              className="ml-3 flex-1 whitespace-nowrap text-left"
+                              sidebar-toggle-item
+                            >
+                              Đơn hàng chờ thanh toán
+                            </span>
+                          </button>
+                        </Link>
+                      </li>
+                      <li className="group flex items-center rounded-lg p-2 pl-5 text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700">
+                        <Link to="/staff/bills/successful-bills">
+                          <button
+                            type="button"
+                            className="group flex w-full items-center rounded-lg  text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                            aria-controls="dropdown-layouts"
+                            data-collapse-toggle="dropdown-layouts"
+                          >
+                            <DocumentCheckIcon className="h-6 w-6" />
+                            <span
+                              className="ml-3 flex-1 whitespace-nowrap text-left"
+                              sidebar-toggle-item
+                            >
+                              Đơn hàng đã thanh toán
+                            </span>
+                          </button>
+                        </Link>
+                      </li>
+                    </ul>
 
-                  <ul id="dropdown-layouts" className="hidden space-y-2 py-2">
-                    <li>
-                      <a
-                        href=""
-                        className="group flex items-center rounded-lg p-2 pl-11 text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                    <ul id="dropdown-layouts" className="hidden space-y-2 py-2">
+                      <li>
+                        <a
+                          href=""
+                          className="group flex items-center rounded-lg p-2 pl-11 text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                        >
+                          Stacked
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href=""
+                          className="group flex items-center rounded-lg p-2 pl-11 text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                        >
+                          Sidebar
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+                )}
+
+                {roleName && roleName === 'ADMIN' && (
+                  <li>
+                    <button
+                      type="button"
+                      className="group flex w-full items-center rounded-lg p-2 text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                      aria-controls="dropdown-crud"
+                      data-collapse-toggle="dropdown-crud"
+                    >
+                      <svg
+                        className="h-6 w-6 flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
                       >
-                        Stacked
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href=""
-                        className="group flex items-center rounded-lg p-2 pl-11 text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                        <path
+                          clip-rule="evenodd"
+                          fill-rule="evenodd"
+                          d="M.99 5.24A2.25 2.25 0 013.25 3h13.5A2.25 2.25 0 0119 5.25l.01 9.5A2.25 2.25 0 0116.76 17H3.26A2.267 2.267 0 011 14.74l-.01-9.5zm8.26 9.52v-.625a.75.75 0 00-.75-.75H3.25a.75.75 0 00-.75.75v.615c0 .414.336.75.75.75h5.373a.75.75 0 00.627-.74zm1.5 0a.75.75 0 00.627.74h5.373a.75.75 0 00.75-.75v-.615a.75.75 0 00-.75-.75H11.5a.75.75 0 00-.75.75v.625zm6.75-3.63v-.625a.75.75 0 00-.75-.75H11.5a.75.75 0 00-.75.75v.625c0 .414.336.75.75.75h5.25a.75.75 0 00.75-.75zm-8.25 0v-.625a.75.75 0 00-.75-.75H3.25a.75.75 0 00-.75.75v.625c0 .414.336.75.75.75H8.5a.75.75 0 00.75-.75zM17.5 7.5v-.625a.75.75 0 00-.75-.75H11.5a.75.75 0 00-.75.75V7.5c0 .414.336.75.75.75h5.25a.75.75 0 00.75-.75zm-8.25 0v-.625a.75.75 0 00-.75-.75H3.25a.75.75 0 00-.75.75V7.5c0 .414.336.75.75.75H8.5a.75.75 0 00.75-.75z"
+                        ></path>
+                      </svg>
+                      <span
+                        className="ml-3 flex-1 whitespace-nowrap text-left"
+                        sidebar-toggle-item
                       >
-                        Sidebar
-                      </a>
-                    </li>
-                  </ul>
-                </li>
+                        Danh sách nhân viên
+                      </span>
+                      <svg
+                        sidebar-toggle-item
+                        className="h-6 w-6"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          clip-rule="evenodd"
+                        ></path>
+                      </svg>
+                    </button>
+                    <ul className="space-y-2 py-2">
+                      <li className="group flex items-center rounded-lg p-2 pl-5 text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700">
+                        <Link to="/admin/staffs/true">
+                          <button
+                            type="button"
+                            className="group flex w-full items-center rounded-lg  text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                            aria-controls="dropdown-layouts"
+                            data-collapse-toggle="dropdown-layouts"
+                          >
+                            <DocumentTextIcon className="h-6 w-6" />
+                            <span
+                              className="ml-3 flex-1 whitespace-nowrap text-left"
+                              sidebar-toggle-item
+                            >
+                              Nhân viên đang làm việc
+                            </span>
+                          </button>
+                        </Link>
+                      </li>
+                      <li className="group flex items-center rounded-lg p-2 pl-5 text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700">
+                        <Link to="/admin/staffs/false">
+                          <button
+                            type="button"
+                            className="group flex w-full items-center rounded-lg  text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                            aria-controls="dropdown-layouts"
+                            data-collapse-toggle="dropdown-layouts"
+                          >
+                            <DocumentCheckIcon className="h-6 w-6" />
+                            <span
+                              className="ml-3 flex-1 whitespace-nowrap text-left"
+                              sidebar-toggle-item
+                            >
+                              Nhân viên đã nghỉ việc
+                            </span>
+                          </button>
+                        </Link>
+                      </li>
+                    </ul>
+
+                    <ul id="dropdown-layouts" className="hidden space-y-2 py-2">
+                      <li>
+                        <a
+                          href=""
+                          className="group flex items-center rounded-lg p-2 pl-11 text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                        >
+                          Stacked
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href=""
+                          className="group flex items-center rounded-lg p-2 pl-11 text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                        >
+                          Sidebar
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+                )}
+
                 <li>
                   <button
                     type="button"
@@ -186,8 +338,11 @@ const Sidebar = () => {
                   </ul>
                 </li>
                 <li>
-                  <a
-                    href=""
+                  <button
+                    onClick={() => {
+                      dispatch(authActions.setLogout());
+                      navigate('/');
+                    }}
                     className="group flex items-center rounded-lg p-2 text-base text-gray-900 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 "
                   >
                     <svg
@@ -204,9 +359,9 @@ const Sidebar = () => {
                       ></path>
                     </svg>
                     <span className="ml-3" sidebar-toggle-item>
-                      Settings
+                      Đăng xuất
                     </span>
-                  </a>
+                  </button>
                 </li>
                 <li>
                   <button

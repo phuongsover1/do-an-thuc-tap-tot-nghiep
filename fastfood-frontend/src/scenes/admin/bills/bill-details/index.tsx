@@ -7,7 +7,7 @@ import {
 } from '@/axios/bills';
 import { ArrowLongLeftIcon } from '@heroicons/react/24/solid';
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import MyCart from './my-cart';
 import Information from './information';
 import TotalPrice from './total-price';
@@ -48,6 +48,7 @@ const BillDetailsPageStaff = () => {
     }, 0);
     setCartLengthState(cartLength);
   }, [myCart.length]);
+  const navigate = useNavigate();
 
   return (
     <div className="mt-10 min-h-screen bg-[#fffcfe]">
@@ -61,12 +62,16 @@ const BillDetailsPageStaff = () => {
                 </span>
                 &nbsp;&nbsp; ({cartLengthState} Sản phẩm)
               </p>
-              <Link to={'/staff/bills/'}>
-                <button className="flex items-center gap-1 rounded-full px-4 py-2 font-semibold text-red-500 shadow-md ">
-                  <ArrowLongLeftIcon className="w-5" />
-                  Quay lại
-                </button>
-              </Link>
+
+              <button
+                onClick={() => {
+                  navigate(-1);
+                }}
+                className="flex items-center gap-1 rounded-full px-4 py-2 font-semibold text-red-500 shadow-md "
+              >
+                <ArrowLongLeftIcon className="w-5" />
+                Quay lại
+              </button>
             </div>
             <MyCart cart={myCart} />
             <div className="mt-6 rounded-lg bg-white p-4 shadow drop-shadow">

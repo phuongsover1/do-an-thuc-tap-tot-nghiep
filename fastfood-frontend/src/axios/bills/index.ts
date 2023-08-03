@@ -47,3 +47,10 @@ export const fetchWaitingBills = async () => {
   const response = await axiosInstance.get('/bills/waiting-bills');
   return response.data as BillHistory[];
 };
+
+export const fetchSuccessfulBills = async (accountId: number) => {
+  const resnponse = await axiosInstance.get('/bills/successful-bills', {
+    params: { accountId },
+  });
+  return resnponse.data as BillHistory[];
+};
