@@ -1,5 +1,6 @@
 import { Staff } from '@/scenes/admin/staffs';
 import axiosInstance from '../axios';
+import { AccountInfo } from '@/shared/types';
 
 export type PaymentConfirmationType = {
   billId: number;
@@ -14,6 +15,8 @@ export type StaffInfor = {
   dateOfBirth: string;
   email: string;
   phoneNumber: string;
+  isWorking: boolean;
+  sex: boolean;
 };
 
 export const paymentConfirmation = async (values: PaymentConfirmationType) => {
@@ -96,4 +99,30 @@ export async function fetchStaffs(isWorking: boolean) {
     params: { isWorking },
   });
   return responese.data as Staff[];
+}
+
+export async function fetchStaffById(staffId: string) {
+  const responese = await axiosInstance.get('/staffs/find-by-id', {
+    params: { staffId },
+  });
+
+  return responese.data as StaffInfor;
+}
+
+export async function fetchAccountByStaffId(staffId: string) {
+  const response = await axiosInstance.get('/staffs/find-account', {
+    params: { staffId },
+  });
+  return response.data as AccountInfo;
+}
+
+export async function changeStaffStatus(staffId: string) {
+  const response = await axiosInstance.post(
+    '/admins/change-staff-status',
+    {},
+    {
+      params: { staffId },
+    },
+  );
+  return response.data as boolean;
 }

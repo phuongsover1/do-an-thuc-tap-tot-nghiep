@@ -1195,7 +1195,6 @@ const Product = () => {
                 id="image"
                 accept="image/jpeg"
                 className="focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-                placeholder="Type product name"
                 {...formik.getFieldProps('image')}
                 onChange={(e) => {
                   formik.handleChange(e);

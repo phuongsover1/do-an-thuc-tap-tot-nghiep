@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import { CartType, authActions } from '@/store/auth/auth-slice.ts';
 import { Message } from '@/shared/MessageType.ts';
 import { useNavigate } from 'react-router-dom';
+import { loginRequest } from '@/axios';
 
 type LoginError = {
   username?: string;
@@ -71,42 +72,35 @@ const Login = ({ setIsLoginBlockEnable }: Props) => {
     }
   }
 
-  const login = (username: string, password: string) => {
-    axiosInstance
-      .post('/auth/login', { username, password })
-      .then((response) => {
-        const idAccount: number | '' = response.data as number | '';
-        if (typeof idAccount === 'number') {
-          setMessageEnable(true);
-          setMessage({
-            type: 'success',
-            message: 'Đăng nhập thành công',
-          });
+  const login = async (username: string, password: string) => {
+    const responseData = await loginRequest(username, password);
+    if (responseData) {
+      if (!responseData.status) {
+        setMessage({ type: 'error', message: 'Tài khoản đã bị khóa !' });
+        setMessageEnable(true);
+        return;
+      }
+      setMessage({ type: 'success', message: 'Đăng nhập thành công' });
 
-          setTimeout(() => {
-            dispatch(authActions.setLogin(idAccount));
-            void getRoleFromAccountId(idAccount);
+      setTimeout(() => {
+        dispatch(authActions.setLogin(responseData.accountId));
+        void getRoleFromAccountId(responseData.accountId);
 
-            axiosInstance
-              .get('/carts', { params: { accountId: idAccount } })
-              .then((response) => {
-                const data = response.data as CartType[];
-                dispatch(authActions.setCart(data));
-              })
-              .catch((error) => console.log('error: ', error));
-          }, 2000);
-          // TODO: Lưu vào redux id đăng nhập hiện tại
-        } else {
-          setMessageEnable(true);
-          setMessage({
-            type: 'error',
-            message: 'Tài khoản hoặc mật khẩu không chính xác',
-          });
-        }
-      })
-      .catch((error) => {
-        console.log('error: ', error);
+        axiosInstance
+          .get('/carts', { params: { accountId: responseData.accountId } })
+          .then((response) => {
+            const data = response.data as CartType[];
+            dispatch(authActions.setCart(data));
+          })
+          .catch((error) => console.log('error: ', error));
+      }, 2000);
+    } else {
+      setMessage({
+        type: 'error',
+        message: 'Tài khoản hoặc mật khẩu không chính xác',
       });
+    }
+    setMessageEnable(true);
   };
   return (
     <div>

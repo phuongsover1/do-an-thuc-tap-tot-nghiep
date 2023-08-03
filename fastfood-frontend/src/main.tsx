@@ -22,6 +22,7 @@ import BillDetailsPageStaff from './scenes/admin/bills/bill-details';
 import Information from './scenes/admin/info';
 import SuccessfulBills from './scenes/admin/successfull-bills';
 import Staffs from './scenes/admin/staffs';
+import StaffDetails from './scenes/admin/staffs/staff-details';
 
 const router = createBrowserRouter([
   {
@@ -109,6 +110,10 @@ const router = createBrowserRouter([
   {
     path: '/staff/bills/successful-bills/details/:billId',
     element: <BillDetailsPageStaff />,
+  },
+  {
+    path: '/admin/staffs/details/:id',
+    element: <StaffDetails />,
   },
 ]);
 

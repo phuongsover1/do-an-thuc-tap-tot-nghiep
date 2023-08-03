@@ -34,12 +34,13 @@ public class AuthController {
   }
 
   @PostMapping("/login")
-  public ResponseEntity<Integer> login(@NonNull @RequestBody AccountDTO account) {
+  public ResponseEntity<AccountDTO> login(@NonNull @RequestBody AccountDTO account) {
     Optional<Account> accountOptional = accountService.findByUsername(account.getUsername());
     if (accountOptional.isPresent()) {
       Account dbAccount = accountOptional.get();
       if (account.getPassword().equals(dbAccount.getPassword())) {
-        return ResponseEntity.ok().body(dbAccount.getId());
+        AccountDTO dto = accountService.toDTO(dbAccount);
+        return ResponseEntity.ok(dto);
       }
     }
     return ResponseEntity.ok().body(null);
@@ -118,6 +119,18 @@ public class AuthController {
       }
     }
     return ResponseEntity.ok(map);
+  }
+
+  @PostMapping("/change-status")
+  public ResponseEntity<Boolean> changeStatus(@RequestParam("accountId") Integer accountId) {
+    Optional<Account> accountOptional = accountService.findById(accountId);
+    if (accountOptional.isPresent()) {
+      Account account = accountOptional.get();
+      account.setStatus(!account.isStatus());
+      accountService.save(account);
+      return ResponseEntity.ok(true);
+    }
+    return ResponseEntity.ok(false);
   }
 
 }

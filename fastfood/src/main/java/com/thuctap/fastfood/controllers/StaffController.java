@@ -1,5 +1,6 @@
 package com.thuctap.fastfood.controllers;
 
+import com.thuctap.fastfood.dto.AccountDTO;
 import com.thuctap.fastfood.dto.ProductImportDTO;
 import com.thuctap.fastfood.dto.StaffDTO;
 import com.thuctap.fastfood.dto.UserDTO;
@@ -154,5 +155,31 @@ public class StaffController {
     }
 
     return ResponseEntity.ok(false);
+  }
+
+  @GetMapping("/find-by-id")
+  public ResponseEntity<StaffDTO> findStaffById(@RequestParam("staffId") String staffId) {
+    Optional<Staff> staffOptional = staffService.findById(staffId);
+    if (staffOptional.isPresent()) {
+      Staff staff = staffOptional.get();
+      StaffDTO dto = staffService.toDTO(staff);
+      return ResponseEntity.ok(dto);
+    }
+    return ResponseEntity.ok(null);
+  }
+
+  @GetMapping("/find-account")
+  public ResponseEntity<AccountDTO> findAccount(@RequestParam("staffId") String staffId) {
+    Optional<Staff> staffOptional = staffService.findById(staffId);
+    if (staffOptional.isPresent()) {
+      Staff staff = staffOptional.get();
+      Optional<Account> accountOptional = accountService.findByIdPerson(staff.getId());
+      if (accountOptional.isPresent()) {
+        Account account = accountOptional.get();
+        AccountDTO dto = accountService.toDTO(account);
+        return ResponseEntity.ok(dto);
+      }
+    }
+    return ResponseEntity.ok(null);
   }
 }

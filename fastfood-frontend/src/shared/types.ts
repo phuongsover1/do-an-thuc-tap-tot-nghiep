@@ -19,3 +19,8 @@ export type UserInfor = {
   email: string;
   phoneNumber: string;
 };
+
+export type AccountInfo = {
+  accountId: number;
+  status: boolean;
+};

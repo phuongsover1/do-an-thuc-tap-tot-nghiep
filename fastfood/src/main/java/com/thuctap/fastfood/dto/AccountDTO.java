@@ -1,12 +1,12 @@
 package com.thuctap.fastfood.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class AccountDTO {
   private Integer accountId;
   private String username;
@@ -14,4 +14,5 @@ public class AccountDTO {
   private String email;
   private String phoneNumber;
   private String address;
+private Boolean status;
 }

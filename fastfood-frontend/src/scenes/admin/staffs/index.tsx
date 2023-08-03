@@ -187,8 +187,7 @@ const Staffs = () => {
       key: 'action',
       render: (_, record) => (
         <Link
-          to={`details`}
-          state={{ ...record }}
+          to={`/admin/staffs/details/${record.id}`}
           className="bg-red-400 px-2 py-2 font-semibold text-white"
         >
           Xem chi tiết

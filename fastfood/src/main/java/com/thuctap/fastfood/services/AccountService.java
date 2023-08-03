@@ -47,7 +47,20 @@ public class AccountService {
     return accountRepository.findByUsername(username);
   }
 
-  public Account save(Account account){
+  public Account save(Account account) {
     return accountRepository.save(account);
+  }
+
+  public Optional<Account> findByIdPerson(String idPerson) {
+    return accountRepository.findAccountByIdPerson(idPerson);
+  }
+
+  public AccountDTO toDTO(Account entity) {
+    return AccountDTO.builder()
+        .accountId(entity.getId())
+        .username(entity.getUsername())
+        .password(entity.getPassword())
+        .status(entity.isStatus())
+        .build();
   }
 }

@@ -132,14 +132,16 @@ const BillInfo = ({ bill }: Props) => {
               {billState.status}
             </span>
           </p>
-          <div className="mt-3 text-right">
-            <button
-              onClick={openModalConfirm}
-              className="rounded-lg bg-red-400 p-2 font-semibold text-white"
-            >
-              Duyệt đơn
-            </button>
-          </div>
+          {bill.status === 'Đang Chờ Duyệt' && (
+            <div className="mt-3 text-right">
+              <button
+                onClick={openModalConfirm}
+                className="rounded-lg bg-red-400 p-2 font-semibold text-white"
+              >
+                Duyệt đơn
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </>
