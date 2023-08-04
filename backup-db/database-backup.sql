@@ -19,94 +19,95 @@
 -- Sequence structure for `account_sequence`
 --
 
-DROP SEQUENCE IF EXISTS `account_sequence`;
-CREATE SEQUENCE `account_sequence` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 1 cache 1000 nocycle ENGINE=InnoDB;
-SELECT SETVAL(`account_sequence`, 4001, 0);
-
---
--- Sequence structure for `bill_sequence`
---
-
-DROP SEQUENCE IF EXISTS `bill_sequence`;
-CREATE SEQUENCE `bill_sequence` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 1 cache 1000 nocycle ENGINE=InnoDB;
-SELECT SETVAL(`bill_sequence`, 5001, 0);
-
---
--- Sequence structure for `cart_sequence`
---
-
-DROP SEQUENCE IF EXISTS `cart_sequence`;
-CREATE SEQUENCE `cart_sequence` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 1 cache 1000 nocycle ENGINE=InnoDB;
-SELECT SETVAL(`cart_sequence`, 4001, 0);
-
---
--- Sequence structure for `categories_sequence`
---
-
-DROP SEQUENCE IF EXISTS `categories_sequence`;
-CREATE SEQUENCE `categories_sequence` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 1 cache 1000 nocycle ENGINE=InnoDB;
-SELECT SETVAL(`categories_sequence`, 2001, 0);
-
---
--- Sequence structure for `good_export_notes_seq`
---
-
-DROP SEQUENCE IF EXISTS `good_export_notes_seq`;
-CREATE SEQUENCE `good_export_notes_seq` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 50 cache 1000 nocycle ENGINE=InnoDB;
-SELECT SETVAL(`good_export_notes_seq`, 100001, 0);
-
---
--- Sequence structure for `product_images_sequence`
---
-
-DROP SEQUENCE IF EXISTS `product_images_sequence`;
-CREATE SEQUENCE `product_images_sequence` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 1 cache 1000 nocycle ENGINE=InnoDB;
-SELECT SETVAL(`product_images_sequence`, 3001, 0);
-
---
--- Sequence structure for `product_import_notes_sequence`
---
-
-DROP SEQUENCE IF EXISTS `product_import_notes_sequence`;
-CREATE SEQUENCE `product_import_notes_sequence` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 1 cache 1000 nocycle ENGINE=InnoDB;
-SELECT SETVAL(`product_import_notes_sequence`, 3001, 0);
-
---
--- Sequence structure for `product_sequence`
---
-
-DROP SEQUENCE IF EXISTS `product_sequence`;
-CREATE SEQUENCE `product_sequence` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 50 cache 1000 nocycle ENGINE=InnoDB;
-SELECT SETVAL(`product_sequence`, 200001, 0);
-
---
--- Sequence structure for `products_seq`
---
-
-DROP SEQUENCE IF EXISTS `products_seq`;
-CREATE SEQUENCE `products_seq` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 50 cache 1000 nocycle ENGINE=InnoDB;
-SELECT SETVAL(`products_seq`, 1, 0);
-
---
--- Sequence structure for `role_sequence`
---
-
-DROP SEQUENCE IF EXISTS `role_sequence`;
-CREATE SEQUENCE `role_sequence` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 1 cache 1000 nocycle ENGINE=InnoDB;
-SELECT SETVAL(`role_sequence`, 1001, 0);
-
---
--- Sequence structure for `users_seq`
---
-
-DROP SEQUENCE IF EXISTS `users_seq`;
-CREATE SEQUENCE `users_seq` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 50 cache 1000 nocycle ENGINE=InnoDB;
-SELECT SETVAL(`users_seq`, 1, 0);
-
---
--- Table structure for table `accounts`
---
-
+-- DROP SEQUENCE IF EXISTS `account_sequence`;
+-- CREATE SEQUENCE `account_sequence` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 1 cache 1000 nocycle ENGINE=InnoDB;
+-- SELECT SETVAL(`account_sequence`, 4001, 0);
+-- 
+-- --
+-- -- Sequence structure for `bill_sequence`
+-- --
+-- 
+-- DROP SEQUENCE IF EXISTS `bill_sequence`;
+-- CREATE SEQUENCE `bill_sequence` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 1 cache 1000 nocycle ENGINE=InnoDB;
+-- SELECT SETVAL(`bill_sequence`, 5001, 0);
+-- 
+-- --
+-- -- Sequence structure for `cart_sequence`
+-- --
+-- 
+-- DROP SEQUENCE IF EXISTS `cart_sequence`;
+-- CREATE SEQUENCE `cart_sequence` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 1 cache 1000 nocycle ENGINE=InnoDB;
+-- SELECT SETVAL(`cart_sequence`, 4001, 0);
+-- 
+-- --
+-- -- Sequence structure for `categories_sequence`
+-- --
+-- 
+-- DROP SEQUENCE IF EXISTS `categories_sequence`;
+-- CREATE SEQUENCE `categories_sequence` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 1 cache 1000 nocycle ENGINE=InnoDB;
+-- SELECT SETVAL(`categories_sequence`, 2001, 0);
+-- 
+-- --
+-- -- Sequence structure for `good_export_notes_seq`
+-- --
+-- 
+-- DROP SEQUENCE IF EXISTS `good_export_notes_seq`;
+-- CREATE SEQUENCE `good_export_notes_seq` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 50 cache 1000 nocycle ENGINE=InnoDB;
+-- SELECT SETVAL(`good_export_notes_seq`, 100001, 0);
+-- 
+-- --
+-- -- Sequence structure for `product_images_sequence`
+-- --
+-- 
+-- DROP SEQUENCE IF EXISTS `product_images_sequence`;
+-- CREATE SEQUENCE `product_images_sequence` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 1 cache 1000 nocycle ENGINE=InnoDB;
+-- SELECT SETVAL(`product_images_sequence`, 3001, 0);
+-- 
+-- --
+-- -- Sequence structure for `product_import_notes_sequence`
+-- --
+-- 
+-- DROP SEQUENCE IF EXISTS `product_import_notes_sequence`;
+-- CREATE SEQUENCE `product_import_notes_sequence` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 1 cache 1000 nocycle ENGINE=InnoDB;
+-- SELECT SETVAL(`product_import_notes_sequence`, 3001, 0);
+-- 
+-- --
+-- -- Sequence structure for `product_sequence`
+-- --
+-- 
+-- DROP SEQUENCE IF EXISTS `product_sequence`;
+-- CREATE SEQUENCE `product_sequence` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 50 cache 1000 nocycle ENGINE=InnoDB;
+-- SELECT SETVAL(`product_sequence`, 200001, 0);
+-- 
+-- --
+-- -- Sequence structure for `products_seq`
+-- --
+-- 
+-- DROP SEQUENCE IF EXISTS `products_seq`;
+-- CREATE SEQUENCE `products_seq` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 50 cache 1000 nocycle ENGINE=InnoDB;
+-- SELECT SETVAL(`products_seq`, 1, 0);
+-- 
+-- --
+-- -- Sequence structure for `role_sequence`
+-- --
+-- 
+-- DROP SEQUENCE IF EXISTS `role_sequence`;
+-- CREATE SEQUENCE `role_sequence` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 1 cache 1000 nocycle ENGINE=InnoDB;
+-- SELECT SETVAL(`role_sequence`, 1001, 0);
+-- 
+-- --
+-- -- Sequence structure for `users_seq`
+-- --
+-- 
+-- DROP SEQUENCE IF EXISTS `users_seq`;
+-- CREATE SEQUENCE `users_seq` start with 1 minvalue 1 maxvalue 9223372036854775806 increment by 50 cache 1000 nocycle ENGINE=InnoDB;
+-- SELECT SETVAL(`users_seq`, 1, 0);
+-- 
+-- --
+-- -- Table structure for table `accounts`
+-- --
+-- 
+SET GLOBAL log_bin_trust_function_creators = 1; 
 DROP TABLE IF EXISTS `accounts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -149,7 +150,7 @@ UNLOCK TABLES;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`phuong`@`localhost`*/ /*!50003 TRIGGER after_account_insert
     AFTER INSERT ON accounts
@@ -533,7 +534,7 @@ UNLOCK TABLES;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`phuong`@`localhost`*/ /*!50003 trigger after_import_note_insert
 after insert
@@ -552,7 +553,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`phuong`@`localhost`*/ /*!50003 trigger after_import_note_details_update
 after update
@@ -571,7 +572,7 @@ DELIMITER ;
 /*!50003 SET character_set_results = utf8mb4 */ ;
 /*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
-/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`phuong`@`localhost`*/ /*!50003 trigger before_import_note_details_delete
 before delete

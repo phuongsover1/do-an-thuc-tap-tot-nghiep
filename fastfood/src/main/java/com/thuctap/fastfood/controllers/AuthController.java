@@ -3,9 +3,11 @@ package com.thuctap.fastfood.controllers;
 import com.thuctap.fastfood.dto.AccountDTO;
 import com.thuctap.fastfood.entities.Account;
 import com.thuctap.fastfood.entities.Role;
+import com.thuctap.fastfood.entities.Staff;
 import com.thuctap.fastfood.entities.User;
 import com.thuctap.fastfood.services.AccountService;
 import com.thuctap.fastfood.services.RoleService;
+import com.thuctap.fastfood.services.StaffService;
 import com.thuctap.fastfood.services.UserService;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +26,7 @@ public class AuthController {
   private final UserService userService;
   private final AccountService accountService;
   private final RoleService roleService;
+  private final StaffService staffService;
 
   @GetMapping("/role")
   public ResponseEntity<Role> getRoleOfAccount(@RequestParam Integer accountId) {
@@ -36,7 +39,7 @@ public class AuthController {
   @PostMapping("/login")
   public ResponseEntity<AccountDTO> login(@NonNull @RequestBody AccountDTO account) {
     Optional<Account> accountOptional = accountService.findByUsername(account.getUsername());
-    if (accountOptional.isPresent()) {
+    if (accountOptional.isPresent()){
       Account dbAccount = accountOptional.get();
       if (account.getPassword().equals(dbAccount.getPassword())) {
         AccountDTO dto = accountService.toDTO(dbAccount);
@@ -131,6 +134,32 @@ public class AuthController {
       return ResponseEntity.ok(true);
     }
     return ResponseEntity.ok(false);
+  }
+
+  @GetMapping("/check-username-email-phone-number")
+  public ResponseEntity<Map<String, String>> checkUsername(@RequestParam("username") String username, @RequestParam("email") String email, @RequestParam("phoneNumber") String phoneNumber) {
+    Map<String, String> map = new HashMap<>();
+    Optional<Account> accountOptional = accountService.findByUsername(username);
+    if (accountOptional.isPresent()){
+      map.put("username", "Username đã tồn tại");
+    } else {
+      map.put("username", "");
+    }
+
+    Optional<User> userOptional = userService.findByEmail(email);
+    Optional<Staff> staffOptional = staffService.findByEmail(email);
+    if (userOptional.isPresent() || staffOptional.isPresent())  {
+      map.put("email", "Email đã tồn tại");
+    } else {
+      map.put("email", "");
+    }
+    userOptional = userService.findByPhoneNumber(phoneNumber);
+    staffOptional = staffService.findByPhoneNumber(phoneNumber);
+    if (userOptional.isPresent() || staffOptional.isPresent())
+      map.put("phoneNumber", "Số điện thoại đã tồn tại");
+    else map.put("phoneNumber", "");
+
+    return ResponseEntity.ok(map);
   }
 
 }

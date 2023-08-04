@@ -23,6 +23,9 @@ import Information from './scenes/admin/info';
 import SuccessfulBills from './scenes/admin/successfull-bills';
 import Staffs from './scenes/admin/staffs';
 import StaffDetails from './scenes/admin/staffs/staff-details';
+import CreateStaff from './scenes/admin/staffs/create-staff';
+import Users from './scenes/admin/users';
+import UserDetails from './scenes/admin/users/user-details';
 
 const router = createBrowserRouter([
   {
@@ -79,6 +82,10 @@ const router = createBrowserRouter([
         path: 'staffs/:isWorking',
         element: <Staffs />,
       },
+      {
+        path: 'users/:isActive',
+        element: <Users />,
+      },
     ],
   },
   {
@@ -114,6 +121,14 @@ const router = createBrowserRouter([
   {
     path: '/admin/staffs/details/:id',
     element: <StaffDetails />,
+  },
+  {
+    path: '/admin/staffs/new',
+    element: <CreateStaff />,
+  },
+  {
+    path: '/admin/users/details/:id',
+    element: <UserDetails />,
   },
 ]);
 

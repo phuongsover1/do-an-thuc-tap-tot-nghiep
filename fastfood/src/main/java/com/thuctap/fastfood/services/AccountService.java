@@ -8,6 +8,8 @@ import com.thuctap.fastfood.repositories.AccountRepository;
 import com.thuctap.fastfood.repositories.CartRepository;
 import com.thuctap.fastfood.repositories.RoleRepository;
 import com.thuctap.fastfood.repositories.UserRepository;
+
+import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -62,5 +64,9 @@ public class AccountService {
         .password(entity.getPassword())
         .status(entity.isStatus())
         .build();
+  }
+
+  public List<Account> findByIdPersonStartingWith(String idPerson) {
+    return accountRepository.findByIdPersonStartingWith(idPerson);
   }
 }

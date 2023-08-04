@@ -2,10 +2,14 @@ import axiosInstance from '@/axios/axios';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { authActions } from '@/store/auth/auth-slice';
 import {
+  CheckCircleIcon,
   DocumentCheckIcon,
   DocumentTextIcon,
+  NoSymbolIcon,
   UserIcon,
+  UsersIcon,
 } from '@heroicons/react/24/outline';
+
 import { Link, useNavigate } from 'react-router-dom';
 const Sidebar = () => {
   const roleName = useAppSelector((state) => state.auth.roleName);
@@ -164,7 +168,94 @@ const Sidebar = () => {
                     </ul>
                   </li>
                 )}
+                {roleName && roleName === 'ADMIN' && (
+                  <li>
+                    <button
+                      type="button"
+                      className="group flex w-full items-center rounded-lg p-2 text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                      aria-controls="dropdown-crud"
+                      data-collapse-toggle="dropdown-crud"
+                    >
+                      <UsersIcon className="h-6 w-6" />
+                      <span
+                        className="ml-3 flex-1 whitespace-nowrap text-left"
+                        sidebar-toggle-item
+                      >
+                        Danh sách người dùng
+                      </span>
+                      <svg
+                        sidebar-toggle-item
+                        className="h-6 w-6"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          clip-rule="evenodd"
+                        ></path>
+                      </svg>
+                    </button>
+                    <ul className="space-y-2 py-2">
+                      <li className="group flex items-center rounded-lg p-2 pl-5 text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700">
+                        <Link to="/admin/users/true">
+                          <button
+                            type="button"
+                            className="group flex w-full items-center rounded-lg  text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                            aria-controls="dropdown-layouts"
+                            data-collapse-toggle="dropdown-layouts"
+                          >
+                            <CheckCircleIcon className="h-6 w-6" />
+                            <span
+                              className="ml-3 flex-1 whitespace-nowrap text-left"
+                              sidebar-toggle-item
+                            >
+                              Người dùng đang hoạt động
+                            </span>
+                          </button>
+                        </Link>
+                      </li>
+                      <li className="group flex items-center rounded-lg p-2 pl-5 text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700">
+                        <Link to="/admin/users/false">
+                          <button
+                            type="button"
+                            className="group flex w-full items-center rounded-lg  text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                            aria-controls="dropdown-layouts"
+                            data-collapse-toggle="dropdown-layouts"
+                          >
+                            <NoSymbolIcon className="h-6 w-6" />
+                            <span
+                              className="ml-3 flex-1 whitespace-nowrap text-left"
+                              sidebar-toggle-item
+                            >
+                              Người dùng đã bị khóa
+                            </span>
+                          </button>
+                        </Link>
+                      </li>
+                    </ul>
 
+                    <ul id="dropdown-layouts" className="hidden space-y-2 py-2">
+                      <li>
+                        <a
+                          href=""
+                          className="group flex items-center rounded-lg p-2 pl-11 text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                        >
+                          Stacked
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href=""
+                          className="group flex items-center rounded-lg p-2 pl-11 text-base text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                        >
+                          Sidebar
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+                )}
                 {roleName && roleName === 'ADMIN' && (
                   <li>
                     <button

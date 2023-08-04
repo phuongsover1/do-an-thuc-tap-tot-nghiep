@@ -1,13 +1,20 @@
 package com.thuctap.fastfood.controllers;
 
+import com.thuctap.fastfood.dto.AccountDTO;
 import com.thuctap.fastfood.dto.StaffDTO;
+import com.thuctap.fastfood.dto.UserDTO;
 import com.thuctap.fastfood.entities.Account;
+import com.thuctap.fastfood.entities.Role;
 import com.thuctap.fastfood.entities.Staff;
+import com.thuctap.fastfood.entities.User;
 import com.thuctap.fastfood.services.AccountService;
+import com.thuctap.fastfood.services.RoleService;
 import com.thuctap.fastfood.services.StaffService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import com.thuctap.fastfood.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +25,25 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
   private final StaffService staffService;
   private final AccountService accountService;
+  private final RoleService roleService;
+  private final UserService userService;
 
+
+  @GetMapping("/users")
+  public ResponseEntity<List<UserDTO>> findAllUsers(@RequestParam("isActive") Boolean isActive) {
+    List<UserDTO> userDTOS = new ArrayList<>();
+
+    List<Account> accounts = accountService.findByIdPersonStartingWith("KH");
+    accounts.forEach(account -> {
+      if (account.isStatus() == isActive) {
+        User user = userService.findById(account.getIdPerson()).get();
+        UserDTO dto = userService.toDTO(user);
+        userDTOS.add(dto);
+      }
+
+    });
+    return ResponseEntity.ok(userDTOS);
+  }
   @GetMapping("/staffs")
   public ResponseEntity<List<StaffDTO>> findAllStaff(@RequestParam("isWorking") Boolean isWorking) {
     List<StaffDTO> staffDTOS = new ArrayList<>();
@@ -57,5 +82,29 @@ public class AdminController {
       return ResponseEntity.ok(true);
     }
     return ResponseEntity.ok(false);
+  }
+
+  @PostMapping("/create-staff")
+  public ResponseEntity<String> createStaff(@RequestBody AccountDTO accountDTO) {
+    Staff staff = new Staff();
+    staff.setEmail(accountDTO.getEmail());
+    staff.setPhoneNumber(accountDTO.getPhoneNumber());
+    staff.setAddress(accountDTO.getAddress());
+    staff.setSex(accountDTO.getSex());
+    staff.setFirstName(accountDTO.getFirstName());
+    staff.setLastName(accountDTO.getLastName());
+    staff.setDateOfBirth(accountDTO.getDateOfBirth());
+    staff = staffService.save(staff);
+    if (staff.getId() == null) return ResponseEntity.ok(null);
+    Account account = new Account();
+    Optional<Role> roleOptional = roleService.findByName("STAFF");
+    roleOptional.ifPresent(account::setRole);
+    account.setUsername(accountDTO.getUsername());
+    account.setPassword(accountDTO.getPassword());
+    account.setStatus(true);
+    account.setIdPerson(staff.getId());
+    account = accountService.save(account);
+    if (account.getId() == null) return ResponseEntity.ok(null);
+    return ResponseEntity.ok(staff.getId());
   }
 }
