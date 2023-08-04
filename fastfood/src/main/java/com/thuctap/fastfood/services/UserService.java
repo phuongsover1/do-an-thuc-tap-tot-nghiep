@@ -28,6 +28,7 @@ public class UserService {
 
   public UserDTO toDTO(User user) {
     return UserDTO.builder()
+            .userId(user.getId())
         .dateOfBirth(user.getDateOfBirth())
         .sex(String.valueOf(user.isSex()))
         .address(user.getAddress())

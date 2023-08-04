@@ -1,3 +1,5 @@
+import { changeAccountStatus } from '@/axios';
+import { UserInfo } from '@/axios/admin';
 import axiosInstance from '@/axios/axios';
 import {
   StaffInfor,
@@ -5,13 +7,14 @@ import {
   fetchAccountByStaffId,
   fetchStaffById,
 } from '@/axios/staffs';
+import { fetchAccountByUserId, fetchUserById } from '@/axios/users';
 import CustomizedSnackbars from '@/shared/CustomizedSnackbars';
 import { Message } from '@/shared/MessageType';
 import { AccountInfo } from '@/shared/types';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-const PersonDetails = () => {
+const UserDetails = () => {
   const [messageEnable, setMessageEnable] = useState(false);
   const [messageState, setMessage] = useState<Message>({
     type: 'info',
@@ -20,18 +23,18 @@ const PersonDetails = () => {
   const { id } = useParams();
   console.log('id: ', id);
 
-  const [staff, setStaff] = useState<StaffInfor | null>(null);
+  const [user, setUser] = useState<UserInfo | null>(null);
   const [account, setAccount] = useState<null | AccountInfo>(null);
 
   useEffect(() => {
-    const fetch = async (staffId: string) => {
+    const fetch = async (userId: string) => {
       console.log('response 1:');
-      const responseData = await fetchStaffById(staffId);
+      const responseData = await fetchUserById(userId);
 
-      setStaff(responseData);
+      setUser(responseData);
     };
-    const fetchAccount = async (staffId: string) => {
-      const responseData = await fetchAccountByStaffId(staffId);
+    const fetchAccount = async (userId: string) => {
+      const responseData = await fetchAccountByUserId(userId);
       console.log('response 2: ', responseData);
       setAccount(responseData);
     };
@@ -42,31 +45,26 @@ const PersonDetails = () => {
   }, [id]);
 
   let isBlock;
-  if (staff) {
-    if (staff.isWorking) isBlock = false;
+  if (account) {
+    if (account.status) isBlock = false;
     else isBlock = true;
   }
 
   const navigate = useNavigate();
 
-  async function changeStaffStatusHandler() {
-    if (staff) {
-      const responseData = await changeStaffStatus(staff.id);
+  async function changeAccountStatusHandler() {
+    if (account) {
+      const responseData = await changeAccountStatus(account.accountId);
       if (responseData) {
         setMessage({
           type: 'success',
           message: 'Thay đổi trạng thái thành công',
         });
         try {
-          const staffData = await fetchStaffById(staff.id);
-          setStaff(staffData);
-        } catch (error) {
-          console.log('error: ', error);
-        }
-
-        try {
-          const accountData = await fetchAccountByStaffId(staff.id);
-          setAccount(accountData);
+          if (user) {
+            const accountData = await fetchAccountByUserId(user.userId);
+            setAccount(accountData);
+          }
         } catch (error) {
           console.log('error: ', error);
         }
@@ -87,34 +85,34 @@ const PersonDetails = () => {
       />
       <div>
         <p className="border-b border-red-300 py-2 text-center text-xl font-semibold text-slate-800">
-          THÔNG TIN NHÂN VIÊN
+          THÔNG TIN NGƯỜI DÙNG
         </p>
         <div className="grid grid-cols-[150px_minmax(300px,_1fr)] gap-4 p-4">
           <p className="text-slate-600">Mã: </p>
-          <p className="font-semibold">{staff && staff.id}</p>
+          <p className="font-semibold">{user && user.userId}</p>
           <p className="text-slate-600">Họ và tên:</p>
           <p className="font-semibold">
-            {staff && staff.lastName + ' ' + staff.firstName}
+            {user && user.lastName + ' ' + user.firstName}
           </p>
           <p className="text-slate-600">Ngày sinh:</p>
-          <p className="font-semibold">{staff && staff.dateOfBirth}</p>
+          <p className="font-semibold">{user && user.dateOfBirth}</p>
           <p className="text-slate-600">Giới tính:</p>
           <p className="font-semibold">
-            {staff && staff.sex === false ? 'Nam' : 'Nữ'}
+            {user && user.sex === 'false' ? 'Nam' : 'Nữ'}
           </p>
           <p className="text-slate-600">Email:</p>
-          <p className="font-semibold">{staff?.email}</p>
+          <p className="font-semibold">{user?.email}</p>
           <p className="text-slate-600">Số điện thoại:</p>
-          <p className="font-semibold">{staff?.phoneNumber}</p>
+          <p className="font-semibold">{user?.phoneNumber}</p>
           <p className="text-slate-600">Địa chỉ:</p>
-          <p className="font-semibold">{staff?.address}</p>
+          <p className="font-semibold">{user?.address}</p>
           <p className="text-slate-600">Trạng thái:</p>
           <p
             className={`font-semibold font-semibold ${
               isBlock ? 'text-red-500' : 'text-emerald-500'
             }`}
           >
-            {staff && staff.isWorking === true ? 'Đang làm việc' : 'Nghỉ việc'}
+            {account?.status === true ? 'Đang hoạt động' : 'Đã bị khóa'}
           </p>
         </div>
       </div>
@@ -143,7 +141,7 @@ const PersonDetails = () => {
         </div>
         <div className="mt-6 flex items-center justify-end gap-4">
           <button
-            onClick={changeStaffStatusHandler}
+            onClick={changeAccountStatusHandler}
             className={`rounded-sm p-1 px-2 ${
               isBlock ? 'bg-red-400' : 'bg-emerald-600'
             }  text-white`}
@@ -152,7 +150,7 @@ const PersonDetails = () => {
           </button>
           <button
             className="rounded-sm border border-red-300 bg-white p-1 px-2  text-red-400"
-            onClick={() => navigate('/admin/staffs/true')}
+            onClick={() => navigate(`/admin/users/${!isBlock}`)}
           >
             Quay lại
           </button>
@@ -162,4 +160,4 @@ const PersonDetails = () => {
   );
 };
 
-export default PersonDetails;
+export default UserDetails;

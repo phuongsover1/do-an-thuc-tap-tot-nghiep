@@ -17,21 +17,11 @@ import Highlighter from 'react-highlight-words';
 import { fetchStaffs } from '@/axios/staffs';
 import BasicModal from '@/shared/BasicModal';
 import CreateStaff from './create-staff';
+import { UserInfo, fetchUsers } from '@/axios/admin';
 
-export type Staff = {
-  id: number;
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  sex: boolean;
-  email: string;
-  phoneNumber: string;
-  address: string;
-};
+type DataIndex = keyof UserInfo;
 
-type DataIndex = keyof Staff;
-
-const Staffs = () => {
+const Users = () => {
   // của antd
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
@@ -52,7 +42,9 @@ const Staffs = () => {
     setSearchText('');
   };
 
-  const getColumnSearchProps = (dataIndex: DataIndex): ColumnType<Staff> => ({
+  const getColumnSearchProps = (
+    dataIndex: DataIndex,
+  ): ColumnType<UserInfo> => ({
     filterDropdown: ({
       setSelectedKeys,
       selectedKeys,
@@ -141,17 +133,17 @@ const Staffs = () => {
   });
   console.log('dayjs: ', dayjs('30/7/2023 9:02:09 PM', 'D/M/YYYY h:mm:ss A'));
 
-  const columns: ColumnsType<Staff> = [
+  const columns: ColumnsType<UserInfo> = [
     {
       title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
+      dataIndex: 'userId',
+      key: 'userId',
       render: (text) => <p>{text}</p>,
 
-      sorter: (a, b) => a.id - b.id,
+      sorter: (a, b) => a.userId.localeCompare(b.userId),
       sortDirections: ['descend', 'ascend', 'descend'],
 
-      ...getColumnSearchProps('id'),
+      ...getColumnSearchProps('userId'),
     },
     {
       title: 'Họ và tên đệm',
@@ -189,7 +181,7 @@ const Staffs = () => {
       key: 'action',
       render: (_, record) => (
         <Link
-          to={`/admin/staffs/details/${record.id}`}
+          to={`/admin/users/details/${record.userId}`}
           className="bg-red-400 px-2 py-2 font-semibold text-white"
         >
           Xem chi tiết
@@ -199,52 +191,35 @@ const Staffs = () => {
   ];
 
   // của mình,
-  const [data, setData] = useState<Staff[]>([]);
-  const [addStaff, setAddStaff] = useState(false);
+  const [data, setData] = useState<UserInfo[]>([]);
 
-  function closeAddStaffModalHandler() {
-    setAddStaff(false);
-  }
-
-  function openAddStaffModalHandler() {
-    setAddStaff(true);
-  }
-
-  const { isWorking } = useParams();
-  const isWorkingBool = isWorking == 'true';
+  const { isActive } = useParams();
+  const isActiveBool = isActive == 'true';
 
   useEffect(() => {
-    const fetch = async (isWorking: boolean) => {
-      const responseData = await fetchStaffs(isWorking);
+    const fetch = async (isActive: boolean) => {
+      const responseData = await fetchUsers(isActive);
       setData(responseData);
     };
-    if (isWorking) {
-      const boolValue = isWorking == 'true';
+    if (isActive) {
+      const boolValue = isActive == 'true';
       void fetch(boolValue);
     }
-  }, [isWorking]);
+  }, [isActive]);
   // TODO: Đang làm thêm nhân viên // xong
-  // khóa tài khoản user // xong
+  // khóa tài khoản user
   // còn thay đổi sản phẩm
   // thêm xóa sửa nhà cung cấp
   // nhập hàng chọn thêm nhà cung cấp
   // gửi mail quên mật khẩu
   // hiên món ăn theo danh mục
   // ràng buộc các trang là phải đăng nhập rồi mới được vào
-  const navigate = useNavigate();
   return (
     <div className="mt-20 w-full">
       <p className="border-b border-red-400 py-5 text-center text-2xl font-bold text-slate-700">
-        NHÂN VIÊN {isWorkingBool ? 'ĐANG HOẠT ĐỘNG' : 'ĐÃ NGHỈ VIỆC'}
+        NGƯỜI DÙNG {isActiveBool ? 'ĐANG HOẠT ĐỘNG' : 'ĐÃ BỊ KHÓA'}
       </p>
-      <div className="my-5 pr-5 text-right">
-        <button
-          onClick={() => navigate('/admin/staffs/new')}
-          className="rounded-sm bg-red-400 p-1 px-2 text-sm font-semibold text-white"
-        >
-          Thêm nhân viên
-        </button>
-      </div>
+
       <Table
         columns={columns}
         pagination={{ position: ['bottomRight'] }}
@@ -254,4 +229,4 @@ const Staffs = () => {
   );
 };
 
-export default Staffs;
+export default Users;

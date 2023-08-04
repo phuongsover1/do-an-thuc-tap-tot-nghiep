@@ -14,4 +14,7 @@ public class RoleService {
   public Optional<Role> findById(Integer id) {
     return roleRepository.findById(id);
   }
+  public Optional<Role> findByName(String name) {
+    return roleRepository.findRoleByName(name);
+  }
 }

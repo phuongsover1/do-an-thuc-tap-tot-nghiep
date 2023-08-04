@@ -1,5 +1,6 @@
 package com.thuctap.fastfood.controllers;
 
+import com.thuctap.fastfood.dto.AccountDTO;
 import com.thuctap.fastfood.dto.UserDTO;
 import com.thuctap.fastfood.entities.Account;
 import com.thuctap.fastfood.entities.Staff;
@@ -23,6 +24,32 @@ public class UserController {
   private final AccountService accountService;
   private final UserService userService;
   private final StaffService staffService;
+
+  @GetMapping("/find-by-id")
+  public ResponseEntity<UserDTO> findStaffById(@RequestParam("userId") String userId) {
+    Optional<User> userOptional = userService.findById(userId);
+    if (userOptional.isPresent()) {
+      User user= userOptional.get();
+      UserDTO dto = userService.toDTO(user);
+      return ResponseEntity.ok(dto);
+    }
+    return ResponseEntity.ok(null);
+  }
+
+  @GetMapping("/find-account")
+  public ResponseEntity<AccountDTO> findAccount(@RequestParam("userId") String userId) {
+    Optional<User> userOptional = userService.findById(userId);
+    if (userOptional.isPresent()) {
+      User user = userOptional.get();
+      Optional<Account> accountOptional = accountService.findByIdPerson(user.getId());
+      if (accountOptional.isPresent()) {
+        Account account = accountOptional.get();
+        AccountDTO dto = accountService.toDTO(account);
+        return ResponseEntity.ok(dto);
+      }
+    }
+    return ResponseEntity.ok(null);
+  }
 
   @GetMapping("/find-user-by-account-id")
   public ResponseEntity<UserDTO> findUserByAccountId(@RequestParam("accountId") Integer accountId) {

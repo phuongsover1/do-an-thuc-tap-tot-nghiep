@@ -1,4 +1,3 @@
-import AntdTable from '@/shared/antd-table';
 import { Button, Input, InputRef, Space, Tag } from 'antd';
 import Table, { ColumnsType } from 'antd/es/table';
 import {
@@ -13,7 +12,6 @@ import { BillHistory, fetAllBills } from '@/axios/bills';
 import { handleMoney } from '@/shared/Utils';
 import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
-import { validateYupSchema } from 'formik';
 import { ColumnType, FilterConfirmProps } from 'antd/es/table/interface';
 import Highlighter from 'react-highlight-words';
 

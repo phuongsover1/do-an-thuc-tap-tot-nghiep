@@ -1,5 +1,6 @@
-import { UserInfor } from '@/shared/types';
+import { AccountInfo } from '@/shared/types';
 import axiosInstance from '../axios';
+import { UserInfo } from '../admin';
 
 export async function getUserByAccountId(accountId: number) {
   const responese = await axiosInstance.get('/users/find-user-by-account-id', {
@@ -57,4 +58,18 @@ export async function changePassword(values: {
     },
   );
   return response.data as { error?: string };
+}
+
+export async function fetchUserById(userId: string) {
+  const response = await axiosInstance.get('/users/find-by-id', {
+    params: { userId },
+  });
+  return response.data as UserInfo;
+}
+
+export async function fetchAccountByUserId(userId: string) {
+  const responese = await axiosInstance.get('/users/find-account', {
+    params: { userId },
+  });
+  return responese.data as AccountInfo;
 }
