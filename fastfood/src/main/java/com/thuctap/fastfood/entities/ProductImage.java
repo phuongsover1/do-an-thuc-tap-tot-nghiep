@@ -22,7 +22,7 @@ public class ProductImage implements Serializable {
   @Column(name = "id", columnDefinition = "INT(11)")
   private Integer id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "id_product")
   @JsonBackReference
   private Product productId;

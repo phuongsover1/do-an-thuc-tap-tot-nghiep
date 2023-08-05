@@ -47,6 +47,8 @@ public class ProductService {
   }
 
   public void deleteProduct(Product product) {
+    ProductImage image = productImagesRepository.findProductImageByProductIdAndImageName(product, "anh 1").get();
+    productImagesRepository.delete(image);
     productRepository.delete(product);
   }
 

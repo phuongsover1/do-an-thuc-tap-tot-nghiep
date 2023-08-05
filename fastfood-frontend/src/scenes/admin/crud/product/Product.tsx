@@ -5,6 +5,9 @@ import { useFormik } from 'formik';
 import CustomizedSnackbars from '@/shared/CustomizedSnackbars';
 import { Message } from '@/shared/MessageType';
 import { useAppSelector } from '@/store';
+import { fetchUpdateProduct } from '@/axios/admin';
+import * as Yup from 'yup';
+import { deleteProductById } from '@/axios/products';
 
 type AddFormSubmitValues = {
   name: string;
@@ -22,6 +25,14 @@ export type ProductFromApi = {
   stock: number;
   images: [];
 };
+export type UpdateProductFromApi = {
+  id: number;
+  name: string;
+  price: number;
+  description: string;
+  status: boolean;
+  categories: string[];
+};
 
 type Category = {
   id: number;
@@ -35,6 +46,27 @@ type ProductImportType = {
   quantity: number;
   price: number;
 };
+const addProductSchema = Yup.object({
+  name: Yup.string().trim().required('Tên sản phẩm không được để trống'),
+  categories: Yup.array().min(1, 'Danh mục phải chọn ít nhất 1 cái'),
+  price: Yup.number()
+    .positive()
+    .typeError('Giá không hợp lệ')
+    .required('Giá không được để trống'),
+  image: Yup.string().trim().required('Hình không được để trống'),
+});
+
+const updateProductSchema = Yup.object({
+  name: Yup.string().trim().required('Tên sản phẩm không được để trống'),
+  categories: Yup.array().min(1, 'Danh mục phải chọn ít nhất 1 cái'),
+  price: Yup.number()
+    .positive()
+    .typeError('Giá không hợp lệ')
+    .required('Giá không được để trống'),
+});
+
+let deleteProductId: number | null = null;
+
 const Product = () => {
   const [formProductState, setFormProductState] = useState<
     HideProductForm | ShowProductForm
@@ -44,6 +76,8 @@ const Product = () => {
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<ProductFromApi[]>([]);
+  const [productUpdate, setProductUpdate] =
+    useState<UpdateProductFromApi | null>(null);
 
   const [messageEnable, setMessageEnable] = useState(false);
   const [messageState, setMessage] = useState<Message>({
@@ -70,6 +104,7 @@ const Product = () => {
       price: '0',
       image: '' as string | Blob,
     },
+    validationSchema: addProductSchema,
     onSubmit: (values) => {
       console.log('onSubmit: ', values);
 
@@ -95,6 +130,47 @@ const Product = () => {
           setTestImageSrc(URL.createObjectURL(res.data));
         })
         .catch((err) => console.log(err)); */
+    },
+  });
+
+  const formikUpdateProduct = useFormik({
+    initialValues: {
+      name: '',
+      price: '0',
+      description: '',
+      categories: [] as string[],
+      image: '' as string | Blob,
+    },
+    validationSchema: updateProductSchema,
+    onSubmit: async (values) => {
+      console.log('update values: ', values);
+
+      try {
+        const response = await axiosInstance.post('/products/update', {
+          ...values,
+          id: productUpdate?.id,
+        });
+        const responseData = response.data as number | null;
+        if (responseData) {
+          if (values.image !== '') {
+            if (selectedImage) {
+              updateImage(responseData, selectedImage);
+            }
+          }
+          setMessage({
+            type: 'success',
+            message: 'Sửa đổi sản phẩm thành công',
+          });
+          setMessageEnable(true);
+          hideProductFormHandler();
+          void getAllProducts();
+        } else {
+          setMessage({ type: 'error', message: 'Sửa đổi sản phẩm thất bại' });
+          setMessageEnable(true);
+        }
+      } catch (err) {
+        console.log('error: ', err);
+      }
     },
   });
 
@@ -178,6 +254,18 @@ const Product = () => {
       .then((res) => console.log('res', res))
       .catch((err) => console.log('error: ', err));
   }
+  function updateImage(productId: number, selectedImage: Blob) {
+    const formData = new FormData();
+    formData.append('file', selectedImage);
+
+    axiosInstance
+      .post('/products/updateImage', formData, {
+        params: { productId },
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+      .then((res) => console.log('res', res))
+      .catch((err) => console.log('error: ', err));
+  }
 
   async function submitAddProduct(values: AddFormSubmitValues) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -215,13 +303,73 @@ const Product = () => {
     setFormProductState({ showForm: true, type: 'import' });
   }
 
-  function showUpdateFormProductHandler() {
+  async function showUpdateFormProductHandler(
+    e: React.MouseEvent<HTMLButtonElement>,
+  ) {
+    console.log('button event: ', e.currentTarget);
+    const button = e.currentTarget;
+    const id = parseInt(button.id.substring(button.id.lastIndexOf('-') + 1));
+    const responseData = await fetchUpdateProduct(id);
+    setProductUpdate(responseData);
+    console.log('responseData: ', responseData);
     void getAllCategories();
+
     setFormProductState({ showForm: true, type: 'update' });
+
+    void formikUpdateProduct.setFieldValue('name', responseData.name, false);
+    void formikUpdateProduct.setFieldTouched('name', false);
+    void formikUpdateProduct.setFieldValue(
+      'price',
+      Math.floor(responseData.price),
+      false,
+    );
+    void formikUpdateProduct.setFieldTouched('price', false);
+    void formikUpdateProduct.setFieldValue(
+      'description',
+      responseData.description,
+    );
+
+    void formikUpdateProduct.setFieldValue(
+      'categories',
+      responseData.categories,
+      false,
+    );
+    void formikUpdateProduct.setFieldTouched('categories', false);
+    axiosInstance
+      .get('/products/image', {
+        params: {
+          productId: responseData.id,
+          imageName: 'anh 1',
+        },
+        responseType: 'blob',
+      })
+      .then((res) => {
+        setPreviewImage(URL.createObjectURL(res.data));
+      })
+      .catch((err) => console.log(err));
   }
 
-  function showDeleteProductHandler() {
-    setFormProductState({ showForm: false });
+  async function deleteProduct() {
+    console.log('deleteProductId: ', deleteProductId);
+    if (deleteProductId) {
+      const error = await deleteProductById(deleteProductId);
+      setMessageEnable(true);
+      if (error) {
+        setMessage({ type: 'error', message: error });
+      } else {
+        setMessage({ type: 'success', message: 'Xóa sản phẩm thành công' });
+        hideProductFormHandler();
+        void getAllProducts();
+      }
+    }
+  }
+
+  function showDeleteProductHandler(e: React.MouseEvent<HTMLButtonElement>) {
+    setFormProductState({ showForm: true, type: 'delete' });
+    const button = e.currentTarget;
+    deleteProductId = parseInt(
+      button.id.substring(button.id.lastIndexOf('-') + 1),
+    );
   }
   function hideProductFormHandler() {
     setFormProductState({ showForm: false });
@@ -524,12 +672,13 @@ const Product = () => {
                         <td className="space-x-2 whitespace-nowrap p-4">
                           <button
                             type="button"
-                            id="updateProductButton"
+                            id={`updateProductButton-${product.id}`}
                             data-drawer-target="drawer-update-product-default"
                             data-drawer-show="drawer-update-product-default"
                             aria-controls="drawer-update-product-default"
                             data-drawer-placement="right"
                             className="focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 inline-flex items-center rounded-lg bg-blue-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-blue-800 focus:ring-4"
+                            onClick={showUpdateFormProductHandler}
                           >
                             <svg
                               className="mr-2 h-4 w-4"
@@ -548,12 +697,13 @@ const Product = () => {
                           </button>
                           <button
                             type="button"
-                            id="deleteProductButton"
+                            id={`deleteProductButton-${product.id}`}
                             data-drawer-target="drawer-delete-product-default"
                             data-drawer-show="drawer-delete-product-default"
                             aria-controls="drawer-delete-product-default"
                             data-drawer-placement="right"
                             className="inline-flex items-center rounded-lg bg-red-700 px-3 py-2 text-center text-sm font-medium text-white hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
+                            onClick={showDeleteProductHandler}
                           >
                             <svg
                               className="mr-2 h-4 w-4"
@@ -713,10 +863,14 @@ const Product = () => {
         </div>
       </div>
 
-      {/* Edit Product Drawer */}
+      {/* FIXME:  Edit Product Drawer */}
       <div
-        id="drawer-update-product-default"
-        className="fixed right-0 top-0 z-40 h-screen w-full max-w-xs translate-x-full overflow-y-auto bg-white p-4 transition-transform dark:bg-gray-800"
+        id="drawer-create-product-default"
+        className={`fixed right-0 top-0 z-40 h-screen w-full max-w-xs overflow-y-auto p-4 transition-transform ${
+          formProductState.showForm && formProductState.type === 'update'
+            ? ''
+            : 'translate-x-full'
+        }  bg-white dark:bg-gray-800`}
         tabIndex="-1"
         aria-labelledby="drawer-label"
         aria-hidden="true"
@@ -729,9 +883,17 @@ const Product = () => {
         </h5>
         <button
           type="button"
-          data-drawer-dismiss="drawer-update-product-default"
-          aria-controls="drawer-update-product-default"
+          data-drawer-dismiss="drawer-create-product-default"
+          aria-controls="drawer-create-product-default"
           className="absolute right-2.5 top-2.5 inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
+          onClick={() => {
+            hideProductFormHandler();
+            void formikUpdateProduct.setFieldValue('name', '');
+            void formikUpdateProduct.setFieldValue('price', '');
+            void formikUpdateProduct.setFieldValue('description', '');
+            void formikUpdateProduct.setFieldValue('categories', []);
+            void formikUpdateProduct.setFieldValue('image', '');
+          }}
         >
           <svg
             aria-hidden="true"
@@ -748,7 +910,7 @@ const Product = () => {
           </svg>
           <span className="sr-only">Close menu</span>
         </button>
-        <form action="#">
+        <form onSubmit={formikUpdateProduct.handleSubmit}>
           <div className="space-y-4">
             <div>
               <label
@@ -759,31 +921,18 @@ const Product = () => {
               </label>
               <input
                 type="text"
-                name="title"
                 id="name"
                 className="focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-                value="Education Dashboard"
                 placeholder="Type product name"
-                required=""
+                {...formikUpdateProduct.getFieldProps('name')}
               />
+              <div className="my-1 my-1 text-red-400">
+                {formikUpdateProduct.errors.name &&
+                  formikUpdateProduct.touched.name &&
+                  formikUpdateProduct.errors.name}
+              </div>
             </div>
-            <div>
-              <label
-                htmlFor="category"
-                className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
-              >
-                Technology
-              </label>
-              <select
-                id="category"
-                className="focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-              >
-                <option selected="">Flowbite</option>
-                <option value="RE">React</option>
-                <option value="AN">Angular</option>
-                <option value="VU">Vue JS</option>
-              </select>
-            </div>
+
             <div>
               <label
                 htmlFor="price"
@@ -793,13 +942,44 @@ const Product = () => {
               </label>
               <input
                 type="number"
-                name="price"
                 id="price"
                 className="focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-                value="2999"
-                placeholder="$149"
-                required=""
+                placeholder="$2999"
+                {...formikUpdateProduct.getFieldProps('price')}
               />
+              <div className="my-1 text-red-400">
+                {formikUpdateProduct.errors.price &&
+                  formikUpdateProduct.touched.price &&
+                  formikUpdateProduct.errors.price}
+              </div>
+            </div>
+            <div>
+              <label
+                htmlFor="category-create"
+                className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Category
+              </label>
+              <select
+                id="category-create"
+                className="focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                {...formikUpdateProduct.getFieldProps('categories')}
+                multiple
+              >
+                {categories.map((category) => (
+                  <option
+                    value={category.id}
+                    key={`${category.id} ${category.name}`}
+                  >
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+              <div className="my-1 text-red-400">
+                {formikUpdateProduct.errors.categories &&
+                  formikUpdateProduct.touched.categories &&
+                  formikUpdateProduct.errors.categories}
+              </div>
             </div>
             <div>
               <label
@@ -810,62 +990,74 @@ const Product = () => {
               </label>
               <textarea
                 id="description"
-                rows="4"
+                rows={4}
                 className="focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
                 placeholder="Enter event description here"
-              >
-                Start developing with an open-source library of over 450+ UI
-                components, sections, and pages built with the utility classes
-                from Tailwind CSS and designed in Figma.
-              </textarea>
+                {...formikUpdateProduct.getFieldProps('description')}
+              ></textarea>
             </div>
             <div>
               <label
-                htmlFor="discount"
+                htmlFor="image"
                 className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
               >
-                Discount
+                Image
               </label>
-              <select
-                id="discount"
-                className="focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-              >
-                <option selected="">No</option>
-                <option value="5">5%</option>
-                <option value="10">10%</option>
-                <option value="20">20%</option>
-                <option value="30">30%</option>
-                <option value="40">40%</option>
-                <option value="50">50%</option>
-              </select>
+              <input
+                type="file"
+                id="image"
+                accept="image/jpeg"
+                className="focus:ring-primary-600 focus:border-primary-600 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                {...formikUpdateProduct.getFieldProps('image')}
+                onChange={(e) => {
+                  formikUpdateProduct.handleChange(e);
+                  onChangeImageHandler(e);
+                }}
+              />
             </div>
-          </div>
-          <div className="bottom-0 left-0 mt-4 flex w-full justify-center space-x-4 pb-4 sm:absolute sm:mt-0 sm:px-4">
-            <button
-              type="submit"
-              className="focus:ring-primary-300 dark:focus:ring-primary-800 w-full justify-center rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 dark:bg-blue-600 dark:hover:bg-blue-700"
-            >
-              Update
-            </button>
-            <button
-              type="button"
-              className="inline-flex w-full items-center justify-center rounded-lg border border-red-600 px-5 py-2.5 text-center text-sm font-medium text-red-600 hover:bg-red-600 hover:text-white focus:outline-none focus:ring-4 focus:ring-red-300 dark:border-red-500 dark:text-red-500 dark:hover:bg-red-600 dark:hover:text-white dark:focus:ring-red-900"
-            >
-              <svg
-                aria-hidden="true"
-                className="-ml-1 mr-1 h-5 w-5"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
+            <div>
+              <img src={previewImage} className="h-24 w-24" alt="" />
+            </div>
+
+            <div className="flex w-full justify-center space-x-4 pb-4 md:px-4">
+              <button
+                type="submit"
+                className="focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 w-full justify-center rounded-lg bg-blue-700 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4"
               >
-                <path
-                  fill-rule="evenodd"
-                  d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                  clip-rule="evenodd"
-                ></path>
-              </svg>
-              Delete
-            </button>
+                Update product
+              </button>
+              <button
+                type="button"
+                data-drawer-dismiss="drawer-create-product-default"
+                aria-controls="drawer-create-product-default"
+                className="focus:ring-primary-300 inline-flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-5 py-2.5 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:z-10 focus:outline-none focus:ring-4 dark:border-gray-500 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-600"
+                onClick={() => {
+                  hideProductFormHandler();
+                  void formikUpdateProduct.setFieldValue('name', '');
+                  void formikUpdateProduct.setFieldValue('price', '');
+                  void formikUpdateProduct.setFieldValue('description', '');
+                  void formikUpdateProduct.setFieldValue('categories', []);
+                  void formikUpdateProduct.setFieldValue('image', '');
+                }}
+              >
+                <svg
+                  aria-hidden="true"
+                  className="-ml-1 h-5 w-5 sm:mr-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+                Cancel
+              </button>
+            </div>
           </div>
         </form>
       </div>
@@ -1008,7 +1200,11 @@ const Product = () => {
       {/* Delete Product Drawer */}
       <div
         id="drawer-delete-product-default"
-        className="fixed right-0 top-0 z-40 h-screen w-full max-w-xs translate-x-full overflow-y-auto bg-white p-4 transition-transform dark:bg-gray-800"
+        className={`fixed right-0 top-0 z-40 h-screen w-full max-w-xs ${
+          formProductState.showForm && formProductState.type === 'delete'
+            ? ''
+            : 'translate-x-full'
+        } overflow-y-auto bg-white p-4 transition-transform dark:bg-gray-800`}
         tabIndex="-1"
         aria-labelledby="drawer-label"
         aria-hidden="true"
@@ -1024,6 +1220,7 @@ const Product = () => {
           data-drawer-dismiss="drawer-delete-product-default"
           aria-controls="drawer-delete-product-default"
           className="absolute right-2.5 top-2.5 inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-gray-400 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white"
+          onClick={hideProductFormHandler}
         >
           <svg
             aria-hidden="true"
@@ -1057,19 +1254,19 @@ const Product = () => {
         <h3 className="mb-6 text-lg text-gray-500 dark:text-gray-400">
           Are you sure you want to delete this product?
         </h3>
-        <a
-          href="#"
+        <button
+          onClick={deleteProduct}
           className="mr-2 inline-flex items-center rounded-lg bg-red-600 px-3 py-2.5 text-center text-sm font-medium text-white hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:focus:ring-red-900"
         >
           Yes, I'm sure
-        </a>
-        <a
-          href="#"
+        </button>
+        <button
+          onClick={hideProductFormHandler}
           className="focus:ring-primary-300 inline-flex items-center rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 focus:ring-4 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
           data-modal-toggle="delete-product-modal"
         >
           No, cancel
-        </a>
+        </button>
       </div>
 
       {/* Add Product Drawer */}
@@ -1128,6 +1325,11 @@ const Product = () => {
                 placeholder="Type product name"
                 {...formik.getFieldProps('name')}
               />
+              <div className="my-1 text-red-400">
+                {formik.errors.name &&
+                  formik.touched.name &&
+                  formik.errors.name}
+              </div>
             </div>
 
             <div>
@@ -1144,6 +1346,11 @@ const Product = () => {
                 placeholder="$2999"
                 {...formik.getFieldProps('price')}
               />
+              <div className="my-1 text-red-400">
+                {formik.errors.price &&
+                  formik.touched.price &&
+                  formik.errors.price}
+              </div>
             </div>
             <div>
               <label
@@ -1167,6 +1374,11 @@ const Product = () => {
                   </option>
                 ))}
               </select>
+              <div className="my-1 text-red-400">
+                {formik.errors.categories &&
+                  formik.touched.categories &&
+                  formik.errors.categories}
+              </div>
             </div>
             <div>
               <label
@@ -1201,6 +1413,11 @@ const Product = () => {
                   onChangeImageHandler(e);
                 }}
               />
+              <div className="my-1 text-red-400">
+                {formik.errors.image &&
+                  formik.touched.image &&
+                  formik.errors.image}
+              </div>
             </div>
             <div>
               <img src={previewImage} className="h-24 w-24" alt="" />

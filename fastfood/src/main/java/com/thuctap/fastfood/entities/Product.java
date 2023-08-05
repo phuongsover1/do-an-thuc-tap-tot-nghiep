@@ -39,7 +39,7 @@ public class Product implements Serializable {
   @Column(name = "stock")
   private Integer stock;
 
-  @OneToMany(cascade = CascadeType.ALL, mappedBy = "productId", fetch = FetchType.LAZY)
+  @OneToMany(cascade = CascadeType.ALL, mappedBy = "productId")
   @JsonManagedReference
   private Set<ProductImage> images;
 
@@ -63,11 +63,7 @@ public class Product implements Serializable {
   @JsonManagedReference
   Set<BillDetail> billDetails = new HashSet<>();
 
-  @PreRemove
-  private void removeMembers() {
-    this.images.clear();
-    this.categories.clear();
-  }
+
 
   public void addCategory(Category category) {
     categories.add(category);

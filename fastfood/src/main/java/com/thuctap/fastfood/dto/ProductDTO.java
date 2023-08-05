@@ -2,11 +2,14 @@ package com.thuctap.fastfood.dto;
 
 import java.util.HashSet;
 import java.util.Set;
-import lombok.Getter;
-import lombok.Setter;
+
+import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ProductDTO {
   private Integer id;
   private String name;

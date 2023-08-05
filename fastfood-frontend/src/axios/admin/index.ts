@@ -1,3 +1,4 @@
+import { UpdateProductFromApi } from '@/scenes/admin/crud/product/Product';
 import axiosInstance from '../axios';
 
 export type CreateStaffType = {
@@ -33,4 +34,9 @@ export async function fetchUsers(isActive: boolean) {
     params: { isActive },
   });
   return response.data as UserInfo[];
+}
+
+export async function fetchUpdateProduct(productId: number) {
+  const response = await axiosInstance.get(`/products/${productId}`);
+  return response.data as UpdateProductFromApi;
 }

@@ -207,8 +207,8 @@ const Users = () => {
     }
   }, [isActive]);
   // TODO: Đang làm thêm nhân viên // xong
-  // khóa tài khoản user
-  // còn thay đổi sản phẩm
+  // khóa tài khoản user // xong
+  // còn thay đổi sản phẩm // xong
   // thêm xóa sửa nhà cung cấp
   // nhập hàng chọn thêm nhà cung cấp
   // gửi mail quên mật khẩu

@@ -1,14 +1,18 @@
 package com.thuctap.fastfood.controllers;
 
 import com.thuctap.fastfood.dto.ProductDTO;
+import com.thuctap.fastfood.entities.Category;
 import com.thuctap.fastfood.entities.Product;
 import com.thuctap.fastfood.entities.ProductImage;
+import com.thuctap.fastfood.services.CategoryService;
 import com.thuctap.fastfood.services.ProductService;
+
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -22,15 +26,55 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/products")
 public class ProductController {
   private final ProductService productService;
+  private final CategoryService categoryService;
 
   @PostMapping
   public ResponseEntity<Integer> saveProduct(@RequestBody ProductDTO productDTO) {
-    if (productDTO.getId() != null) { // update
-    }
     // add new
     Product product = productService.convertProductDTOToProduct(productDTO);
+    product.setStock(0);
     product = productService.saveProduct(product);
     return ResponseEntity.ok(product.getId());
+  }
+
+  @PostMapping("/update")
+  public ResponseEntity<Integer> updateProduct(@RequestBody ProductDTO productDTO) {
+    Optional<Product> productOptional = productService.findById(productDTO.getId());
+    if (productOptional.isPresent()) {
+      Product product = productOptional.get();
+      product.setName(productDTO.getName());
+      product.setPrice(Double.valueOf(productDTO.getPrice()));
+      product.setDescription(productDTO.getDescription());
+      product.getCategories().clear();
+      for (String idCate : productDTO.getCategories()) {
+        Category category = categoryService.findById(Integer.parseInt(idCate)).get();
+        product.getCategories().add(category);
+      }
+      product = productService.saveProduct(product);
+      return ResponseEntity.ok(product.getId());
+    }
+    return ResponseEntity.ok(null);
+  }
+  @PostMapping("/delete")
+  public ResponseEntity<String> deleteProduct(@RequestParam("productId") Integer productId) {
+    Optional<Product> productOptional = productService.findById(productId);
+    if (productOptional.isPresent()) {
+      Product product = productOptional.get();
+      if (product.getStock() > 0) {
+        return ResponseEntity.ok("Hàng đã được lập phiếu nhập, không thể xóa");
+      }
+
+      if (!product.getBillDetails().isEmpty()) {
+        return ResponseEntity.ok("Sản phẩm đã có trong hóa đơn, không thể xóa");
+      }
+
+      product.getCartProducts().clear();
+      product.getCategories().clear();
+      product =productService.saveProduct(product);
+      productService.deleteProduct(product);
+      return ResponseEntity.ok("");
+    }
+    return ResponseEntity.ok("Mã sản phầm không tồn tại");
   }
 
   @PostMapping(value = "/uploadImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -110,19 +154,28 @@ public class ProductController {
     return ResponseEntity.ok(products);
   }
 
-  @PostMapping("/delete")
-  public ResponseEntity<Boolean> deleteProduct(@RequestBody Integer productId) {
-    Optional<Product> productOptional = productService.findById(productId);
-    if (productOptional.isPresent()) {
-      productService.deleteProduct(productOptional.get());
-      return ResponseEntity.ok(true);
-    }
-
-    return ResponseEntity.ok(false);
-  }
 
   @GetMapping("/{productId}")
-  public ResponseEntity<Product> findById(@PathVariable Integer productId) {
-    return ResponseEntity.ok(productService.findById(productId).orElse(null));
+  public ResponseEntity<ProductDTO> findById(@PathVariable Integer productId) {
+    Optional<Product> productOptional = productService.findById(productId);
+    if (productOptional.isPresent()) {
+      Product product = productOptional.get();
+      ProductDTO productDTO =
+          ProductDTO.builder()
+              .id(product.getId())
+              .name(product.getName())
+              .price(String.valueOf(product.getPrice()))
+              .description(product.getDescription())
+              .categories(
+                  product.getCategories().stream()
+                      .map(
+                          category -> {
+                            return String.valueOf(category.getId());
+                          })
+                      .collect(Collectors.toSet()))
+              .build();
+      return ResponseEntity.ok(productDTO);
+    }
+    return ResponseEntity.ok(null);
   }
 }

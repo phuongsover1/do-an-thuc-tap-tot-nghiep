@@ -54,6 +54,8 @@ public class StaffController {
 
           // Lưu Đơn
           ProductImportNote returnImportNote = productImportNoteService.save(importNote);
+          product.setStock(product.getStock() + productImportDTO.getQuantity());
+          productService.saveProduct(product);
           return ResponseEntity.ok(returnImportNote.getId());
         }
       }
