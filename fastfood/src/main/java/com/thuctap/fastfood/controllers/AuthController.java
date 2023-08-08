@@ -1,14 +1,13 @@
 package com.thuctap.fastfood.controllers;
 
+import com.thuctap.fastfood.FastfoodApplication;
 import com.thuctap.fastfood.dto.AccountDTO;
 import com.thuctap.fastfood.entities.Account;
 import com.thuctap.fastfood.entities.Role;
 import com.thuctap.fastfood.entities.Staff;
 import com.thuctap.fastfood.entities.User;
-import com.thuctap.fastfood.services.AccountService;
-import com.thuctap.fastfood.services.RoleService;
-import com.thuctap.fastfood.services.StaffService;
-import com.thuctap.fastfood.services.UserService;
+import com.thuctap.fastfood.services.*;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -27,6 +26,7 @@ public class AuthController {
   private final AccountService accountService;
   private final RoleService roleService;
   private final StaffService staffService;
+  private final EmailSenderService senderService;
 
   @GetMapping("/role")
   public ResponseEntity<Role> getRoleOfAccount(@RequestParam Integer accountId) {
@@ -39,7 +39,7 @@ public class AuthController {
   @PostMapping("/login")
   public ResponseEntity<AccountDTO> login(@NonNull @RequestBody AccountDTO account) {
     Optional<Account> accountOptional = accountService.findByUsername(account.getUsername());
-    if (accountOptional.isPresent()){
+    if (accountOptional.isPresent()) {
       Account dbAccount = accountOptional.get();
       if (account.getPassword().equals(dbAccount.getPassword())) {
         AccountDTO dto = accountService.toDTO(dbAccount);
@@ -106,14 +106,15 @@ public class AuthController {
   }
 
   @PostMapping("/change-password")
-  public ResponseEntity<Map<String, String>> changePassword(@RequestBody AccountDTO accountDTO, @RequestParam("newPassword") String newPassword){
+  public ResponseEntity<Map<String, String>> changePassword(
+      @RequestBody AccountDTO accountDTO, @RequestParam("newPassword") String newPassword) {
     Map<String, String> map = new HashMap<>();
     Optional<Account> accountOptional = accountService.findById(accountDTO.getAccountId());
     if (accountOptional.isPresent()) {
       Account account = accountOptional.get();
       if (!account.getPassword().equals(accountDTO.getPassword())) {
         map.put("error", "Mật khẩu cũ không đúng");
-      }else {
+      } else {
         account.setPassword(newPassword);
         String savedPassword = accountService.save(account).getPassword();
         if (!savedPassword.equals(newPassword)) {
@@ -136,11 +137,56 @@ public class AuthController {
     return ResponseEntity.ok(false);
   }
 
+  @GetMapping("/check-email")
+  public ResponseEntity<Integer> checkEmail(
+      @RequestParam("email") String email, @RequestParam("isCreateOTP") Boolean isCreateOTP) {
+    Optional<User> userOptional = userService.findByEmail(email);
+    Optional<Staff> staffOptional = staffService.findByEmail(email);
+    if (userOptional.isPresent()) {
+      Account account = accountService.findByIdPerson(userOptional.get().getId()).get();
+      if (isCreateOTP) {
+        double otpNumber = Math.random() * 100000;
+        String otp = String.valueOf((int) otpNumber);
+        FastfoodApplication.forgotPasswordMap.put(email, otp);
+        senderService.sendEmail(
+            email, "Mã OTP quên mật khẩu", "OTP để thay đổi mật khẩu mới của bạn là: " + otp);
+      }
+      return ResponseEntity.ok(account.getId());
+    }
+    if (staffOptional.isPresent()) {
+      Account account = accountService.findByIdPerson(staffOptional.get().getId()).get();
+      if (isCreateOTP) {
+        double otpNumber = Math.random() * 100000;
+        String otp = String.valueOf((int) otpNumber);
+        FastfoodApplication.forgotPasswordMap.put(email, otp);
+        senderService.sendEmail(
+            email, "Mã OTP quên mật khẩu", "OTP để thay đổi mật khẩu mới của bạn là: " + otp);
+      }
+      return ResponseEntity.ok(account.getId());
+    }
+    return ResponseEntity.ok(null);
+  }
+
+  @GetMapping("/check-email-and-otp")
+  public ResponseEntity<Boolean> checkEmailAndOTP(
+      @RequestParam("email") String email, @RequestParam("otp") String otp) {
+    if (FastfoodApplication.forgotPasswordMap.containsKey(email)) {
+      String otpInMap = FastfoodApplication.forgotPasswordMap.get(email);
+      if (otpInMap.equals(otp)) {
+        return ResponseEntity.ok(true);
+      }
+    }
+    return ResponseEntity.ok(false);
+  }
+
   @GetMapping("/check-username-email-phone-number")
-  public ResponseEntity<Map<String, String>> checkUsername(@RequestParam("username") String username, @RequestParam("email") String email, @RequestParam("phoneNumber") String phoneNumber) {
+  public ResponseEntity<Map<String, String>> checkUsername(
+      @RequestParam("username") String username,
+      @RequestParam("email") String email,
+      @RequestParam("phoneNumber") String phoneNumber) {
     Map<String, String> map = new HashMap<>();
     Optional<Account> accountOptional = accountService.findByUsername(username);
-    if (accountOptional.isPresent()){
+    if (accountOptional.isPresent()) {
       map.put("username", "Username đã tồn tại");
     } else {
       map.put("username", "");
@@ -148,7 +194,7 @@ public class AuthController {
 
     Optional<User> userOptional = userService.findByEmail(email);
     Optional<Staff> staffOptional = staffService.findByEmail(email);
-    if (userOptional.isPresent() || staffOptional.isPresent())  {
+    if (userOptional.isPresent() || staffOptional.isPresent()) {
       map.put("email", "Email đã tồn tại");
     } else {
       map.put("email", "");
@@ -162,4 +208,16 @@ public class AuthController {
     return ResponseEntity.ok(map);
   }
 
+  @PostMapping("/change-password-no-old-password")
+  public ResponseEntity<Map<String, String>> changePasswordNoOldPassword(
+      @RequestParam Integer accountId, @RequestParam String newPassword) {
+    Map<String, String> returnedMap = new HashMap<>();
+    Optional<Account> accountOptional = accountService.findById(accountId);
+    if (accountOptional.isPresent()) {
+      Account account = accountOptional.get();
+      account.setPassword(newPassword);
+      accountService.save(account);
+    } else returnedMap.put("error", "Id tài khoản không tồn tại");
+    return ResponseEntity.ok(returnedMap);
+  }
 }

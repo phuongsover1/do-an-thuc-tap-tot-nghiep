@@ -7,6 +7,7 @@ import axiosInstance from '@/axios/axios.ts';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { RegisterType } from './register-types';
 import { authActions } from '@/store/auth/auth-slice.ts';
+import { BlockEnable } from '../LoginModal';
 
 const RegisterSchema = Yup.object().shape({
   username: Yup.string()
@@ -27,7 +28,7 @@ const RegisterSchema = Yup.object().shape({
 });
 
 type Props = {
-  setIsLoginBlockEnable: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsLoginBlockEnable: React.Dispatch<React.SetStateAction<BlockEnable>>;
 };
 const Register = ({ setIsLoginBlockEnable }: Props) => {
   const [messageEnable, setMessageEnable] = useState(false);
@@ -108,7 +109,7 @@ const Register = ({ setIsLoginBlockEnable }: Props) => {
   }
 
   const enableLoginBlock = () => {
-    setIsLoginBlockEnable(true);
+    setIsLoginBlockEnable({ login: true });
   };
   return (
     <div>

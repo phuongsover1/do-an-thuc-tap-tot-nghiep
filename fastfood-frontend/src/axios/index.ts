@@ -43,3 +43,35 @@ export async function checkUsernameEmailPhoneNumber(
     phoneNumber: string;
   };
 }
+
+export async function checkEmail(email: string, isCreateOTP: boolean) {
+  const response = await axiosInstance.get('/auth/check-email', {
+    params: {
+      email,
+      isCreateOTP,
+    },
+  });
+  return response.data as number | null;
+}
+
+export async function checkEmailAndOTP(email: string, otp: string) {
+  const response = await axiosInstance.get('/auth/check-email-and-otp', {
+    params: {
+      email,
+      otp,
+    },
+  });
+  return response.data as boolean;
+}
+
+export async function changePasswordNoOldPassword(
+  accountId: number,
+  newPassword: string,
+) {
+  const response = await axiosInstance.post(
+    '/auth/change-password-no-old-password',
+    {},
+    { params: { accountId, newPassword } },
+  );
+  return response.data as { error?: string };
+}

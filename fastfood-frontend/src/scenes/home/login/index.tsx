@@ -7,6 +7,7 @@ import { CartType, authActions } from '@/store/auth/auth-slice.ts';
 import { Message } from '@/shared/MessageType.ts';
 import { useNavigate } from 'react-router-dom';
 import { loginRequest } from '@/axios';
+import { BlockEnable } from '../LoginModal';
 
 type LoginError = {
   username?: string;
@@ -14,7 +15,7 @@ type LoginError = {
 };
 
 type Props = {
-  setIsLoginBlockEnable: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsLoginBlockEnable: React.Dispatch<React.SetStateAction<BlockEnable>>;
 };
 
 const Login = ({ setIsLoginBlockEnable }: Props) => {
@@ -29,7 +30,11 @@ const Login = ({ setIsLoginBlockEnable }: Props) => {
   const dispatch = useAppDispatch();
 
   const enableRegisterBlock = () => {
-    setIsLoginBlockEnable(false);
+    setIsLoginBlockEnable({ register: true });
+  };
+
+  const enableForgotPasswordBlock = () => {
+    setIsLoginBlockEnable({ forgotPassword: true });
   };
 
   const formikLogin = useFormik({
@@ -162,6 +167,15 @@ const Login = ({ setIsLoginBlockEnable }: Props) => {
         onClick={enableRegisterBlock}
       >
         Đăng ký
+      </button>
+
+      <p className="mt-6 text-sm">Nếu quên mật khẩu</p>
+      <button
+        type="button"
+        className="mt-3 w-full rounded-md bg-red-400 py-2 text-white"
+        onClick={enableForgotPasswordBlock}
+      >
+        Quên mật khẩu
       </button>
     </div>
   );
