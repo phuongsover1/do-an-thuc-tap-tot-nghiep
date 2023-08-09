@@ -62,7 +62,10 @@ const Login = ({ setIsLoginBlockEnable }: Props) => {
       const response = await axiosInstance.get('/auth/role', {
         params: { accountId },
       });
-      const role = response.data as { id: number; name: string } | null;
+      const role = response.data as {
+        id: number;
+        name: 'USER' | 'ADMIN' | 'STAFF';
+      } | null;
       if (role) {
         dispatch(authActions.setRole(role.name));
         // TODO: Chuyển trang

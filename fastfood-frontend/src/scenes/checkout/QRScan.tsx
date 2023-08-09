@@ -151,8 +151,6 @@ const QRScan = () => {
     };
   }, [countDown]);
 
-  // TODO: Xử lý đống ở dưới sau
-  // tạo Interval tới db cứ mỗi 3s để kiểm tra là đã thanh toán chưa
   const fetchBillStatus = async (id: number) => {
     const response = await axiosInstance.get(`/bills/${id}`);
     const data = response.data as Bill;
@@ -192,8 +190,6 @@ const QRScan = () => {
     });
   }
 
-  // TODO: Xử lý đống code ở dưới
-  // const movieId = useSelector((state) => state.ticket.movieId);
   useEffect(() => {
     if (invalid) {
       setInvalidateTime(true);

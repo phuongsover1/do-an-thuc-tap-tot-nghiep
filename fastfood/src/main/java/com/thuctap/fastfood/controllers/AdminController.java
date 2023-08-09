@@ -68,6 +68,32 @@ public class AdminController {
     return ResponseEntity.ok(staffDTOS);
   }
 
+  @GetMapping
+  public ResponseEntity<List<StaffDTO>> findAllAdmins(@RequestParam("isWorking") Boolean isWorking) {
+    List<StaffDTO> staffDTOS = new ArrayList<>();
+    if (isWorking) {
+      staffService
+              .findAllAdminsIsWorking()
+              .forEach(
+                      staff -> {
+                        StaffDTO dto = staffService.toDTO(staff);
+                        staffDTOS.add(dto);
+                      });
+
+    } else {
+      staffService
+              .findAllAdminsNotWorking()
+              .forEach(
+                      staff -> {
+                        StaffDTO dto = staffService.toDTO(staff);
+                        staffDTOS.add(dto);
+                      });
+    }
+    return ResponseEntity.ok(staffDTOS);
+  }
+
+
+
   @PostMapping("/change-staff-status")
   public ResponseEntity<Boolean> quit(@RequestParam("staffId") String staffId) {
     Optional<Staff> staffOptional = staffService.findById(staffId);
@@ -85,7 +111,7 @@ public class AdminController {
   }
 
   @PostMapping("/create-staff")
-  public ResponseEntity<String> createStaff(@RequestBody AccountDTO accountDTO) {
+  public ResponseEntity<String> createStaff(@RequestBody AccountDTO accountDTO, @RequestParam("role") String role) {
     Staff staff = new Staff();
     staff.setEmail(accountDTO.getEmail());
     staff.setPhoneNumber(accountDTO.getPhoneNumber());
@@ -97,7 +123,12 @@ public class AdminController {
     staff = staffService.save(staff);
     if (staff.getId() == null) return ResponseEntity.ok(null);
     Account account = new Account();
-    Optional<Role> roleOptional = roleService.findByName("STAFF");
+    Optional<Role> roleOptional;
+    if (role.equals("STAFF")) {
+      roleOptional = roleService.findByName("STAFF");
+    }else {
+      roleOptional = roleService.findByName("ADMIN");
+    }
     roleOptional.ifPresent(account::setRole);
     account.setUsername(accountDTO.getUsername());
     account.setPassword(accountDTO.getPassword());
@@ -107,4 +138,6 @@ public class AdminController {
     if (account.getId() == null) return ResponseEntity.ok(null);
     return ResponseEntity.ok(staff.getId());
   }
+
+
 }

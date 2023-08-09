@@ -160,7 +160,7 @@ public class AuthController {
         String otp = String.valueOf((int) otpNumber);
         FastfoodApplication.forgotPasswordMap.put(email, otp);
         senderService.sendEmail(
-            email, "Mã OTP quên mật khẩu", "OTP để thay đổi mật khẩu mới của bạn là: " + otp);
+            email, "Mã OTP quên mật khẩu", "OTP để thay đổi mật khẩu mới cho tài khoản + " + account.getUsername() +" là: " + otp);
       }
       return ResponseEntity.ok(account.getId());
     }

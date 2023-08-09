@@ -1,22 +1,13 @@
-import { Button, Input, InputRef, Space, Tag } from 'antd';
+import { Button, Input, InputRef, Space } from 'antd';
 import Table, { ColumnsType } from 'antd/es/table';
-import {
-  CheckCircleOutlined,
-  ClockCircleOutlined,
-  CloseCircleOutlined,
-  SearchOutlined,
-} from '@ant-design/icons';
+import { SearchOutlined } from '@ant-design/icons';
 import { useEffect, useRef, useState } from 'react';
-import { useAppSelector } from '@/store';
-import { BillHistory, fetAllBills, fetchWaitingBills } from '@/axios/bills';
-import { handleMoney } from '@/shared/Utils';
 import dayjs from 'dayjs';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ColumnType, FilterConfirmProps } from 'antd/es/table/interface';
 import Highlighter from 'react-highlight-words';
 import { fetchStaffs } from '@/axios/staffs';
-import BasicModal from '@/shared/BasicModal';
-import CreateStaff from './create-staff';
+import { fetchAdmins } from '@/axios/admin';
 
 export type Staff = {
   id: number;
@@ -29,9 +20,13 @@ export type Staff = {
   address: string;
 };
 
+type Props = {
+  isAdmin: boolean;
+};
+
 type DataIndex = keyof Staff;
 
-const Staffs = () => {
+const Staffs = ({ isAdmin }: Props) => {
   // của antd
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
@@ -200,22 +195,18 @@ const Staffs = () => {
 
   // của mình,
   const [data, setData] = useState<Staff[]>([]);
-  const [addStaff, setAddStaff] = useState(false);
-
-  function closeAddStaffModalHandler() {
-    setAddStaff(false);
-  }
-
-  function openAddStaffModalHandler() {
-    setAddStaff(true);
-  }
 
   const { isWorking } = useParams();
   const isWorkingBool = isWorking == 'true';
 
   useEffect(() => {
     const fetch = async (isWorking: boolean) => {
-      const responseData = await fetchStaffs(isWorking);
+      let responseData;
+      if (isAdmin) {
+        responseData = await fetchAdmins(isWorking);
+      } else {
+        responseData = await fetchStaffs(isWorking);
+      }
       setData(responseData);
     };
     if (isWorking) {
@@ -225,10 +216,11 @@ const Staffs = () => {
   }, [isWorking]);
   // TODO: Đang làm thêm nhân viên // xong
   // khóa tài khoản user // xong
-  // còn thay đổi sản phẩm
+  // còn thay đổi sản phẩm // xong
+  // gửi mail quên mật khẩu // xong
+  // thêm nhân viên admin
   // thêm xóa sửa nhà cung cấp
   // nhập hàng chọn thêm nhà cung cấp
-  // gửi mail quên mật khẩu
   // hiên món ăn theo danh mục
   // ràng buộc các trang là phải đăng nhập rồi mới được vào
   const navigate = useNavigate();
@@ -239,7 +231,9 @@ const Staffs = () => {
       </p>
       <div className="my-5 pr-5 text-right">
         <button
-          onClick={() => navigate('/admin/staffs/new')}
+          onClick={() =>
+            navigate(`/admin/${isAdmin ? 'admins' : 'staffs'}/new`)
+          }
           className="rounded-sm bg-red-400 p-1 px-2 text-sm font-semibold text-white"
         >
           Thêm nhân viên

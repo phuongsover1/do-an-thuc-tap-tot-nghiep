@@ -35,7 +35,10 @@ const initialValues = {
   password: '',
 };
 
-const CreateStaff = () => {
+type Props = {
+  isAdmin: boolean;
+};
+const CreateStaff = ({ isAdmin }: Props) => {
   const dayjsObj = dayjs();
   const dateToday = dayjsObj.format('YYYY-MM-DD');
   const [hasErrors, setHasErrors] = useState<{
@@ -70,11 +73,14 @@ const CreateStaff = () => {
           responseData.username === ''
         ) {
           try {
-            let valuesAfterMap = {
+            const valuesAfterMap = {
               ...values,
-              sex: values.sex == true ? 'true' : 'false',
+              sex: values.sex ? true : false,
             };
-            const staffId = await createStaff(valuesAfterMap);
+            const staffId = await createStaff(
+              valuesAfterMap,
+              isAdmin ? 'ADMIN' : 'STAFF',
+            );
             if (staffId) {
               setMessage({
                 type: 'success',

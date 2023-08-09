@@ -206,14 +206,6 @@ const Users = () => {
       void fetch(boolValue);
     }
   }, [isActive]);
-  // TODO: Đang làm thêm nhân viên // xong
-  // khóa tài khoản user // xong
-  // còn thay đổi sản phẩm // xong
-  // gửi mail quên mật khẩu
-  // thêm xóa sửa nhà cung cấp
-  // nhập hàng chọn thêm nhà cung cấp
-  // hiên món ăn theo danh mục
-  // ràng buộc các trang là phải đăng nhập rồi mới được vào
   return (
     <div className="mt-20 w-full">
       <p className="border-b border-red-400 py-5 text-center text-2xl font-bold text-slate-700">

@@ -80,7 +80,11 @@ const router = createBrowserRouter([
       },
       {
         path: 'staffs/:isWorking',
-        element: <Staffs />,
+        element: <Staffs isAdmin={false} />,
+      },
+      {
+        path: 'admins/:isWorking',
+        element: <Staffs isAdmin={true} />,
       },
       {
         path: 'users/:isActive',
@@ -124,7 +128,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/admin/staffs/new',
-    element: <CreateStaff />,
+    element: <CreateStaff isAdmin={false} />,
+  },
+  {
+    path: '/admin/admins/new',
+    element: <CreateStaff isAdmin={true} />,
   },
   {
     path: '/admin/users/details/:id',

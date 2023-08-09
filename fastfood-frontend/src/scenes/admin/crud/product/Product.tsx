@@ -293,7 +293,7 @@ const Product = () => {
   function showImportProductHandler(e: ChangeEvent<HTMLButtonElement>) {
     const button = e.currentTarget;
     console.log('button: ', button);
-    // TODO: giờ làm tiếp nhập hàng cho nhân viên
+
     setSelectedProduct({
       name: button.dataset.productname!,
       id: button.dataset.productid!,

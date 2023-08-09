@@ -43,6 +43,17 @@ public class StaffService {
         .collect(Collectors.toList());
   }
 
+    public List<Staff> findAllAdminsIsWorking() {
+        return staffRepository.findAll().stream()
+                .filter(staff -> {
+                    if (!staff.isWorking())
+                        return false;
+                    Account account = accountRepository.findAccountByIdPerson(staff.getId()).get();
+                    return account.getRole().getName().equals("ADMIN");
+                })
+                .collect(Collectors.toList());
+    }
+
   public List<Staff> findAllNotWorking() {
 
     return staffRepository.findAll().stream()
@@ -54,6 +65,18 @@ public class StaffService {
         })
         .collect(Collectors.toList());
   }
+
+    public List<Staff> findAllAdminsNotWorking() {
+
+        return staffRepository.findAll().stream()
+                .filter(staff -> {
+                    if (staff.isWorking())
+                        return false;
+                    Account account = accountRepository.findAccountByIdPerson(staff.getId()).get();
+                    return account.getRole().getName().equals("ADMIN");
+                })
+                .collect(Collectors.toList());
+    }
 
   public StaffDTO toDTO(Staff staff) {
     return StaffDTO.builder()
