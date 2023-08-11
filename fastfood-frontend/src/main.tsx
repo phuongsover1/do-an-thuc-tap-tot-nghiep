@@ -26,6 +26,7 @@ import StaffDetails from './scenes/admin/staffs/staff-details';
 import CreateStaff from './scenes/admin/staffs/create-staff';
 import Users from './scenes/admin/users';
 import UserDetails from './scenes/admin/users/user-details';
+import Suppliers from './scenes/admin/suppliers';
 
 const router = createBrowserRouter([
   {
@@ -89,6 +90,10 @@ const router = createBrowserRouter([
       {
         path: 'users/:isActive',
         element: <Users />,
+      },
+      {
+        path: 'suppliers',
+        element: <Suppliers />,
       },
     ],
   },

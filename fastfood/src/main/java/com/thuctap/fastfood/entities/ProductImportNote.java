@@ -38,6 +38,11 @@ public class ProductImportNote {
   @JsonManagedReference
   private Set<ProductImportNoteDetails> productImportNoteDetails = new HashSet<>();
 
+  @ManyToOne
+  @JoinColumn(name = "id_supplier")
+  @JsonBackReference
+  private Supplier supplier;
+
   public void addProductImportNoteDetails(ProductImportNoteDetails importNoteDetails) {
     productImportNoteDetails.add(importNoteDetails);
   }

@@ -25,6 +25,7 @@ public class StaffController {
   private final ProductImportNoteService productImportNoteService;
   private final BillService billService;
   private final UserService userService;
+  private final SupplierService supplierService;
   @PostMapping("/importNote")
   public ResponseEntity<Integer> saveImportNote(@RequestBody ProductImportDTO productImportDTO) {
     Optional<Account> accountOptional = accountService.findById(productImportDTO.getAccountId());
@@ -36,11 +37,13 @@ public class StaffController {
             productService.findById(productImportDTO.getProductId());
         if (productOptional.isPresent()) {
           Product product = productOptional.get();
+          Supplier supplier = supplierService.findById(Integer.parseInt(productImportDTO.getSupplier())).get();
 
           // Lập phiếu nhập hàng
           ProductImportNote importNote = new ProductImportNote();
           importNote.setStaff(staff);
           importNote.setDate(LocalDateTime.now());
+          importNote.setSupplier(supplier);
 
           // lập chi tiết phiếu nhập hàng
           ProductImportNoteDetails importNoteDetails = new ProductImportNoteDetails();

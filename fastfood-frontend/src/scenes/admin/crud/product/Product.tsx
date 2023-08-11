@@ -8,6 +8,11 @@ import { useAppSelector } from '@/store';
 import { fetchUpdateProduct } from '@/axios/admin';
 import * as Yup from 'yup';
 import { deleteProductById } from '@/axios/products';
+import {
+  Supplier,
+  getAllSuppliers,
+  getAllSuppliersisActive,
+} from '@/axios/suppliers';
 
 type AddFormSubmitValues = {
   name: string;
@@ -45,6 +50,7 @@ type ProductImportType = {
   productId: number;
   quantity: number;
   price: number;
+  supplier: string;
 };
 const addProductSchema = Yup.object({
   name: Yup.string().trim().required('Tên sản phẩm không được để trống'),
@@ -75,6 +81,7 @@ const Product = () => {
   const [selectedImage, setSelectedImage] = useState<null | Blob>(null);
 
   const [categories, setCategories] = useState<Category[]>([]);
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [products, setProducts] = useState<ProductFromApi[]>([]);
   const [productUpdate, setProductUpdate] =
     useState<UpdateProductFromApi | null>(null);
@@ -178,6 +185,7 @@ const Product = () => {
     initialValues: {
       price: 0,
       quantity: 0,
+      supplier: '',
     },
     onSubmit: (values, { resetForm }) => {
       console.log('onSubmit: ', values);
@@ -186,7 +194,10 @@ const Product = () => {
         productId: parseInt(selectedProduct.id),
         quantity: values.quantity,
         price: values.price,
+        supplier: values.supplier,
       };
+      console.log('requestData: ', requestData);
+
       void addImportProductToDB(requestData);
       resetForm();
     },
@@ -211,6 +222,15 @@ const Product = () => {
     }
     setMessageEnable(true);
   }
+
+  async function fetchSuppliers() {
+    const responseData = await getAllSuppliersisActive();
+    setSuppliers(responseData);
+  }
+
+  useEffect(() => {
+    void fetchSuppliers();
+  }, []);
 
   useEffect(() => {
     void getAllProducts();
@@ -1162,6 +1182,34 @@ const Product = () => {
                 formikImportProduct.touched.price && (
                   <div className="text-red-400">
                     {formikImportProduct.errors.price}
+                  </div>
+                )}
+            </div>
+            <div>
+              <label
+                htmlFor="category-create"
+                className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Nhà cung cấp
+              </label>
+              <select
+                id="category-create"
+                className="focus:ring-primary-500 focus:border-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+                {...formikImportProduct.getFieldProps('supplier')}
+              >
+                {suppliers.map((supplier) => (
+                  <option
+                    value={supplier.id}
+                    key={`${supplier.id} ${supplier.name}`}
+                  >
+                    {supplier.name}
+                  </option>
+                ))}
+              </select>
+              {formikImportProduct.errors.supplier &&
+                formikImportProduct.touched.supplier && (
+                  <div className="text-red-400">
+                    {formikImportProduct.errors.supplier}
                   </div>
                 )}
             </div>

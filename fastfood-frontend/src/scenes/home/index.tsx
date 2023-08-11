@@ -66,12 +66,17 @@ const HomePage = (props: Props) => {
     }
   }, [idAccount]);
   return (
-    <>
+    <div className="mt-10">
       <OtherInformationModal
         open={enableForceUserTypeOtherInfor}
         handleClose={closeUserTypeOtherInfo}
       />
-      <Carousel autoPlay={true} infiniteLoop={true} interval={3000}>
+      <Carousel
+        className="mt-24"
+        autoPlay={true}
+        infiniteLoop={true}
+        interval={3000}
+      >
         <div>
           <img src={Banner1} />
         </div>
@@ -85,7 +90,7 @@ const HomePage = (props: Props) => {
       <div className="bg-white">
         <ProductList products={products} />
       </div>
-    </>
+    </div>
   );
 };
 

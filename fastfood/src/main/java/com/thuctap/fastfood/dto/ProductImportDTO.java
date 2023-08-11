@@ -12,4 +12,5 @@ public class ProductImportDTO {
   private Integer productId;
   private int quantity;
   private double price;
+  private String supplier;
 }
