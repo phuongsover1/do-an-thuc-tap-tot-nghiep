@@ -94,7 +94,7 @@ public class AdminController {
 
 
 
-  @PostMapping("/change-staff-status")
+  @PutMapping("/change-staff-status")
   public ResponseEntity<Boolean> quit(@RequestParam("staffId") String staffId) {
     Optional<Staff> staffOptional = staffService.findById(staffId);
     if (staffOptional.isPresent()) {

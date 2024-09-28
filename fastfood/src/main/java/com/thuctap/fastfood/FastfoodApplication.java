@@ -21,19 +21,5 @@ public class FastfoodApplication {
     SpringApplication.run(FastfoodApplication.class, args);
   }
   public static final HashMap<String, String> forgotPasswordMap =  new HashMap<>();
-  private final EmailSenderService senderService;
-  @Bean
-  public WebMvcConfigurer corsConfigurer() {
-    return new WebMvcConfigurer() {
-      @Override
-      public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("*");
-      }
-    };
-  }
 
-//  @EventListener(ApplicationReadyEvent.class)
-//  public void sendEmail() {
-//    senderService.sendEmail("phuongsover5@gmail.com","This is the subject","This is the body");
-//  }
 }

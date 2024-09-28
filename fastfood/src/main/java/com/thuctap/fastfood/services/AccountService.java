@@ -12,6 +12,7 @@ import com.thuctap.fastfood.repositories.UserRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ public class AccountService {
   private final UserRepository userRepository;
   private final CartRepository cartRepository;
   private final RoleRepository roleRepository;
+  private final PasswordEncoder passwordEncoder;
 
   public Account register(AccountDTO accountDTO) {
     User newUser = new User();
@@ -31,7 +33,7 @@ public class AccountService {
     newUser.setEmail(accountDTO.getEmail());
     newUser.setPhoneNumber(accountDTO.getPhoneNumber());
     newAccount.setUsername(accountDTO.getUsername());
-    newAccount.setPassword(accountDTO.getPassword());
+    newAccount.setPassword(passwordEncoder.encode(accountDTO.getPassword()));
     newAccount.setCart(newCart);
     cartRepository.save(newCart);
     User returnedUser = userRepository.save(newUser);

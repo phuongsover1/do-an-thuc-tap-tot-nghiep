@@ -1,0 +1,4 @@
+FROM mariadb:latest
+ENV MARIADB_DATABASE=fastfood
+ENV MARIADB_ROOT_PASSWORD=root
+COPY ./fast_food_db.sql /docker-entrypoint-initdb.d/

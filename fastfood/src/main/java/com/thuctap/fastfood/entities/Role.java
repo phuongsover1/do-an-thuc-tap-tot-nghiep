@@ -16,7 +16,7 @@ import lombok.Setter;
 @Setter
 @Entity(name = "Role")
 @Table(name = "roles")
-@PrimaryKeyJoinColumn(name = "id")
+//@PrimaryKeyJoinColumn(name = "id")
 public class Role implements Serializable {
   @Id
   @SequenceGenerator(name = "role_sequence", sequenceName = "role_sequence", allocationSize = 1)

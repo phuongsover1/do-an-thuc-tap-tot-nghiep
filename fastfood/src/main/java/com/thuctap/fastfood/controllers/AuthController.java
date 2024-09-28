@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -27,6 +29,7 @@ public class AuthController {
   private final RoleService roleService;
   private final StaffService staffService;
   private final EmailSenderService senderService;
+  private final PasswordEncoder passwordEncoder;
 
   @GetMapping("/role")
   public ResponseEntity<Role> getRoleOfAccount(@RequestParam Integer accountId) {
@@ -41,7 +44,7 @@ public class AuthController {
     Optional<Account> accountOptional = accountService.findByUsername(account.getUsername());
     if (accountOptional.isPresent()) {
       Account dbAccount = accountOptional.get();
-      if (account.getPassword().equals(dbAccount.getPassword())) {
+      if (passwordEncoder.matches(account.getPassword(), dbAccount.getPassword())) {
         AccountDTO dto = accountService.toDTO(dbAccount);
         return ResponseEntity.ok(dto);
       }
@@ -105,19 +108,20 @@ public class AuthController {
     return ResponseEntity.ok(false);
   }
 
-  @PostMapping("/change-password")
+  @PutMapping("/change-password")
   public ResponseEntity<Map<String, String>> changePassword(
       @RequestBody AccountDTO accountDTO, @RequestParam("newPassword") String newPassword) {
     Map<String, String> map = new HashMap<>();
     Optional<Account> accountOptional = accountService.findById(accountDTO.getAccountId());
     if (accountOptional.isPresent()) {
       Account account = accountOptional.get();
-      if (!account.getPassword().equals(accountDTO.getPassword())) {
+      // Mật khẩu cũ không đúng
+      if (!passwordEncoder.matches(accountDTO.getPassword(), account.getPassword())) {
         map.put("error", "Mật khẩu cũ không đúng");
       } else {
-        account.setPassword(newPassword);
+        account.setPassword(passwordEncoder.encode(newPassword));
         String savedPassword = accountService.save(account).getPassword();
-        if (!savedPassword.equals(newPassword)) {
+        if (!passwordEncoder.matches(newPassword, savedPassword)) {
           map.put("error", "Thay đổi mật khẩu thất bại");
         }
       }
@@ -215,7 +219,7 @@ public class AuthController {
     Optional<Account> accountOptional = accountService.findById(accountId);
     if (accountOptional.isPresent()) {
       Account account = accountOptional.get();
-      account.setPassword(newPassword);
+      account.setPassword(passwordEncoder.encode(newPassword));
       accountService.save(account);
     } else returnedMap.put("error", "Id tài khoản không tồn tại");
     return ResponseEntity.ok(returnedMap);
