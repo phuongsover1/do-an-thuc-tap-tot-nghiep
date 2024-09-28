@@ -21,6 +21,7 @@ import ShopeePayImage from '@/assets/Logo ShopeePay.svg';
 import { useAppSelector } from '@/store';
 import axiosInstance from '@/axios/axios';
 import { handleMoney } from '@/shared/Utils';
+import { IP_ADDR } from '@/axios/axios';
 // import ticketApi from '../../../api/ticketApi';
 
 const leftStyle = {
@@ -71,6 +72,7 @@ type Bill = {
   totalPrice: number;
   status: 'Đã Thanh Toán' | 'Chờ Thanh Toán' | 'Đã Hủy';
 };
+
 
 const QRScan = () => {
   const afterFiveMinutesFromNow = new Date().getTime() + 300000;
@@ -384,7 +386,7 @@ const QRScan = () => {
               </Typography.Title>
               {bill && (
                 <QRCode
-                  value={`http://192.168.1.11:8080/api/bills/paid/${bill.billId}?qr_path=http://192.168.1.11:8080/api/bills/paid/${bill.billId}`}
+                  value={`http://${IP_ADDR}/api/bills/paid/${bill.billId}?qr_path=http://${IP_ADDR}/api/bills/paid/${bill.billId}`}
                   status={qrStatus ? 'active' : 'expired'}
                 />
               )}

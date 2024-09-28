@@ -14,6 +14,7 @@ const ProductDetails = () => {
   const [productQuantity, setProductQuantity] = useState(1);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  
 
   useEffect(() => {
     async function getProductById(productId: number) {
@@ -21,6 +22,8 @@ const ProductDetails = () => {
 
       const response = await axiosInstance.get(`/products/${productId}`);
       const data = response.data as ProductFromApi;
+      console.log('Product data: ', data);
+       
       setProduct(data);
       getProductImage(data);
     }
@@ -88,7 +91,7 @@ const ProductDetails = () => {
           <div className="flex gap-4 flex-col items-start">
             <p className="text-slate-700 text-3xl font-bold">{product?.name}</p>
             <p className="text-red-400 font-bold text-2xl">
-              {product && handleMoney(product?.price)} đ
+              {product && handleMoney(parseInt(product.price))} đ
             </p>
             <div>
               <div className="flex gap-4 items-center">

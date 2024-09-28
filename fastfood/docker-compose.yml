@@ -1,0 +1,3 @@
+services:
+  fastfoodDB:
+    image: phuongsover2/phuong-images:fastfood_db

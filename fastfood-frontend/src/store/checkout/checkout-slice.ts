@@ -1,4 +1,4 @@
-import { CheckoutType } from '@/shared/types';
+import { CheckoutType, PaymentMethodType } from '@/shared/types';
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState: CheckoutType = {
@@ -26,7 +26,7 @@ const checkoutSlice = createSlice({
     clearCheckout(state) {
       state = initialState;
     },
-    setPaymentMethod(state, action: { payload: string }) {
+    setPaymentMethod(state, action: { payload: PaymentMethodType }) {
       state.paymentMethod = action.payload;
     },
   },

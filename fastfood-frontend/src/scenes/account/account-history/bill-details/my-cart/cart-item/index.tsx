@@ -62,9 +62,9 @@ const CartItem = ({ cartItem, isTop1 }: Props) => {
             {product?.name}
           </p>
           <p>
-            {product && handleMoney(product.price)}
+            {product && handleMoney(parseInt(product.price))}
             {' x'} {quantity} {' = '}
-            {product && handleMoney(product.price * quantity)}
+            {product && handleMoney(parseInt(product.price) * quantity)}
             <span className="underline underline-offset-1">đ</span>
           </p>
         </div>

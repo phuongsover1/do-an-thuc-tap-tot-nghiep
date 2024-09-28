@@ -1,4 +1,4 @@
-import { AccountInfo } from '@/shared/types';
+import { AccountInfo, UserInfor } from '@/shared/types';
 import axiosInstance from '../axios';
 import { UserInfo } from '../admin';
 

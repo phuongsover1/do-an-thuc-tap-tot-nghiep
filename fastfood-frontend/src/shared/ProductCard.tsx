@@ -52,7 +52,7 @@ const ProductCard = ({ product }: Props) => {
       <div className="p-3 pb-10">
         <p className="font-semibold text-slate-800">{product.name}</p>
         <p className="mt-2 text-2xl font-bold text-red-400">
-          {handleMoney(product.price)} <span className="underline">đ</span>
+          {handleMoney(parseInt(product.price))} <span className="underline">đ</span>
         </p>
       </div>
       <div className="p-1">

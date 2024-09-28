@@ -87,7 +87,7 @@ const Checkout = () => {
                 </span>
                 &nbsp;&nbsp; ({cartLengthState} Sản phẩm)
               </p>
-              <Link to={'/products'}>
+              <Link to={'/'}>
                 <button className="flex items-center gap-1 rounded-full px-4 py-2 font-semibold text-red-500 shadow-md ">
                   <PlusSmallIcon className="w-5" />
                   Thêm món ăn

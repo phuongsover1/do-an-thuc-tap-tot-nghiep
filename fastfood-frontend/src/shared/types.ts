@@ -1,14 +1,17 @@
 import { CartType } from '@/store/auth/auth-slice';
 
+export type PaymentMethodType = 'VietinBank' | 'ZaloPay' | 'MoMo' | 'ShopeePay' | '';
+
 export type CheckoutType = {
   accountId: number;
   cart: CartType[];
   address: string;
   phoneNumber: string;
   notes: string;
-  paymentMethod?: 'VietinBank' | 'ZaloPay' | 'MoMo' | 'ShopeePay';
+  paymentMethod?: PaymentMethodType;
   totalPrice: number;
 };
+
 
 export type UserInfor = {
   userId: string;

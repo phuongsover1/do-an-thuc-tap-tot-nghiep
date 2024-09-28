@@ -30,15 +30,15 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setLogin(state, action: AuthAccountIdPayloadAction) {
+    setLogin(state: AuthState, action: AuthAccountIdPayloadAction) {
       state.idAccount = action.payload;
     },
-    setLogout(state) {
+    setLogout(state: AuthState) {
       state.idAccount = null;
       state.cart = [];
       state.roleName = '';
     },
-    setRole(state, action: { payload: 'USER' | 'ADMIN' | 'STAFF' }) {
+    setRole(state: AuthState, action: { payload: 'USER' | 'ADMIN' | 'STAFF' }) {
       state.roleName = action.payload;
     },
     setCart(state, action: AuthAccountCartPayloadAction) {
@@ -46,7 +46,7 @@ const authSlice = createSlice({
     },
     addProductToCart(state, action: AddProductToCartActionType) {
       const existProduct = state.cart.find(
-        (productObj) =>
+        (productObj: CartType) =>
           productObj.productId === action.payload.cartDetail.productId,
       );
       if (!existProduct) {

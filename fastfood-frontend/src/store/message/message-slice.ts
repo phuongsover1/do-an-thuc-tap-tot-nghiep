@@ -11,11 +11,11 @@ const messageSlice = createSlice({
   name: 'message',
   initialState,
   reducers: {
-    showMessage(state, action: { payload: string }) {
+    showMessage(state : Message, action: { payload: string }) {
       state.enable = true;
       state.message = action.payload;
     },
-    hideMessage(state) {
+    hideMessage(state : Message) {
       state.enable = false;
       state.message = '';
     },

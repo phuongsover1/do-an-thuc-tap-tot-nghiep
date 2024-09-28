@@ -42,7 +42,7 @@ const CartItem = ({ isTop1, cartItem, updateTotalPrice }: Props) => {
 
   useEffect(() => {
     if (product) {
-      updateTotalPrice(product.price * productQuantity);
+      updateTotalPrice(parseInt(product.price) * productQuantity);
     }
   }, [product, productQuantity, updateTotalPrice]);
   function getProductImage(product: ProductFromApi) {
@@ -123,7 +123,8 @@ const CartItem = ({ isTop1, cartItem, updateTotalPrice }: Props) => {
             {product?.name}
           </Link>
           <p>
-            {product && handleMoney(product.price * productQuantity)}
+            <span>{product && handleMoney(parseInt(product.price))}</span> x <span>{productQuantity} = </span>
+            {product && handleMoney(parseInt(product.price) * productQuantity)}
             <span className="underline underline-offset-1">đ</span>
           </p>
         </div>

@@ -31,7 +31,7 @@ const CartProduct = ({
 
   useEffect(() => {
     if (product) {
-      updateTotalPrice(product.price * quantity);
+      updateTotalPrice(parseInt(product.price) * quantity);
     }
   }, [product, quantity, updateTotalPrice]);
 
@@ -107,7 +107,7 @@ const CartProduct = ({
         <div>
           <p className="text-slate-800 font-semibold">{product?.name}</p>
           <p className="text-slate-800">
-            {product && handleMoney(product.price)} đ x {quantity}
+            {product && handleMoney(parseInt(product.price))} đ x {quantity}
           </p>
         </div>
       </div>

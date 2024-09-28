@@ -25,7 +25,7 @@ export type ProductFromApi = {
   id: number;
   name: string;
   status: boolean;
-  price: number;
+  price: string;
   description: string;
   stock: number;
   images: [];
@@ -680,7 +680,7 @@ const Product = () => {
                         {product.id}
                       </td>
                       <td className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
-                        {product.price}
+                        {parseInt(product.price)}
                       </td>
                       <td className="whitespace-nowrap p-4 text-base font-medium text-gray-900 dark:text-white">
                         {product.status ? 'Đang được bán' : 'Đã ngừng bán'}
@@ -749,7 +749,7 @@ const Product = () => {
                             data-productname={`${product.name}`}
                             data-productid={`${product.id}`}
                             data-productstock={`${product.stock}`}
-                            data-productprice={`${product.price}`}
+                            data-productprice={`${parseInt(product.price)}`}
                             data-drawer-target="drawer-update-product-default"
                             data-drawer-show="drawer-update-product-default"
                             aria-controls="drawer-update-product-default"

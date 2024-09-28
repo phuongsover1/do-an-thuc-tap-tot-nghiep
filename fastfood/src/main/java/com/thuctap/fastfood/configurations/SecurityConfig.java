@@ -22,16 +22,7 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-    http.cors(cors -> {
-      CorsConfigurationSource source =  request -> {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of(allowedOrigins));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        return config;
-      };
-      cors.configurationSource(source);
-    });
+    http.cors(Customizer.withDefaults());
 
     http.csrf(AbstractHttpConfigurer::disable);
 
