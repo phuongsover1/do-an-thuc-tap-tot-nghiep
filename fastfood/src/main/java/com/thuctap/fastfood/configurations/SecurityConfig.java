@@ -14,6 +14,8 @@ public class SecurityConfig {
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.cors(Customizer.withDefaults()); // Use the CORS configuration from WebConfig
     http.csrf(AbstractHttpConfigurer::disable);
+    http.authorizeHttpRequests(auth -> auth
+        .requestMatchers("/api/auth/**").permitAll());
 
     return http.build();
   }
